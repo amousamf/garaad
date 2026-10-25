@@ -2246,7 +2246,7 @@ function load(){
   if(store.school && !Array.isArray(store.school.outbox)) store.school.outbox=[];
   // Families now need a free account (agreed 25 Oct 2026). A family phone without one starts fresh, like a new phone.
   if(store.mode!=='school' && !store.familyAccount && (store.profiles.length || store.sessions.length || store.mode==='family' || store.familyCode || store.familyLegacy)){
-    store={device:store.device, sendTo:store.sendTo, settings:store.settings, version:3, profiles:[], sessions:[]};
+    store={device:store.device, sendTo:store.sendTo, settings:store.settings, school:store.school, version:3, profiles:[], sessions:[]};   // school logins and unsent school results stay
   }
   save();
 }
