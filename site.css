@@ -2,10 +2,12 @@
 :root{
   --cream:#FFF7E8; --sun:#F5B400; --teal:#0E8C7E; --teal-dark:#0A5E55; --star:#F28C28; --ink:#2B2118;
   --muted:#6B5D50; --card:#FFFFFF; --line:#EFE2C8;
+  color-scheme:light dark;   /* tells phones not to repaint the page; the colours stay the same */
 }
+html{background:var(--cream)}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--cream);color:var(--ink);font:400 17px/1.65 Lexend,system-ui,-apple-system,"Segoe UI",sans-serif}
+body{color-scheme:light;margin:0;background:var(--cream);color:var(--ink);font:400 17px/1.65 Lexend,system-ui,-apple-system,"Segoe UI",sans-serif}
 a{color:var(--teal-dark);text-underline-offset:3px}
 h1,h2,h3{font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;line-height:1.15;margin:0 0 .4em}
 h1{font-size:clamp(32px,7vw,48px)}

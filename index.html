@@ -146,8 +146,9 @@ body[data-theme="adult"]{ --bg:#F5F6F5; --page-ink:#24292B; --page-muted:#5F6B6E
 /* the calm grown-up style when the phone is in dark mode */
 body[data-theme="adultdark"]{ --bg:#15191A; --page-ink:#E8ECEC; --page-muted:#A9B4B6; --surface:#22282A; --ink:#E8ECEC; --muted:#A9B4B6; --line:#353D40;
   --primary:#2BB3A2; --primary-ink:#5ED1C2; --primary-soft:#173B37; --cta:#0E8C7E; --on-cta:#FFFFFF; --cta-shadow:#0A6F64; color-scheme:dark; }
-body[data-theme="night"]{ color-scheme:dark; }
 html,body{height:100%}
+body{color-scheme:light}
+html{background:var(--bg,#FFF7E8)}
 body{background:var(--bg);color:var(--page-ink);font-family:var(--font);font-size:16px;overflow:hidden;-webkit-tap-highlight-color:transparent;transition:background-color .25s}
 .app{height:100%;max-width:980px;margin:0 auto;display:flex;flex-direction:column;
   padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:10px;box-sizing:border-box}
@@ -686,26 +687,9 @@ body[data-theme="night"] .readq{color:var(--cta)}
 .task .te svg,.door .di svg{display:block}
 .task .te{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary-ink);flex:none}
 .task .te svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-/* when the phone is in dark mode: navy splash with the gold owl, and the theme sheet to match */
-@media (prefers-color-scheme: dark){
-  .splash{background:#1E2257;color:#FFFFFF}
-  .splash .sp-sub{color:#C9CCF0}
-  .splash .sp-circle{background:#2B3170}
-  .splash .sp-dots span{background:#3A3F86}
-  .splash .sp-dots span.full,.splash .sp-dots i{background:#FFC93C}
-  .splash .sp-feat{background:#2B3170;color:#FFFFFF}
-  .splash .sp-feat small{color:#C9CCF0}
-  .splash .sp-go{background:#FFC93C;color:#2A1F00}
-  .splash .sp-go.teal{background:#FFC93C;color:#2A1F00}
-  .sheetwrap{background:rgba(5,8,30,.6)}
-  .sheet{background:#262B66;color:#FFFFFF}
-  .sheet .grab{background:#4A4F96}
-  .themeopt{background:#323778;color:#FFFFFF}
-  .themeopt small{color:#C9CCF0}
-  .themeopt[aria-pressed="true"],.themeopt[aria-pressed="true"] .tick{border-color:#FFC93C}
-  .themeopt[aria-pressed="true"] .tick{background:#FFC93C}
-  .themeopt[aria-pressed="true"] .tick svg{stroke:#2A1F00}
-}
+/* The page says it handles dark mode (meta color-scheme and :root), so Samsung Internet and Chrome
+   do not repaint it, but it keeps the same colours. Form controls stay light. */
+@media (prefers-color-scheme: dark){ :root{ color-scheme:light dark; } }
 @media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation:none!important;transition:none!important} }
 </style>
 
@@ -3418,8 +3402,8 @@ const THEMES = {
   night:{name:'Night sky', note:'For evening play', bg:'#1E2257', owl:'#8E7CFF', pupil:'#1E2257', gold:'#FFC93C', meta:'#1E2257'}
 };
 const DARKQ = window.matchMedia ? matchMedia('(prefers-color-scheme: dark)') : null;
-const phoneDark = () => !!(DARKQ && DARKQ.matches);
-/* a theme the child picked always wins; otherwise Night sky when the phone is in dark mode */
+const phoneDark = () => false;   // Garaad keeps its own colours whatever the phone's dark setting (decided 25 Oct 2026)
+/* a theme the child picked always wins; otherwise Savanna sun */
 const kidTheme = p => (p.themeSet || (p.theme && p.theme!=='savanna')) ? (THEMES[p.theme]?p.theme:'savanna') : (phoneDark()?'night':'savanna');
 function applyTheme(t){
   if(t!=='adult' && t!=='adultdark' && !THEMES[t]) t='savanna';
