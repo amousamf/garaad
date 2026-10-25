@@ -21,7 +21,7 @@ The mascot is Garaad, a wise owl whose eyes are the double "aa" of the name. Bra
 
 The first screen asks where the phone is used.
 
-- **Family:** a free family account. The parent registers with their name, country and region (drop-down lists of every country and its official regions, in `countries-regions.json`), a typed location, their WhatsApp number (the dialling code follows the country), a 4-number PIN, and a tick box to join the parents' WhatsApp group. On another phone they log in with the WhatsApp number and PIN. Old family codes still work, and phones that already had children on them keep playing without registering.
+- **Family:** a free family account. The parent registers with their name, country and region (drop-down lists of every country and its official regions, in `countries-regions.json`), a typed location, their WhatsApp number (the dialling code follows the country), a 4-number PIN, and a tick box to join the parents' WhatsApp group. On another phone they log in with the WhatsApp number and PIN, and the children and their progress come down from the account. Every child, level played and session is saved to the family's account in Supabase (waiting on the phone when there is no internet). A family phone without an account starts fresh, like a new phone. The Google Sheet is kept only as an archive.
 - **School:** enter the school code, then log in with a phone number (+252) and a 4-number PIN. New teachers register themselves.
 
 ## School mode
@@ -42,4 +42,4 @@ The **admin** screen (link on the first page) creates school codes, adds classes
 
 ## Database
 
-The scripts in `database/` set up Supabase. Run them in order in the Supabase SQL Editor: `01-schema.sql`, then `02-progress-and-offline.sql`, then `03-design-features.sql` (owl avatars, themes, hints bought with stars, parent phone, assessments, needs-help list, weekly report and pilot results), then `04-family-registration.sql` (free family accounts, family login with WhatsApp and PIN, admin family tools and WhatsApp settings). The app holds only the publishable key; every read and write goes through database functions that check the login.
+The scripts in `database/` set up Supabase. Run them in order in the Supabase SQL Editor: `01-schema.sql`, then `02-progress-and-offline.sql`, then `03-design-features.sql` (owl avatars, themes, hints bought with stars, parent phone, assessments, needs-help list, weekly report and pilot results), then `04-family-registration.sql` (free family accounts, family login with WhatsApp and PIN, admin family tools and WhatsApp settings), then `05-family-data.sql` (family children and results saved to the account). The app holds only the publishable key; every read and write goes through database functions that check the login.
