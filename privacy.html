@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Garaad Privacy</title>
+<meta name="description" content="What information Garaad keeps about children, families and teachers, where it is kept and why.">
+<link rel="canonical" href="https://garaad.app/privacy.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Garaad">
+<meta property="og:title" content="Garaad privacy">
+<meta property="og:description" content="What information Garaad keeps, where it is kept and why.">
+<meta property="og:url" content="https://garaad.app/privacy.html">
+<meta property="og:image" content="https://garaad.app/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0E8C7E">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Lexend:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="./" aria-label="Garaad, open the games">
+    <svg viewBox="0 0 100 100" width="40" height="40" aria-hidden="true"><path d="M14 8 L34 24 Q50 17 66 24 L86 8 Q95 40 91 62 Q85 93 50 95 Q15 93 9 62 Q5 40 14 8 Z" fill="#0E8C7E"/><g transform="translate(6 13) scale(0.88)"><circle cx="33" cy="46" r="12" fill="#fff" stroke="#fff" stroke-width="8"/><circle cx="67" cy="46" r="12" fill="#fff" stroke="#fff" stroke-width="8"/><rect x="41" y="30" width="8" height="32" rx="4" fill="#fff"/><rect x="75" y="30" width="8" height="32" rx="4" fill="#fff"/><circle cx="34" cy="47" r="5.5" fill="#0A5E55"/><circle cx="68" cy="47" r="5.5" fill="#0A5E55"/><circle cx="35.8" cy="45.2" r="1.7" fill="#fff"/><circle cx="69.8" cy="45.2" r="1.7" fill="#fff"/><path d="M38 74 Q50 84 62 74" fill="none" stroke="#F5B400" stroke-width="6" stroke-linecap="round"/></g><polygon points="46,63 54,63 50,70" fill="#F5B400"/></svg>
+    <span>Garaad</span>
+  </a>
+  <a class="btn" href="./">Play</a>
+</header>
+
+<main class="doc">
+  <h1>Privacy</h1>
+  <p class="updated">Last updated 25 October 2026</p>
+
+  <div class="card short">
+    <h2>The short version</h2>
+    <ul>
+      <li>We keep only what helps children learn: a first name, an age and how they do in the games.</li>
+      <li>No adverts, no tracking tools, and we never sell information.</li>
+      <li>Children never chat with anyone and do not have accounts. A grown-up sets everything up.</li>
+      <li>You can ask us to delete a child's information at any time.</li>
+    </ul>
+  </div>
+
+  <h2>Who runs Garaad</h2>
+  <p>Garaad is run by Abdifatah, who built it. Questions or requests about information go to <a href="mailto:muse.afatah@gmail.com">muse.afatah@gmail.com</a>.</p>
+
+  <h2>At home (family phones)</h2>
+  <p>When a grown-up adds a child, the child's <b>name and age</b> and their <b>progress</b> (levels, stars and missed questions) are saved on the phone itself.</p>
+  <p>So that we can see how children are getting on and make the games better, the app also sends these to a private Google Sheet that only Garaad's owner can open:</p>
+  <ul>
+    <li>the family name the grown-up typed, and a random code for the phone</li>
+    <li>each child's name, age and number of stars</li>
+    <li>each level played: the game, the level, how many answers were right, the date and time, and how long it took</li>
+  </ul>
+
+  <h2>At school</h2>
+  <p>In school mode, information is kept in a secure database (Supabase) so that a child's progress follows them on any school phone. It holds:</p>
+  <ul>
+    <li>the school and class, and each child's name, age and the group the teacher expects (for example, "medium")</li>
+    <li>the child's starting exercise score, the levels they play and their results</li>
+    <li>each teacher's name and phone number, and their PIN, which is stored scrambled so nobody can read it</li>
+  </ul>
+  <p>Teachers see the children at their own school. The principal can view but not change anything. Garaad's owner, as the administrator, manages schools and codes. Results played without internet wait on the phone and are sent later.</p>
+
+  <h2>The microphone</h2>
+  <p>Two speaking games use the microphone, and only after the phone asks for permission.</p>
+  <ul>
+    <li><b>Parrot Echo</b> records a few seconds, plays it back in a parrot voice, then throws it away. The recording never leaves the phone.</li>
+    <li><b>Name It!</b> uses the phone's own speech recognition to check the word a child says. On many phones, for example Chrome on Android, the phone's browser sends that short piece of sound to Google to turn it into text. Garaad does not keep the sound or the text. A grown-up can always mark the answer instead.</li>
+  </ul>
+
+  <h2>Other services</h2>
+  <p>Like any website, the services that deliver Garaad see basic technical details such as the phone's internet address. These are GitHub (which hosts the app), Cloudflare (which runs the garaad.app address) and Google Fonts (which supplies the lettering). Garaad does not use them to track anyone.</p>
+
+  <h2>Sharing results</h2>
+  <p>We do not sell or give away children's information. If we share how the games are working, for example with a school's leaders or with organisations that support the project, we remove children's names first.</p>
+
+  <h2>Removing information</h2>
+  <ul>
+    <li><b>Families:</b> remove a child in the Parent area. This deletes them from the phone and marks them as removed in the Sheet. Email us and we will delete their rows completely.</li>
+    <li><b>Schools:</b> ask the school or email us, and we will delete the child's records from the database.</li>
+  </ul>
+
+  <h2>Changes</h2>
+  <p>If what Garaad keeps changes, for example when new features are added, we will update this page and the date at the top.</p>
+</main>
+
+<footer>
+  <a href="./">Play</a> · <a href="about.html">About Garaad</a> · <span>© 2026 Garaad</span>
+</footer>
+</body>
+</html>
