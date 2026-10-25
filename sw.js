@@ -1,6 +1,7 @@
-// Tiri offline cache — version s1a2b3c4d6
-const CACHE = 'tiri-s1a2b3c4d6';
-const CORE = ['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png'];
+// Garaad offline cache — version g3-family-1
+const CACHE = 'garaad-g3-family-1';
+const CORE = ['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','favicon-64.png',
+  'fonts/baloo2-800.woff2','fonts/lexend-400.woff2','fonts/lexend-500.woff2','fonts/lexend-600.woff2','fonts/lexend-700.woff2'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {

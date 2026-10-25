@@ -1,13 +1,13 @@
 {
-  "name": "Tiri",
-  "short_name": "Tiri",
-  "description": "Maths games for children aged 3 to 12.",
+  "name": "Garaad",
+  "short_name": "Garaad",
+  "description": "Garaad: maths and English games for children aged 3 to 12, at home and at school.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#F3F5FA",
-  "theme_color": "#3657E0",
+  "background_color": "#FFF7E8",
+  "theme_color": "#FFF7E8",
   "icons": [
     {
       "src": "icon-192.png",
