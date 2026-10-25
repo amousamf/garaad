@@ -2260,7 +2260,10 @@ function load(){
   try{ const to=new URLSearchParams(location.search).get('to'); if(validEmail(to)) store.sendTo=to; }catch(e){}
   if(store.version!==3){ store.version=3; }
   if(store.school && !Array.isArray(store.school.outbox)) store.school.outbox=[];
-  if(!store.mode && store.profiles.length){ store.mode='family'; store.familyLegacy=true; }   // phones already used by a family keep playing without a code
+  // Families now need a free account (agreed 25 Oct 2026). A family phone without one starts fresh, like a new phone.
+  if(store.mode!=='school' && !store.familyAccount && (store.profiles.length || store.sessions.length || store.mode==='family' || store.familyCode || store.familyLegacy)){
+    store={device:store.device, sendTo:store.sendTo, settings:store.settings, version:3, profiles:[], sessions:[]};
+  }
   save();
 }
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(store)); }catch(e){} }
@@ -2337,26 +2340,30 @@ async function busy(btn, fn){ if(btn&&btn.disabled) return; const t=btn?btn.text
 
 /* ---------- results waiting to be sent (works through poor internet) ---------- */
 let obBusy=false;
-function obPush(fn, args){ store.school.outbox=store.school.outbox||[]; store.school.outbox.push({fn,args}); save(); obFlush(); }
+const famOn = () => store.mode==='family' && !!store.familyAccount;
+const obBox = () => store.mode==='school' ? store.school : (store.famq = store.famq || {outbox:[]});
+const obTok = () => store.mode==='school' ? tokenOf() : store.familyToken;
+function obPush(fn, args){ const b=obBox(); b.outbox=b.outbox||[]; b.outbox.push({fn,args}); save(); obFlush(); }
 async function obFlush(){
-  if(obBusy || !store.school || !(store.school.outbox||[]).length || !tokenOf()) return;
+  if(obBusy || (store.mode==='school' && !store.school)) return;
+  const b=obBox(); if(!(b.outbox||[]).length || !obTok()) return;
   obBusy=true;
   try{
-    while(store.school.outbox.length && tokenOf()){
-      const it=store.school.outbox[0]; let keep=false;
-      try{ await rpc(it.fn, Object.assign({p_token:tokenOf()}, it.args)); }
-      catch(e){ keep = !!e.offline || !e.http || e.http>=500 || e.http===429 || e.code==='invalid_token'; if(e.code==='invalid_token'){ store.school.token=null; save(); } }
+    while(b.outbox.length && obTok()){
+      const it=b.outbox[0]; let keep=false;
+      try{ await rpc(it.fn, Object.assign({p_token:obTok()}, it.args)); }
+      catch(e){ keep = !!e.offline || !e.http || e.http>=500 || e.http===429 || e.code==='invalid_token'; if(e.code==='invalid_token'){ if(store.mode==='school') store.school.token=null; else store.familyToken=null; save(); } }
       if(keep) break;
-      store.school.outbox.shift(); save();   // sent (or can never succeed): move on
+      b.outbox.shift(); save();   // sent (or can never succeed): move on
     }
-  } finally { obBusy=false; if(current==='sSchool' && SCH.view==='task') renderSchool(); }
+  } finally { obBusy=false; if(current==='sSchool' && SCH.view==='task') renderSchool(); if(current==='sParent') renderParent(); if(current==='sHome' && store.mode==='family' && !store.familyToken) renderHome(); }
 }
 window.addEventListener('online', ()=>obFlush());
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') obFlush(); });
 setInterval(()=>obFlush(), 30000);
 
 /* ---------- a child's session: opened when the teacher taps the child, closed when they go back ---------- */
-function progressOf(p){ return {games:p.games||{}, best:p.best||{}, review:p.review||[], words:p.words||{}, practiceDays:p.practiceDays||[], bonus:p.bonus||0, spent:p.spent||0, themeSet:!!p.themeSet, subject:p.subject||subject, last:p.last||0}; }
+function progressOf(p){ return {games:p.games||{}, best:p.best||{}, review:p.review||[], words:p.words||{}, practiceDays:p.practiceDays||[], bonus:p.bonus||0, spent:p.spent||0, themeSet:!!p.themeSet, subject:p.subject||subject, last:p.last||0, placement:p.placement||null, placementSkipped:!!p.placementSkipped, band:p.band||null}; }
 function saveChildProgress(){
   if(SCH.preview || !SCH.child || !me) return;
   const pr=progressOf(me); store.school.cache=store.school.cache||{}; store.school.cache[SCH.child.id]=pr;
@@ -2386,6 +2393,52 @@ function schoolRound(rec){
     p_missed:rec.items.filter(i=>!i.ok).map(i=>({game:i.game, answer:String(i.answer)})).slice(0,20),
     p_played_at:new Date(Date.now()-rec.seconds*1000).toISOString(),
     p_hints_used:rec.hints_used||0, p_stars_spent:rec.stars_spent||0});
+}
+/* ---------- family children and results: saved to the family's account ---------- */
+let famSes=null;
+function famChildPush(p){ if(famOn() && p) obPush('save_family_child', {p_child_id:p.id, p_name:p.name, p_age:p.age, p_avatar:p.avatar||null, p_theme:p.theme||'savanna'}); }
+function famProgressPush(p){
+  if(!famOn() || !p) return;
+  const b=obBox(), from=obBusy?1:0;   // only the newest copy needs sending
+  b.outbox=(b.outbox||[]).filter((it,i)=> i<from || !(it.fn==='save_progress' && it.args.p_child_id===p.id));
+  obPush('save_progress', {p_child_id:p.id, p_progress:progressOf(p)});
+}
+function famEnd(){ if(famSes){ obPush('end_session', {p_session_id:famSes.id, p_minutes:Math.round((Date.now()-famSes.started)/6000)/10}); famSes=null; } }
+function famRound(rec){
+  if(!famOn() || !me) return;
+  if(rec.game_id!=='placement'){
+    if(!famSes || famSes.child!==me.id){ famEnd(); famSes={id:uuid(), child:me.id, started:Date.now()};
+      obPush('open_session', {p_session_id:famSes.id, p_child_id:me.id, p_task_type:'family', p_started_at:new Date(Date.now()-rec.seconds*1000).toISOString()}); }
+    const first=(rec.items[0]||{}).game || rec.game_id, gg=GAMES[first]||{};
+    obPush('record_round', {p_round_id:uuid(), p_session_id:famSes.id, p_subject:gg.skill?'english':'maths', p_game:rec.game_id,
+      p_skill:rec.game_id==='review'?'Review':(gg.skill||gg.name||rec.game), p_level:rec.level||0, p_questions:rec.questions,
+      p_right_first_time:rec.right_first_try, p_stars:Math.max(0,Math.min(3,rec.stars||0)),
+      p_missed:rec.items.filter(i=>!i.ok).map(i=>({game:i.game, answer:String(i.answer)})).slice(0,20),
+      p_played_at:new Date(Date.now()-rec.seconds*1000).toISOString(),
+      p_hints_used:rec.hints_used||0, p_stars_spent:rec.stars_spent||0});
+  }
+  famProgressPush(me);
+}
+// A new phone: bring the family's children and their progress down from the account.
+async function famRestore(){
+  if(!famOn() || !store.familyToken) return;
+  try{
+    const kids=await rpc('list_children', {p_token:store.familyToken}) || [];
+    const got=[];
+    for(const k of kids){
+      let pr={}; try{ const c=await rpc('child_open', {p_token:store.familyToken, p_child_id:k.id}); pr=(c&&c.progress)||{}; }catch(e){}
+      const local=store.profiles.find(p=>p.id===k.id);
+      if(local && (local.last||0)>=(pr.last||0)) { got.push(local); continue; }   // this phone holds newer progress
+      got.push({id:k.id, name:k.name, age:k.age||5, avatar:k.avatar||null, theme:k.theme||'savanna', color:hashColor(k.id),
+        games:pr.games||{}, best:pr.best||{}, review:pr.review||[], words:pr.words||{}, practiceDays:pr.practiceDays||[],
+        bonus:pr.bonus||0, spent:pr.spent||0, themeSet:!!pr.themeSet, subject:pr.subject, last:pr.last||0,
+        placement:pr.placement||undefined, placementSkipped:!!pr.placementSkipped, band:pr.band||undefined});
+    }
+    const ids=new Set(got.map(p=>p.id));
+    store.profiles=got.concat(store.profiles.filter(p=>!ids.has(p.id)));   // children added on this phone and not sent yet stay
+    save(); if(current==='sHome') renderHome();
+    if(kids.length) toast(`${kids.length===1?'Your child is':'Your children are'} here, with their stars and levels.`);
+  }catch(e){ if(e.code==='invalid_token'){ store.familyToken=null; save(); if(current==='sHome') renderHome(); } else toast('Your children did not load. Check the internet and log in again.'); }
 }
 function profileFromChild(c, pr){
   pr=pr||{};
@@ -2557,7 +2610,7 @@ function familyStartHTML(){
       <div class="btns"><button class="btn primary" data-f="register">Create account</button></div>
       <p class="note">Already registered? <button class="linkbtn" data-f="to-login">Log in</button></p>
     </div>
-    <div class="foot"><button class="linkbtn" data-f="to-code">I have a family code</button></div>`;
+`;
 }
 function famErr(m){ FAM.err=m||''; setErr('famErr', FAM.err); const el=$('famErr'); if(el && m) el.scrollIntoView({block:'center', behavior:'smooth'}); }
 function famIn(r, isNew){
@@ -2566,7 +2619,8 @@ function famIn(r, isNew){
   delete store.familyLegacy; save();
   FAM.err=''; FAM.pin='';
   if(isNew){ FAM.done={name:r.name||FAM.name, group:!!r.wants_group}; FAM.view='welcome'; } else { FAM.view='register'; FAM.done=null; }
-  renderHome(); show('sHome'); window.scrollTo(0,0); liveSync(); loadSettings();
+  renderHome(); show('sHome'); window.scrollTo(0,0); loadSettings();
+  if(!isNew) famRestore().then(()=>obFlush()); else obFlush();
 }
 function openPicker(title, items, cur, onPick){
   const el=document.createElement('div'); el.className='picker'; el.setAttribute('role','dialog'); el.setAttribute('aria-modal','true'); el.setAttribute('aria-label', title);
@@ -2588,7 +2642,7 @@ function openPicker(title, items, cur, onPick){
 }
 async function famAction(a, btn){
   famSnap();
-  if(a==='to-login' || a==='to-register' || a==='to-code'){ FAM.view=a.slice(3); FAM.err=''; renderHome(); show('sHome'); window.scrollTo(0,0); return; }
+  if(a==='to-login' || a==='to-register'){ FAM.view=a.slice(3); FAM.err=''; renderHome(); show('sHome'); window.scrollTo(0,0); return; }
   if(a==='welcome-go'){ FAM.view='register'; FAM.done=null; renderHome(); return; }
   if(a==='pick-country'){
     if(!FAM.data){ try{ await busy(btn, loadPlaces); }catch(e){ return famErr('The country list did not load. Check the internet and try again.'); } }
@@ -3166,8 +3220,6 @@ function admFamiliesHTML(d){
       <div class="tlist">${shown.map(row).join('') || '<p>No families here.</p>'}</div>
       ${wantN?`<div class="btns"><button class="btn small" data-a="copygroup">Copy numbers that want the group</button></div>`:''}`
       : '<p>No families yet.</p>'}
-      <details class="oldcodes"><summary>Family codes (the old way)</summary>
-        <div class="inline"><input class="input" id="nfName" maxlength="40" placeholder="Family name"><input class="input" id="nfCode" maxlength="20" placeholder="Family code" style="text-transform:uppercase"><button class="btn small" data-a="newfamily">Create</button></div></details>
     </div>
     <div class="card panel adm"><h3>WhatsApp links</h3>
       <p>Parents who tick the box see the group link after registering. The admin number is used for every “Contact admin” link.</p>
@@ -3241,7 +3293,8 @@ document.addEventListener('keydown', e=>{
 let round=null, dbRef=null, dbState='checking', dlRef=null;
 const STANDALONE = (()=>{ try{ return window.self===window.top; }catch(e){ return false; } })();
 /* ---------- live results: sent to the organiser's Google Sheet as soon as each level ends ---------- */
-const LIVE = { url: 'https://script.google.com/macros/s/AKfycbxrjokxVXg0WQwSPfD9SXMqzU-GAGlS_xjYnIwJBwIusW7GEXeBlWbxdD30GxO6cNXKtg/exec', key: 'tiri-2026-amf' };
+// The Google Sheet is now an archive: family results go to the family's account in the database.
+const LIVE = { url: '', key: '' };   // was https://script.google.com/macros/s/AKfycbxrjokxVXg0WQwSPfD9SXMqzU-GAGlS_xjYnIwJBwIusW7GEXeBlWbxdD30GxO6cNXKtg/exec
 let liveBusy=false, liveState='', liveLast=0;
 function livePending(){ return store.sessions.filter(r=>!r.live).length + store.profiles.filter(p=>p.dirty).length + (store.removed||[]).length; }
 async function liveSync(){
@@ -3283,7 +3336,7 @@ function logRound(completed){
   };
   if(SCH.cls){ schoolRound(rec); round=null; return; }      // school children are saved to the school database, not this device's log
   store.sessions.push(rec); if(store.sessions.length>1500) store.sessions=store.sessions.slice(-1500);
-  me.dirty=true; save(); round=null; syncPending(); liveSync();
+  me.dirty=true; famRound(rec); save(); round=null; syncPending();
 }
 let syncing=false;
 async function syncPending(){
@@ -3395,6 +3448,7 @@ function pickTheme(t){
   if(!me || !THEMES[t]) return;
   me.theme=t; me.themeSet=true; me.dirty=true; save(); applyTheme(t); closeSheet(); renderChip();
   if(SCH.child && !SCH.preview){ obPush('update_child', {p_child_id:SCH.child.id, p_theme:t}); }
+  else if(famOn()){ obPush('update_child', {p_child_id:me.id, p_theme:t}); famProgressPush(me); }
   say(`${THEMES[t].name}!`);
 }
 function goBack(){
@@ -3411,7 +3465,7 @@ function goBack(){
 }
 
 /* ---------- home ---------- */
-function goHome(){ logRound(false); stopSprint(); if(SCH.cls) endChildSession(); me=null; if(store.mode==='school') return openSchoolHome(); renderHome(); show('sHome'); }
+function goHome(){ logRound(false); stopSprint(); if(SCH.cls) endChildSession(); else if(me && famOn()){ famProgressPush(me); famEnd(); } me=null; if(store.mode==='school') return openSchoolHome(); renderHome(); show('sHome'); }
 function installCard(){
   if(!STANDALONE || INSTALLED) return '';
   if(deferredInstall) return `<div class="card panel" style="margin-top:18px;flex-direction:row;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:200px"><h3>Put the game on this phone</h3><p>Adds an icon to the home screen. Works without internet after that.</p></div><button class="btn primary" id="installBtn">Install</button></div>`;
@@ -3419,7 +3473,7 @@ function installCard(){
   return '';
 }
 const aboutLinks = () => `<p class="aboutlinks"><a href="about.html">About Garaad</a> · <a href="privacy.html">Privacy</a></p>`;
-const needsFamilyStart = () => store.mode==='family' && !store.familyCode && !store.familyToken && !store.familyLegacy;
+const needsFamilyStart = () => store.mode==='family' && !store.familyToken;
 function renderHome(){
   if(!store.mode){ $('homeBody').innerHTML = doorsHTML() + aboutLinks(); return; }
   if(needsFamilyStart() || (store.mode==='family' && FAM.view==='welcome' && FAM.done)){ $('homeBody').innerHTML = familyStartHTML() + aboutLinks();
@@ -3462,9 +3516,11 @@ function saveChild(){
   const err=(!$('famWrap').hidden && !fam)?'Type your family name.':!name?'Type the child’s name.':!edAge?'Pick the child’s age.':'';
   if(err){ $('fErr').textContent=err; $('fErr').hidden=false; return; }
   if(!$('famWrap').hidden){ store.family=fam; }
+  let kid=editing;
   if(editing){ editing.name=name; editing.age=edAge; editing.avatar=edOwl; editing.dirty=true; }
-  else store.profiles.push({id:'k'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), name, age:edAge, avatar:edOwl, theme:'savanna', color:AVCOL[store.profiles.length%AVCOL.length], games:{}, best:{}, last:0, dirty:true});
-  save(); liveSync(); editReturn==='sParent'?openParent():goHome();
+  else { kid={id:famOn()?uuid():'k'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), name, age:edAge, avatar:edOwl, theme:'savanna', color:AVCOL[store.profiles.length%AVCOL.length], games:{}, best:{}, last:0, dirty:true}; store.profiles.push(kid); }
+  famChildPush(kid);
+  save(); editReturn==='sParent'?openParent():goHome();
 }
 
 /* ---------- games ---------- */
@@ -3864,6 +3920,7 @@ function renderParent(){
     : dbState==='checking' ? `<span class="status"><i></i>Checking…</span>`
     : dbState==='denied' ? `<span class="status bad"><i></i>Saved on this device only</span>`
     : dbState==='error' ? `<span class="status bad"><i></i>Sending paused, will retry</span>`
+    : famOn() ? `<span class="status on"><i></i>Also saved to your family account</span>`
     : `<span class="status"><i></i>Saved on this device only</span>`;
   const kids = store.profiles.map(p=>{
     const t=totals(p), acc=t.answers?Math.round(100*t.right/t.answers):null;
@@ -3887,6 +3944,10 @@ function renderParent(){
       <div class="tablewrap"><table class="gtable"><thead><tr><th>Game</th><th class="n">Levels</th><th class="n">Plays</th><th class="n">Accuracy</th></tr></thead><tbody>${rows}</tbody></table></div>
     </div>`; }).join('');
   $('parentBody').innerHTML = `<div class="head"><h1>Progress</h1><p>How each child is doing, game by game.</p></div>
+    ${famOn()?`<div class="card panel"><h3>Family account</h3>
+      <p><span class="status ${(obBox().outbox||[]).length?'bad':'on'}"><i></i>${(obBox().outbox||[]).length?`${obBox().outbox.length} change${obBox().outbox.length===1?'':'s'} waiting to be saved. They are sent when there is internet.`:'Everything is saved to your account.'}</span></p>
+      <p>${esc(store.family||'')}${store.familyAccount.whatsapp?' · '+esc(store.familyAccount.whatsapp):''}. On another phone, log in with this WhatsApp number and your PIN and your children come with you.</p>
+    </div>`:''}
     ${LIVE.url&&STANDALONE?`<div class="card panel"><h3>Live sharing</h3>
       <p><span class="status ${liveState==='offline'?'bad':'on'}"><i></i>${liveState==='offline'?`No internet right now. ${livePending()} item${livePending()===1?'':'s'} will be sent when it returns.`:livePending()?'Sending…':`Up to date${liveLast?' · last sent '+new Date(liveLast).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):''}`}</span></p>
       <label class="label" for="pFamily" style="font-size:14px">Family name</label>
@@ -3962,7 +4023,8 @@ $('fRemove').addEventListener('click',()=>{
   if(!removeArmed){ removeArmed=true; $('fRemove').textContent='Tap again to remove'; return; }
   if(!Array.isArray(store.removed)) store.removed=[];
   store.removed.push({child_id:editing.id, child:editing.name, age:editing.age, removed:true});
-  store.profiles=store.profiles.filter(p=>p!==editing); save(); liveSync(); openParent();
+  if(famOn()){ const b=obBox(); b.outbox=(b.outbox||[]).filter(it=>!(it.args && it.args.p_child_id===editing.id && it.fn==='save_progress')); obPush('remove_child', {p_child_id:editing.id}); }
+  store.profiles=store.profiles.filter(p=>p!==editing); save(); openParent();
 });
 $('backBtn').addEventListener('click',goBack);
 $('sayBtn').addEventListener('click',async()=>{ audio(); if(!q) return; if(q.seq&&!locked){ q.pos=0; $('stage').querySelectorAll('.opt.right').forEach(b=>{ b.classList.remove('right'); const n=b.querySelector('.stepno'); if(n) n.remove(); }); } if(q.pre){ hush(); await q.pre(); } say(questionParts(q)); });
@@ -4120,6 +4182,7 @@ async function moveIn(){                              // at garaad.app, arriving
   }catch(e){ return 'failed'; }
 }
 window.__move={packMove,unpackMove,mergeMove};
+if(DEVTEST) window.__t={get store(){ return store; }, get me(){ return me; }, set me(v){ me=v; }, gp, logRound, pickTheme, goHome, openParent, openEditor, setRound:r=>{ round=r; }};   // test hooks, only on this computer
 
 (async ()=>{
   if(AT_OLD_HOME){ try{ if(await moveOut()) return; }catch(e){} }
@@ -4135,6 +4198,7 @@ window.__move={packMove,unpackMove,mergeMove};
   }
   setTimeout(liveSync, 1500);
   setTimeout(loadSettings, 2500);
+  setTimeout(obFlush, 2000);
 })();
 })();
 </script>

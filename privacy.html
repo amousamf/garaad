@@ -49,12 +49,13 @@
 
   <h2>At home (family phones)</h2>
   <p>When a grown-up adds a child, the child's <b>name and age</b> and their <b>progress</b> (levels, stars and missed questions) are saved on the phone itself.</p>
-  <p>So that we can see how children are getting on and make the games better, the app also sends these to a private Google Sheet that only Garaad's owner can open:</p>
+  <p>They are also saved to the family's account in a secure database (Supabase), so the children's progress follows them to another phone and we can see how children are getting on and make the games better. The account holds:</p>
   <ul>
-    <li>the family name the grown-up typed, and a random code for the phone</li>
-    <li>each child's name, age and number of stars</li>
-    <li>each level played: the game, the level, how many answers were right, the date and time, and how long it took</li>
+    <li>each child's name, age, owl and colours, and their progress</li>
+    <li>each level played: the game, the level, how many answers were right first time, stars, hints, missed questions, and the date and time</li>
+    <li>how long each play session lasted</li>
   </ul>
+  <p>Only the family (with their WhatsApp number and PIN) and Garaad's owner, as the administrator, can see a family's children. Before October 2026, family results went to a private Google Sheet that only Garaad's owner can open; it is kept as an archive and no longer receives anything.</p>
   <h3>Family accounts</h3>
   <p>A family account is free. When a parent registers, the secure database (Supabase) keeps:</p>
   <ul>
@@ -91,7 +92,7 @@
 
   <h2>Removing information</h2>
   <ul>
-    <li><b>Families:</b> remove a child in the Parent area. This deletes them from the phone and marks them as removed in the Sheet. Email us and we will delete their rows and the family account completely.</li>
+    <li><b>Families:</b> remove a child in the Parent area. This deletes the child and all their results from the phone and the database. Email us to delete the whole family account, or old rows in the archived Sheet.</li>
     <li><b>Schools:</b> ask the school or email us, and we will delete the child's records from the database.</li>
   </ul>
 
