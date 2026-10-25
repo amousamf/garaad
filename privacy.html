@@ -37,7 +37,7 @@
   <div class="card short">
     <h2>The short version</h2>
     <ul>
-      <li>We keep only what helps children learn: a first name, an age and how they do in the games.</li>
+      <li>We keep only what helps children learn: a first name, an age and how they do in the games. For a family account, we also keep the parent's name, WhatsApp number and where they live.</li>
       <li>No adverts, no tracking tools, and we never sell information.</li>
       <li>Children never chat with anyone and do not have accounts. A grown-up sets everything up.</li>
       <li>You can ask us to delete a child's information at any time.</li>
@@ -55,6 +55,15 @@
     <li>each child's name, age and number of stars</li>
     <li>each level played: the game, the level, how many answers were right, the date and time, and how long it took</li>
   </ul>
+  <h3>Family accounts</h3>
+  <p>A family account is free. When a parent registers, the secure database (Supabase) keeps:</p>
+  <ul>
+    <li>the parent's name and WhatsApp number</li>
+    <li>their country, region and the location they type (for example, a district)</li>
+    <li>whether they asked to join the Garaad parents' WhatsApp group</li>
+    <li>their 4-digit PIN, stored scrambled so nobody can read it</li>
+  </ul>
+  <p>The number and PIN let the family open Garaad on another phone. Only Garaad's owner, as the administrator, can see families' details. We use the WhatsApp number to help with the account and, only if the parent ticked the box, to add them to the parents' group. Parents' numbers and locations are never included when we share results.</p>
 
   <h2>At school</h2>
   <p>In school mode, information is kept in a secure database (Supabase) so that a child's progress follows them on any school phone. It holds:</p>
@@ -62,6 +71,8 @@
     <li>the school and class, and each child's name, age and the group the teacher expects (for example, "medium")</li>
     <li>the child's starting exercise score, the levels they play and their results</li>
     <li>each teacher's name and phone number, and their PIN, which is stored scrambled so nobody can read it</li>
+    <li>the owl and colours each child picks, hints they buy with stars, and, if the teacher adds it, a parent's phone number for the weekly progress report</li>
+    <li>a short code for each child, used instead of their name when results are shared</li>
   </ul>
   <p>Teachers see the children at their own school. The principal can view but not change anything. Garaad's owner, as the administrator, manages schools and codes. Results played without internet wait on the phone and are sent later.</p>
 
@@ -80,7 +91,7 @@
 
   <h2>Removing information</h2>
   <ul>
-    <li><b>Families:</b> remove a child in the Parent area. This deletes them from the phone and marks them as removed in the Sheet. Email us and we will delete their rows completely.</li>
+    <li><b>Families:</b> remove a child in the Parent area. This deletes them from the phone and marks them as removed in the Sheet. Email us and we will delete their rows and the family account completely.</li>
     <li><b>Schools:</b> ask the school or email us, and we will delete the child's records from the database.</li>
   </ul>
 

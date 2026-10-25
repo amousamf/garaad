@@ -16,13 +16,15 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="The Garaad owl and the words Garaad, maths and English games for children">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#3657E0">
+<meta name="theme-color" content="#FFF7E8">
+<meta name="color-scheme" content="light dark">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Tiri">
+<meta name="apple-mobile-web-app-title" content="Garaad">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;height:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
 
 .readcard{max-width:560px;margin:0 12px;padding:14px 20px;border-radius:18px;background:var(--surface);border:2px solid var(--line);font-size:clamp(24px,6.4vw,34px);font-weight:700;text-align:center;line-height:1.3}
@@ -110,30 +112,43 @@
 </head>
 <body>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap">
 <style>
+/* Garaad brand. Fonts are kept with the app so they work offline: Baloo 2 for the logo and titles,
+   Lexend (made for early readers) for reading text. */
+@font-face{font-family:"Baloo 2";src:url(fonts/baloo2-800.woff2) format("woff2");font-weight:800;font-display:swap}
+@font-face{font-family:"Lexend";src:url(fonts/lexend-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Lexend";src:url(fonts/lexend-500.woff2) format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Lexend";src:url(fonts/lexend-600.woff2) format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Lexend";src:url(fonts/lexend-700.woff2) format("woff2");font-weight:700;font-display:swap}
 /* Layout: app shell — top bar, one screen at a time (family → games → levels → play → result).
-   Lexend was designed to make reading easier, which suits early readers. One calm light theme; colour comes from each game's accent. */
+   Colours are tokens. Each child picks a theme (Savanna sun, Ocean blue, Night sky); grown-up screens use the calm "adult" style.
+   --bg/--page-ink: the page and text on it. --surface/--ink: cards and play pieces and the text on them. */
 :root{
-  --bg:#F3F5FA;
-  --surface:#FFFFFF;
-  --ink:#172041;
-  --muted:#5B6483;
-  --line:#DFE4EE;
-  --primary:#3657E0;
-  --primary-soft:#E8EDFD;
-  --success:#22955A;
-  --success-soft:#DFF5E9;
-  --danger:#D63E55;
-  --danger-soft:#FCE6EA;
-  --gold:#F5B922;
+  --bg:#FFF7E8; --page-ink:#2B2118; --page-muted:#6B5743;
+  --surface:#FFFFFF; --ink:#2B2118; --muted:#6B5743; --line:#F0E2C8;
+  --primary:#0B7A6E; --primary-ink:#0A6F64; --primary-soft:#E0F4F1;
+  --cta:#F5B400; --on-cta:#2B2118; --cta-shadow:#D49B00;
+  --owl:#0E8C7E; --owl-pupil:#0A5E55; --owl-gold:#F5B400;
+  --star:#F28C28; --gold:#F5B400;
+  --success:#22955A; --success-soft:#DFF5E9; --danger:#D63E55; --danger-soft:#FCE6EA;
   --font:"Lexend", "Segoe UI", system-ui, -apple-system, sans-serif;
-  color-scheme:light;
+  --display:"Baloo 2", "Lexend", "Segoe UI", system-ui, sans-serif;
+  color-scheme:light dark;
 }
+body[data-theme="ocean"]{ --bg:#F2F6FF; --page-ink:#172041; --page-muted:#4F5B82; --ink:#172041; --muted:#5B6483; --line:#DCE3F2;
+  --primary:#3657E0; --primary-ink:#2843B8; --primary-soft:#E8EDFD; --cta:#3657E0; --on-cta:#FFFFFF; --cta-shadow:#2843B8;
+  --owl:#3657E0; --owl-pupil:#172041; --owl-gold:#FFB800; --star:#FFA000; --gold:#FFB800; }
+body[data-theme="night"]{ --bg:#1E2257; --page-ink:#FFFFFF; --page-muted:#C9CCF0; --surface:#F4F2FF; --ink:#1E2257; --muted:#4E5385; --line:#D9D5F5;
+  --primary:#6F5EE0; --primary-ink:#5443C4; --primary-soft:#E9E5FF; --cta:#FFC93C; --on-cta:#2A1F00; --cta-shadow:#D9A21E;
+  --owl:#8E7CFF; --owl-pupil:#1E2257; --owl-gold:#FFC93C; --star:#FFC93C; --gold:#FFC93C; }
+body[data-theme="adult"]{ --bg:#F5F6F5; --page-ink:#24292B; --page-muted:#5F6B6E; --ink:#24292B; --muted:#5F6B6E; --line:#E3E6E5;
+  --primary:#0B7A6E; --primary-ink:#0A6F64; --primary-soft:#E0F4F1; --cta:#0E8C7E; --on-cta:#FFFFFF; --cta-shadow:#0A6F64; }
+/* the calm grown-up style when the phone is in dark mode */
+body[data-theme="adultdark"]{ --bg:#15191A; --page-ink:#E8ECEC; --page-muted:#A9B4B6; --surface:#22282A; --ink:#E8ECEC; --muted:#A9B4B6; --line:#353D40;
+  --primary:#2BB3A2; --primary-ink:#5ED1C2; --primary-soft:#173B37; --cta:#0E8C7E; --on-cta:#FFFFFF; --cta-shadow:#0A6F64; color-scheme:dark; }
+body[data-theme="night"]{ color-scheme:dark; }
 html,body{height:100%}
-body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;overflow:hidden;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--page-ink);font-family:var(--font);font-size:16px;overflow:hidden;-webkit-tap-highlight-color:transparent;transition:background-color .25s}
 .app{height:100%;max-width:980px;margin:0 auto;display:flex;flex-direction:column;
   padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:10px;box-sizing:border-box}
 button{font-family:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
@@ -177,7 +192,6 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .empty{padding:28px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
 .empty .big{font-size:52px}
 .empty p{margin:0;color:var(--muted);max-width:40ch;line-height:1.5}
-.aboutlinks{margin:26px auto 8px;text-align:center;font-size:14px;color:var(--muted)}.aboutlinks a{color:inherit;text-decoration:underline;text-underline-offset:3px;padding:8px 6px}
 .parentlink{margin:22px auto 0;display:flex;flex-direction:column;align-items:center;gap:6px}
 .hold{position:relative;overflow:hidden;isolation:isolate}
 .hold .fill{position:absolute;inset:0;background:var(--primary-soft);transform-origin:left;transform:scaleX(0);z-index:-1}
@@ -419,6 +433,25 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .input.pin{letter-spacing:.5em;font-size:24px;max-width:190px;font-variant-numeric:tabular-nums}
 .note{font-size:14px;color:var(--muted);margin:0;line-height:1.45}
 .okmsg{color:var(--success);font-weight:600;margin:0}
+.aboutlinks{margin:26px auto 8px;text-align:center;font-size:14px;color:var(--page-muted,var(--muted))}.aboutlinks a{color:inherit;text-decoration:underline;text-underline-offset:3px;padding:8px 6px}
+.fld{display:flex;flex-direction:column;gap:8px}
+.pickbtn{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;cursor:pointer;min-height:52px}
+.pickbtn .ph{color:var(--muted)}
+.pickbtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none;color:var(--muted)}
+.tickrow{display:flex;gap:12px;align-items:flex-start;font-weight:600;font-size:16px;cursor:pointer;line-height:1.35}
+.tickrow input{width:24px;height:24px;margin:0;accent-color:var(--primary);flex:none}
+.tickrow small{display:block;font-weight:400;color:var(--muted);font-size:14px;margin-top:3px}
+.picker{position:fixed;inset:0;z-index:300;background:rgba(20,16,10,.45);display:flex;align-items:flex-end;justify-content:center}
+.pk-box{background:var(--surface);color:var(--ink);width:100%;max-width:520px;max-height:min(82vh,640px);display:flex;flex-direction:column;gap:10px;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px));border-radius:20px 20px 0 0;box-sizing:border-box}
+.pk-head{display:flex;justify-content:space-between;align-items:center;font-size:18px}
+.pk-x{border:0;background:transparent;font-size:20px;color:var(--muted);width:44px;height:44px;cursor:pointer;border-radius:12px}
+.pk-list{overflow:auto;display:flex;flex-direction:column;margin:0 -6px;overscroll-behavior:contain}
+.pk-it{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;border:0;background:transparent;color:var(--ink);font:500 17px var(--font);padding:12px 10px;border-radius:10px;min-height:48px;cursor:pointer}
+.pk-it small{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.pk-it.on,.pk-it:hover{background:var(--primary-soft)}.pk-it.on{font-weight:600}
+@media (min-width:700px){.picker{align-items:center}.pk-box{border-radius:20px}}
+.chip.warn{background:#FBE3DE;color:#8A2A1B}
+.oldcodes{margin-top:6px}.oldcodes summary{cursor:pointer;color:var(--muted);font-size:14px;padding:6px 0}.oldcodes .inline{margin-top:8px}
 .tasks{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
 .task{display:flex;align-items:center;gap:14px;padding:20px;text-align:left}
 .task .te{font-size:40px;line-height:1}
@@ -452,6 +485,227 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .trow small{display:block;color:var(--muted);font-size:13px;margin-top:3px}
 .trow a{color:var(--primary)}
 @media (max-width:420px){ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} }
+
+/* ================= Garaad brand layer ================= */
+h1,h2,.result h2,.kid b,.door b,.task b,.cls,.game b,.ltop h1,.sp-title{font-family:var(--display);font-weight:800;letter-spacing:-.2px}
+.head h1{font-size:clamp(28px,6.5vw,36px);line-height:1.05}
+.head p,.legend,.hint,.note,.result p,.gprogline,.pracnext,.heard,.agehint,.ltop p{color:var(--page-muted)}
+body[data-theme^="adult"] h1,body[data-theme^="adult"] h2,body[data-theme^="adult"] .task b,body[data-theme^="adult"] .cls{font-family:var(--font);font-weight:600;letter-spacing:0}
+body[data-theme^="adult"] .head h1{font-size:clamp(22px,5vw,28px)}
+.card{color:var(--ink);border:2px solid var(--line);border-radius:22px;box-shadow:none}
+body[data-theme^="adult"] .card{border-width:1px;border-radius:14px}
+.btn{border-radius:99px;border-width:2px;color:var(--ink)}
+.btn.primary{background:var(--cta);border-color:var(--cta);color:var(--on-cta);box-shadow:0 3px 0 var(--cta-shadow)}
+.btn.primary:active{transform:translateY(2px);box-shadow:none}
+body[data-theme^="adult"] .btn{border-radius:12px;border-width:1px}
+body[data-theme^="adult"] .btn.primary{box-shadow:none}
+.ibtn{border-radius:50%;border:2px solid var(--line)}
+body[data-theme^="adult"] .ibtn{border-radius:12px;border-width:1px}
+.age[aria-pressed="true"],.seg button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary)}
+.subjtabs{background:color-mix(in srgb, var(--line) 70%, var(--surface));border:0;padding:5px}
+.subjtabs button{color:var(--muted);display:inline-flex;align-items:center;gap:7px}
+.subjtabs button.on{background:var(--primary);color:#fff}
+.subjtabs svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round}
+.linkbtn{color:var(--primary-ink)}
+.stephead{color:var(--page-ink);font-family:var(--display);font-weight:800;font-size:20px}
+.childchip .starcount{color:var(--page-muted);display:inline-flex;align-items:center;gap:4px;background:var(--surface);border-radius:99px;padding:5px 10px;color:var(--ink);font-weight:600}
+.starico{width:18px;height:18px;flex:none;fill:var(--star)}
+/* play pieces always show dark text on their light surface, whatever the theme */
+.opt,.qmark,.readcard,.story,.pad button,.target,.nl span,.sylls,.eqlines,.placednote{color:var(--ink)}
+.op{color:var(--page-muted)}
+.row .ntile{background:var(--primary-soft);color:var(--ink)}
+.placednote{background:var(--surface);border-color:var(--line)}
+.micbtn{color:var(--page-ink)}
+.micbtn .mi{background:var(--primary)}
+body[data-theme="night"] .readq{color:var(--cta)}
+.lvl{border-radius:50%;font-family:var(--display);font-weight:800}
+.lvl.done{background:var(--primary);color:#fff;border-color:var(--primary)}
+.lvl.done .st{color:var(--cta)}
+.lvl.done .st .off{color:color-mix(in srgb, #fff 35%, transparent)}
+.lvl.current{background:var(--cta);color:var(--on-cta);border-color:var(--cta);box-shadow:0 0 0 6px color-mix(in srgb, var(--cta) 28%, transparent)}
+.lvl.locked{border-radius:50%;background:color-mix(in srgb, var(--line) 75%, var(--bg));color:color-mix(in srgb, var(--muted) 70%, var(--bg))}
+.levels{gap:14px}
+.gicon{border-radius:18px}
+.game{border-width:3px}
+.game.next{border-color:var(--cta)}
+.bar{background:color-mix(in srgb, var(--line) 80%, var(--surface))}
+.qbar{height:14px;background:color-mix(in srgb, var(--line) 80%, var(--surface))}
+.qbar i{background:var(--primary)}
+.bigstars span.on{color:var(--gold)}
+
+/* brand: owl face and wordmark */
+.owl{display:block}
+.owl .oh{fill:var(--owl)} .owl .op2{fill:var(--owl-pupil)} .owl .og{fill:var(--owl-gold)} .owl .ogs{stroke:var(--owl-gold)} .owl .orng{stroke:var(--owl)}
+.owl .acc-dark{fill:#2B2118} .owl .acc-gls{fill:none;stroke:#2B2118;stroke-width:3}
+.brand{gap:8px}
+.brand .owl{width:34px;height:34px;flex:none}
+.wordmark{display:inline-flex;align-items:flex-end;font-family:var(--display);font-weight:800;line-height:1;letter-spacing:-.5px;color:var(--page-ink)}
+.wordmark .wm-eyes{flex:none}
+.brand .wordmark{font-size:24px}
+.brand .sname{font-family:var(--font);font-weight:600;font-size:15px;color:var(--page-muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:8px;border-left:1.5px solid var(--line)}
+.av{background:var(--av-bg,#E0F4F1)!important;border-radius:50%;padding:0;overflow:hidden}
+.av .owl{width:78%;height:78%}
+.av.lg{width:80px;height:80px}
+.av.xl{width:96px;height:96px}
+
+/* owl beside the question */
+.prompt{justify-content:flex-start;gap:10px;margin-top:6px}
+.powl{width:72px;height:72px;flex:none;transition:transform .2s}
+.powl.bounce{animation:hop .6s ease-in-out 2}
+.bubble2{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:var(--surface);color:var(--ink);border-radius:22px 22px 22px 6px;padding:10px 10px 10px 16px;margin-bottom:10px}
+.bubble2 .text{font-family:var(--display);font-weight:800;font-size:clamp(20px,5vw,27px);line-height:1.15;color:var(--ink)}
+.bubble2 .say{background:var(--primary-soft)}
+.bubble2 .say svg{stroke:var(--primary-ink)}
+.hintbtn{align-self:center;display:inline-flex;align-items:center;gap:10px;height:46px;padding:0 6px 0 14px;border-radius:99px;background:var(--surface);color:var(--ink);border:2px solid color-mix(in srgb, var(--gold) 55%, var(--surface));font-weight:600;font-size:15px;margin:2px 0 4px}
+.hintbtn svg.bulb{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.hintbtn .cost{display:inline-flex;align-items:center;gap:3px;height:34px;padding:0 10px;border-radius:99px;background:color-mix(in srgb, var(--gold) 28%, var(--surface))}
+.hintbtn[disabled]{opacity:.5;cursor:default}
+.hintnote{align-self:center;font-size:14px;font-weight:500;color:var(--page-muted);margin:2px 0 4px}
+.opt.hinted{opacity:.3;border-style:dashed;box-shadow:none;pointer-events:none}
+
+/* splash (first launch) */
+.splash{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;padding:calc(18px + env(safe-area-inset-top,0px)) 24px calc(30px + env(safe-area-inset-bottom,0px));box-sizing:border-box;background:#FFF7E8;color:#2B2118;font-family:var(--font)}
+.splash.dark{background:#0A6F64;color:#fff}
+.splash .sp-top{height:44px;display:flex;align-items:center}
+.splash .sp-back{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:inherit}
+.splash .sp-back svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.splash .sp-art{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;position:relative;animation:spin .5s ease-out both;min-height:0}
+@keyframes spin{from{opacity:0;transform:translateY(12px)}}
+.splash .sp-circle{width:min(290px,62vw);aspect-ratio:1;border-radius:50%;background:#FDE9B8;display:grid;place-items:center}
+.splash .sp-circle .owl{width:79%;height:79%}
+.splash .sp-star{position:absolute;fill:#F28C28}
+.splash .sp-text{text-align:center;display:flex;flex-direction:column;gap:10px;max-width:420px;margin:0 auto}
+.splash .sp-title{font-size:clamp(32px,9vw,42px);line-height:1.05;margin:0}
+.splash .sp-sub{margin:0;font-size:18px;line-height:1.5;color:#6B5743}
+.splash.dark .sp-sub{color:#D3EEEA}
+.splash .sp-dots{display:flex;justify-content:center;gap:8px;margin:28px 0 22px}
+.splash .sp-dots span{width:8px;height:8px;border-radius:4px;background:#E6D6BC;overflow:hidden;display:block}
+.splash.dark .sp-dots span{background:#3E958B}
+.splash .sp-dots span.on{width:28px}
+.splash .sp-dots span.full{background:#0E8C7E}
+.splash.dark .sp-dots span.full{background:#F5B400}
+.splash .sp-dots i{display:block;height:100%;background:#0E8C7E;width:0;animation:spfill var(--d,6s) linear forwards}
+.splash.dark .sp-dots i{background:#F5B400}
+@keyframes spfill{to{width:100%}}
+.splash .sp-go{height:60px;border-radius:30px;font-size:20px;font-weight:600;background:#F5B400;color:#2B2118;width:100%;max-width:440px;margin:0 auto;display:block}
+.splash .sp-go.teal{background:#0E8C7E;color:#fff}
+.splash .sp-feats{display:flex;flex-direction:column;gap:12px;width:100%;max-width:420px}
+.splash .sp-feat{display:flex;align-items:center;gap:14px;background:#fff;border-radius:20px;padding:14px 16px;text-align:left}
+.splash .sp-feat .fi{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;flex:none}
+.splash .sp-feat .fi svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.splash .sp-feat b{display:block;font-size:17px}
+.splash .sp-feat small{display:block;font-size:15px;color:#6B5743;margin-top:2px}
+.splash .wordmark{color:#fff;font-size:clamp(52px,15vw,64px)}
+
+/* home doors */
+.homelogo{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px 0 26px}
+.homelogo .owl{width:56px;height:56px}
+.homelogo .wordmark{font-size:42px}
+.doors{grid-template-columns:1fr;max-width:520px;margin:0 auto}
+.door{flex-direction:row;text-align:left;gap:18px;padding:20px}
+.door .di{width:72px;height:72px;border-radius:22px;display:grid;place-items:center;flex:none}
+.door .di svg{width:38px;height:38px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.door b{font-size:26px;line-height:1;display:block}
+.door span.ds{display:block;color:var(--muted);font-size:15px;margin-top:4px}
+.homehead{text-align:center}
+.homehead h1{font-size:clamp(26px,6vw,32px)}
+
+/* owl picker and theme sheet */
+.owls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;max-width:420px}
+.owlpick{aspect-ratio:1;border-radius:22px;border:3px solid transparent;display:grid;place-items:center;position:relative;padding:6px}
+.owlpick .owl{width:82%;height:82%}
+.owlpick[aria-checked="true"]{border-color:var(--primary)}
+.owlpick[aria-checked="true"]::after{content:"";position:absolute;top:-8px;right:-8px;width:26px;height:26px;border-radius:50%;background:var(--primary) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12l5 5 9-10' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
+.sheetwrap{position:fixed;inset:0;z-index:70;background:rgba(43,33,24,.5);display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#FFF7E8;color:#2B2118;width:100%;max-width:560px;border-radius:32px 32px 0 0;padding:12px 22px calc(28px + env(safe-area-inset-bottom,0px));box-sizing:border-box;display:flex;flex-direction:column;gap:14px;animation:sheetin .25s ease-out}
+@keyframes sheetin{from{transform:translateY(40px);opacity:0}}
+.sheet .grab{align-self:center;width:44px;height:5px;border-radius:3px;background:#D9C6A6}
+.sheet h2{font-size:28px;margin:0}
+.themeopt{display:flex;align-items:center;gap:14px;text-align:left;background:#fff;border:3px solid transparent;border-radius:24px;padding:12px;color:#2B2118}
+.themeopt[aria-pressed="true"]{border-color:#0E8C7E}
+.themeopt .tp{width:84px;height:84px;border-radius:18px;display:grid;place-items:center;flex:none}
+.themeopt .tp .owl{width:58px;height:58px}
+.themeopt b{font-family:var(--display);font-weight:800;font-size:22px;display:block;line-height:1}
+.themeopt small{display:block;color:#6B5743;font-size:14px;margin-top:4px}
+.themeopt .tick{margin-left:auto;width:34px;height:34px;border-radius:50%;border:2.5px solid #D9C6A6;box-sizing:border-box;flex:none;display:grid;place-items:center}
+.themeopt[aria-pressed="true"] .tick{background:#0E8C7E;border-color:#0E8C7E}
+.themeopt .tick svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.themeopt:not([aria-pressed="true"]) .tick svg{opacity:0}
+.paletteBtn svg{stroke:var(--primary-ink)!important}
+
+/* teacher: needs help, rows with a report button, weekly report, pilot */
+.needhelp{background:#FFF7E6;border:1px solid #F3D99B;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.needhelp h3{margin:0;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:#6B4500;font-family:var(--font)}
+.needhelp h3 svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.needhelp .nh{display:flex;align-items:center;gap:8px;font-size:14px;text-align:left;width:100%;color:#24292B}
+.needhelp .nh b{font-weight:600;white-space:nowrap}
+.needhelp .nh span{flex:1;color:#5F6B6E;min-width:0}
+.crowwrap{display:flex;gap:8px;align-items:stretch}
+.crowwrap .crow{flex:1;min-width:0}
+.repbtn{width:52px;flex:none;border-radius:14px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--primary-ink)}
+.repbtn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.pct{font-size:13px;font-weight:600;border-radius:8px;padding:4px 8px;white-space:nowrap}
+.pct.good{color:#1F6B35;background:#E3F3E7}.pct.mid{color:#6B4500;background:#FFF1D1}.pct.low{color:#8A4B08;background:#FCEBD7}
+.repcard{background:#FFF7E8;color:#2B2118;border-radius:24px;padding:20px 18px;display:flex;flex-direction:column;gap:14px;max-width:440px}
+.repcard .rtop{display:flex;align-items:center;justify-content:space-between}
+.repcard .rtop .brand .wordmark{color:#2B2118;font-size:20px}
+.repcard .rtop .brand .owl{width:28px;height:28px}
+.repcard .rwho{display:flex;align-items:center;gap:12px}
+.repcard .rjour{display:flex;flex-direction:column;gap:8px}
+.repcard .rjh{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.repcard .rjh b{font-size:15px;font-weight:600}
+.repcard .rjh span{font-size:13px;color:#6B5743}
+.repcard .jmap{display:block;width:100%;height:auto}
+.repcard .rwho h2{margin:0;font-size:26px;line-height:1}
+.repcard .rwho p{margin:4px 0 0;font-size:14px;color:#6B5743}
+.repcard .rstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.repcard .rstats div{background:#fff;border-radius:16px;padding:10px;text-align:center}
+.repcard .rstats b{display:flex;align-items:center;justify-content:center;gap:4px;font-family:var(--display);font-weight:800;font-size:26px;line-height:1.1}
+.repcard .rstats span{font-size:12px;color:#6B5743}
+.repcard .rchips{display:flex;flex-wrap:wrap;gap:6px}
+.repcard .rchips span{font-size:13px;font-weight:500;color:#0A6F64;background:#E0F4F1;border-radius:10px;padding:5px 10px}
+.repcard .rtip{display:flex;gap:10px;background:#FDE9B8;border-radius:16px;padding:12px 14px;font-size:14px;line-height:1.45;color:#5A3D00}
+.repcard .rtip svg{width:22px;height:22px;flex:none;stroke:#7A5200;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.btn.wa{background:#1D7F45;border-color:#1D7F45;color:#fff}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
+.kcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.kcard p{margin:0;font-size:13px;color:var(--muted)}
+.kcard b{display:flex;align-items:baseline;gap:8px;font-size:30px;font-weight:600;line-height:1.1;margin:6px 0 4px}
+.cbars{display:flex;flex-direction:column;gap:14px}
+.cbar{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;align-items:center;font-size:14px}
+.cbar .bb{display:flex;flex-direction:column;gap:4px}
+.cbar .bb div{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.cbar .bb i{display:block;height:12px;border-radius:4px;background:#C9CFCD;min-width:2px}
+.cbar .bb .now i{background:#0E8C7E}
+.cbar .bb .now{color:var(--ink);font-weight:600}
+.legend2{display:flex;gap:14px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.legend2 span{display:inline-flex;align-items:center;gap:6px}
+.legend2 i{width:12px;height:12px;border-radius:3px;background:#C9CFCD;display:inline-block}
+.legend2 i.n{background:#0E8C7E}
+.okchip{font-size:12px;font-weight:600;color:#6B4500;background:#FFF1D1;border-radius:6px;padding:3px 8px}
+.task .te svg,.door .di svg{display:block}
+.task .te{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary-ink);flex:none}
+.task .te svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* when the phone is in dark mode: navy splash with the gold owl, and the theme sheet to match */
+@media (prefers-color-scheme: dark){
+  .splash{background:#1E2257;color:#FFFFFF}
+  .splash .sp-sub{color:#C9CCF0}
+  .splash .sp-circle{background:#2B3170}
+  .splash .sp-dots span{background:#3A3F86}
+  .splash .sp-dots span.full,.splash .sp-dots i{background:#FFC93C}
+  .splash .sp-feat{background:#2B3170;color:#FFFFFF}
+  .splash .sp-feat small{color:#C9CCF0}
+  .splash .sp-go{background:#FFC93C;color:#2A1F00}
+  .splash .sp-go.teal{background:#FFC93C;color:#2A1F00}
+  .sheetwrap{background:rgba(5,8,30,.6)}
+  .sheet{background:#262B66;color:#FFFFFF}
+  .sheet .grab{background:#4A4F96}
+  .themeopt{background:#323778;color:#FFFFFF}
+  .themeopt small{color:#C9CCF0}
+  .themeopt[aria-pressed="true"],.themeopt[aria-pressed="true"] .tick{border-color:#FFC93C}
+  .themeopt[aria-pressed="true"] .tick{background:#FFC93C}
+  .themeopt[aria-pressed="true"] .tick svg{stroke:#2A1F00}
+}
 @media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation:none!important;transition:none!important} }
 </style>
 
@@ -477,6 +731,8 @@ h1,h2,h3{margin:0;text-wrap:balance}
       <div class="label" id="ageLabel">Age</div>
       <div class="ages" id="ages" role="group" aria-labelledby="ageLabel"></div>
       <p class="agehint" id="ageHint"></p>
+      <div class="label" id="owlLabel">Choose your owl</div>
+      <div class="owls" id="owlPick" role="radiogroup" aria-labelledby="owlLabel"></div>
       <p class="err" id="fErr" hidden></p>
       <div class="btns"><button class="btn primary" id="fSave">Save</button><button class="btn" id="fCancel">Cancel</button><button class="btn danger" id="fRemove" hidden>Remove child</button></div>
     </div>
@@ -498,7 +754,8 @@ h1,h2,h3{margin:0;text-wrap:balance}
     <div class="ptop">
       <div class="meta"><b id="pTitle"></b><div class="qbar"><i id="qbar"></i></div></div>
     </div>
-    <div class="prompt"><button class="say" id="sayBtn" aria-label="Hear the question"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 010 7"/></svg></button><div class="text" id="pText"></div></div>
+    <div class="prompt"><span class="powl" id="pOwl" aria-hidden="true"></span><div class="bubble2"><div class="text" id="pText"></div><button class="say" id="sayBtn" aria-label="Hear the question"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 010 7"/></svg></button></div></div>
+    <div id="hintRow" style="display:flex;justify-content:center"></div>
     <div class="stage" id="stage"></div>
   </section>
 
@@ -679,29 +936,48 @@ function burst(el){
     const a=Math.random()*Math.PI*2, d=60+Math.random()*80;
     s.animate([{transform:`translate(${cx-13}px,${cy-13}px) scale(.4)`,opacity:1},{transform:`translate(${cx-13+Math.cos(a)*d}px,${cy-13+Math.sin(a)*d}px) scale(1)`,opacity:0}],{duration:750+Math.random()*250,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove(); }
 }
-/* Tiri's mascot: an original round friend with a star on its head */
-function mascotSVG(mood){
-  const cheer = mood==='cheer';
-  const arms = cheer
-    ? `<path d="M26 60 Q10 44 14 26" /><path d="M94 60 Q110 44 106 26" />`
-    : `<path d="M24 74 Q12 82 15 92" /><path d="M96 74 Q108 82 105 92" />`;
-  const mouth = cheer
-    ? `<path d="M45 71 Q60 92 75 71 Z" fill="#8A2135"/><path d="M52 80 Q60 86 68 80" fill="#F07A93"/>`
-    : `<path d="M46 72 Q60 85 74 72" stroke="#172041" stroke-width="4" fill="none" stroke-linecap="round"/>`;
-  return `<svg viewBox="0 0 120 120" aria-hidden="true">
-    <g stroke="#3657E0" stroke-width="9" stroke-linecap="round" fill="none">${arms}</g>
-    <line x1="60" y1="27" x2="60" y2="14" stroke="#172041" stroke-width="3" stroke-linecap="round"/>
-    <polygon points="${starPts(60,11,9,4)}" fill="#F5B922" stroke="#C98A00" stroke-width="1.5" stroke-linejoin="round"/>
-    <ellipse cx="45" cy="107" rx="11" ry="5.5" fill="#23306B"/><ellipse cx="75" cy="107" rx="11" ry="5.5" fill="#23306B"/>
-    <circle cx="60" cy="66" r="40" fill="#3657E0"/>
-    <ellipse cx="60" cy="82" rx="24" ry="17" fill="#7E97F2"/>
-    <circle cx="46" cy="56" r="9.5" fill="#fff"/><circle cx="74" cy="56" r="9.5" fill="#fff"/>
-    <circle cx="47.5" cy="57" r="4.8" fill="#172041"/><circle cx="75.5" cy="57" r="4.8" fill="#172041"/>
-    <circle cx="49" cy="55" r="1.6" fill="#fff"/><circle cx="77" cy="55" r="1.6" fill="#fff"/>
-    <circle cx="36" cy="70" r="5" fill="#F79AB5" opacity=".85"/><circle cx="84" cy="70" r="5" fill="#F79AB5" opacity=".85"/>
-    ${mouth}
-  </svg>`;
+/* Garaad, the wise owl. Its eyes are the double "aa" of the name. Colours come from CSS variables
+   (--owl, --owl-pupil, --owl-gold), so the same drawing follows each child's theme and owl avatar. */
+const OWL_HEAD='M14 8 L34 24 Q50 17 66 24 L86 8 Q95 40 91 62 Q85 93 50 95 Q15 93 9 62 Q5 40 14 8 Z';
+function owlEyes(mood, ring){
+  ring = ring || '#fff';
+  const stems = `<rect x="41" y="30" width="8" height="32" rx="4" fill="${ring}"/><rect x="75" y="30" width="8" height="32" rx="4" fill="${ring}"/>`;
+  const whites = `<circle cx="33" cy="46" r="12" fill="#fff" stroke="${ring}" stroke-width="8"/><circle cx="67" cy="46" r="12" fill="#fff" stroke="${ring}" stroke-width="8"/>`;
+  const smile = d => `<path d="${d}" fill="none" class="ogs" stroke-width="6" stroke-linecap="round"/>`;
+  if(mood==='cheer') return `<path d="M22 50 Q33 36 44 50 M56 50 Q67 36 78 50" fill="none" stroke="${ring}" stroke-width="8" stroke-linecap="round"/><rect x="41" y="34" width="8" height="28" rx="4" fill="${ring}"/><rect x="75" y="34" width="8" height="28" rx="4" fill="${ring}"/>${smile('M35 70 Q50 88 65 70')}`;
+  if(mood==='think') return whites+stems+`<circle cx="37" cy="42" r="5.5" class="op2"/><circle cx="71" cy="42" r="5.5" class="op2"/>`+smile('M43 76 Q50 79 57 76');
+  if(mood==='oops') return whites+stems+`<circle cx="33" cy="51" r="5.5" class="op2"/><circle cx="67" cy="51" r="5.5" class="op2"/>`+smile('M42 80 Q50 75 58 80');
+  return whites+stems+`<circle cx="34" cy="47" r="5.5" class="op2"/><circle cx="68" cy="47" r="5.5" class="op2"/><circle cx="35.8" cy="45.2" r="1.7" fill="#fff"/><circle cx="69.8" cy="45.2" r="1.7" fill="#fff"/>`+smile('M38 74 Q50 84 62 74');
 }
+const OWL_ACC = {
+  cap:`<polygon class="acc-dark" points="30,15 50,6 70,15 50,24"/><path d="M66 16 L67 30" stroke="#F5B400" stroke-width="2.5"/><circle cx="67" cy="31" r="3" fill="#F5B400"/>`,
+  glasses:`<circle class="acc-gls" cx="35" cy="53.5" r="15"/><circle class="acc-gls" cx="65" cy="53.5" r="15"/>`,
+  star:`<polygon class="og" points="${starPts(50,10,9.5,4.2)}" stroke-linejoin="round"/>`,
+  bow:`<polygon points="24,24 12,17 12,31" fill="#E0567A"/><polygon points="24,24 36,17 36,31" fill="#E0567A"/><circle cx="24" cy="24" r="4" fill="#BE185D"/>`
+};
+function owlSVG(mood, o){
+  o=o||{};
+  const stars = mood==='cheer' ? `<polygon points="${starPts(92,10,6,2.6)}" fill="#F28C28"/><polygon points="${starPts(8,10,6,2.6)}" fill="#F28C28"/>` : '';
+  return `<svg class="owl" viewBox="0 0 100 100" aria-hidden="true"><path class="oh" d="${OWL_HEAD}"/><g transform="translate(6 13) scale(0.88)">${owlEyes(mood)}</g><polygon class="og" points="46,63 54,63 50,70"/>${stars}${OWL_ACC[o.acc]||''}</svg>`;
+}
+const mascotSVG = mood => owlSVG(mood==='cheer'?'cheer':mood==='think'?'think':mood==='oops'?'oops':'happy');
+/* the wordmark: "Gar" + the owl-eye "aa" + "d" */
+function wordmarkHTML(){
+  return `<span class="wordmark" role="img" aria-label="Garaad"><span aria-hidden="true">Gar</span><svg class="wm-eyes" viewBox="14 12 72 72" aria-hidden="true" style="width:1.14em;height:1.14em;margin:0 .01em -.15em">
+    <polygon points="19,32 16,15 31,24" style="fill:var(--wm-ring,var(--owl))"/><polygon points="81,32 84,15 71,24" style="fill:var(--wm-ring,var(--owl))"/>
+    <circle cx="33" cy="46" r="12" fill="#fff" style="stroke:var(--wm-ring,var(--owl))" stroke-width="8"/><circle cx="67" cy="46" r="12" fill="#fff" style="stroke:var(--wm-ring,var(--owl))" stroke-width="8"/>
+    <rect x="41" y="30" width="8" height="32" rx="4" style="fill:var(--wm-ring,var(--owl))"/><rect x="75" y="30" width="8" height="32" rx="4" style="fill:var(--wm-ring,var(--owl))"/>
+    <circle cx="34" cy="47" r="5.5" style="fill:var(--wm-pupil,currentColor)"/><circle cx="68" cy="47" r="5.5" style="fill:var(--wm-pupil,currentColor)"/>
+    <path d="M38 74 Q50 84 62 74" fill="none" style="stroke:var(--owl-gold)" stroke-width="6" stroke-linecap="round"/></svg><span aria-hidden="true">d</span></span>`;
+}
+const brandHTML = extra => `<div class="brand">${owlSVG('happy')}${wordmarkHTML()}${extra?`<span class="sname">${esc(extra)}</span>`:''}</div>`;
+/* owl avatars: a colour and an accessory, e.g. "teal-cap" */
+const OWLCOL = {
+  teal:{h:'#0E8C7E', p:'#0A5E55', bg:'#E0F4F1', g:'#F5B400'}, blue:{h:'#3657E0', p:'#172041', bg:'#E8EDFD', g:'#F5B400'},
+  purple:{h:'#8E7CFF', p:'#1E2257', bg:'#ECE8FF', g:'#F5B400'}, orange:{h:'#E8862A', p:'#5A2E00', bg:'#FCE3D0', g:'#FFF7E8'}
+};
+const OWL_KEYS = ['teal','blue','purple','orange'].flatMap(c=>['cap','glasses','star','bow'].map(a=>c+'-'+a));
+const ICON_STAR = '<svg class="starico" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 14.6,8.6 21.5,9 16.2,13.4 18,20.2 12,16.4 6,20.2 7.8,13.4 2.5,9 9.4,8.6"/></svg>';
 let mascotT=null;
 function mascotPop(text){
   let m=$('mascot');
@@ -736,7 +1012,7 @@ function confetti(n){
       {duration:1800+Math.random()*1400, delay:Math.random()*700, easing:'cubic-bezier(.3,.2,.6,1)', fill:'both'}).onfinish=()=>c.remove();
   }
 }
-function celebrateCorrect(){ riseStars(16); mascotPop(pick(['Great!','Yes!','Super!','Well done!','Brilliant!','You got it!'])); }
+function celebrateCorrect(){ riseStars(16); if(typeof setOwl==='function') setOwl('cheer'); mascotPop(pick(['Great!','Yes!','Super!','Well done!','Brilliant!','You got it!'])); }
 let toastT=null;
 function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200); }
 
@@ -1406,7 +1682,7 @@ const PARROT = {
 };
 function eParrot(lv){
   const set=T(lv,['words','words','words2','words2','phrases','phrases','sents','sents','long','long']);
-  const base=pick(PARROT[set]), text=base.w.replace('NAME', me?me.name:'Tiri'), ms=set==='long'?5000:set==='sents'?4000:set==='phrases'?3200:2600;
+  const base=pick(PARROT[set]), text=base.w.replace('NAME', me?me.name:'Garaad'), ms=set==='long'?5000:set==='sents'?4000:set==='phrases'?3200:2600;
   let myQ;
   myQ = {text:'Say it to the parrot', parts:['Say it after me.', text, text], answer:text, noReview:true,
     html:`<div class="parrot"><span class="pbird" id="pBird">🦜</span><span class="ppic">${base.e}</span></div><div class="pword">${esc(text)}</div>
@@ -1992,14 +2268,25 @@ function gp(p,id){ if(!p.games[id]) p.games[id]={unlocked:1,stars:{},plays:0,rig
 const starTotal = p => Object.values(p.games||{}).reduce((a,g)=>a+Object.values(g.stars||{}).reduce((x,y)=>x+y,0),0) + (p.bonus||0);
 const levelsDone = g => Object.keys(g.stars||{}).length;
 const initials = n => n.trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
-const avatar = (p,lg) => `<span class="av${lg?' lg':''}" style="background:${p.color}">${esc(initials(p.name))}</span>`;
+/* the child's owl: chosen when they are added; children added before owls existed get one from their id */
+function owlKey(p){
+  if(p && OWL_KEYS.includes(p.avatar)) return p.avatar;
+  let h=0; for(const ch of String((p&&(p.id||p.name))||'x')) h=(h*31+ch.charCodeAt(0))|0;
+  return OWL_KEYS[Math.abs(h)%OWL_KEYS.length];
+}
+function owlStyle(key){ const [c]=key.split('-'), o=OWLCOL[c]||OWLCOL.teal; return `--av-bg:${o.bg};--owl:${o.h};--owl-pupil:${o.p};--owl-gold:${o.g}`; }
+const owlAvatarSVG = key => owlSVG('happy', {acc:key.split('-')[1]});
+const avatar = (p,lg) => { const k=owlKey(p); return `<span class="av${lg?(lg===true?' lg':' '+lg):''}" style="${owlStyle(k)}" aria-hidden="true">${owlAvatarSVG(k)}</span>`; };
+const starBalance = p => Math.max(0, starTotal(p) - (p.spent||0));
+const HINT_COST = 2;
 
 /* ================= school mode, family codes and admin (data kept in Supabase) ================= */
 /* The app only holds the publishable key. Every call goes through a database function that checks the login token. */
 const SUPA = { url:'https://elrbvijhzunuuqbblnkl.supabase.co', key:'sb_publishable_ErlGWsYk8RHchg66yXEkTA_YV8idwVv' };
 const ADMIN_WHATSAPP = '';   // the admin's WhatsApp number, digits only with country code (e.g. '252612345678'); empty hides the link
-const SCH = { view:'code', klass:null, cls:null, child:null, preview:false, kids:null, classes:null, search:'', session:null, msg:'', err:'', addAge:null, addGroup:null, arm:'' };
-const ADM = { tok:null, data:null, err:'', msg:'', arm:'' };
+const SCH = { view:'code', klass:null, cls:null, child:null, preview:false, kids:null, classes:null, search:'', session:null, msg:'', err:'', addAge:null, addGroup:null, addOwl:null, arm:'',
+  assess:null, help:null, rep:null, pilot:null, back:null };
+const ADM = { tok:null, data:null, err:'', msg:'', arm:'', pilot:null, fc:'', fr:'' };
 const GROUP_LABEL = {very_smart:'Very smart', medium:'Medium', lowest:'Lowest'};
 const START_EN = ['etap','esafari','erhyme','efish','eopp','esort','eletter','ecaption','eyesno','eread','emissing','eclap','efix'];   // tap-to-answer games only
 
@@ -2033,10 +2320,18 @@ const SERR = {
   not_allowed:'This login cannot do that.',
   code_taken:'That code is already used. Pick another one.',
   admin_only:'Please log in as admin again.', no_admin:'The admin login has not been set up yet.',
-  bad_class:'Pick a class first.', bad_role:'Unknown role.'
+  bad_class:'Pick a class first.', bad_role:'Unknown role.',
+  bad_whatsapp:'Check the WhatsApp number. Type it without the country code, for example 61 234 5678.',
+  whatsapp_already_registered:'This WhatsApp number already has a family account. Tap “Log in” instead.',
+  family_not_registered:'This WhatsApp number is not registered yet. Create a free account first.',
+  family_blocked:'This family account is blocked. Contact the Garaad admin.',
+  pin_reset:'Your PIN was reset. Choose a new one.',
+  name_required_family:'Type your name.', country_required:'Choose your country.', region_required:'Choose your region.', location_required:'Type your location.',
+  bad_group_link:'The group link must start with https://chat.whatsapp.com/', bad_setting:'Unknown setting.'
 };
 const serr = e => SERR[typeof e==='string'?e:((e&&(e.code||e.message))||'')] || (e&&e.http===404 ? 'The database needs an update. Ask the admin to run the latest database script.' : 'Something went wrong. Please try again.');
-const contactHTML = () => ADMIN_WHATSAPP ? `<a class="linkbtn" href="https://wa.me/${ADMIN_WHATSAPP}" target="_blank" rel="noopener">Contact admin on WhatsApp</a>` : '';
+const adminWa = () => String((store.settings||{}).admin_whatsapp||ADMIN_WHATSAPP||'').replace(/\D/g,'');
+const contactHTML = () => adminWa() ? `<a class="linkbtn" href="https://wa.me/${adminWa()}" target="_blank" rel="noopener">Contact admin on WhatsApp</a>` : '';
 function setErr(id, msg){ const el=$(id); if(!el) return; el.textContent=msg||''; el.hidden=!msg; }
 async function busy(btn, fn){ if(btn&&btn.disabled) return; const t=btn?btn.textContent:''; if(btn){ btn.disabled=true; btn.textContent='Please wait…'; } try{ await fn(); } finally{ if(btn&&btn.isConnected){ btn.disabled=false; btn.textContent=t; } } }
 
@@ -2061,7 +2356,7 @@ document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState=
 setInterval(()=>obFlush(), 30000);
 
 /* ---------- a child's session: opened when the teacher taps the child, closed when they go back ---------- */
-function progressOf(p){ return {games:p.games||{}, best:p.best||{}, review:p.review||[], words:p.words||{}, practiceDays:p.practiceDays||[], bonus:p.bonus||0, subject:p.subject||subject, last:p.last||0}; }
+function progressOf(p){ return {games:p.games||{}, best:p.best||{}, review:p.review||[], words:p.words||{}, practiceDays:p.practiceDays||[], bonus:p.bonus||0, spent:p.spent||0, themeSet:!!p.themeSet, subject:p.subject||subject, last:p.last||0}; }
 function saveChildProgress(){
   if(SCH.preview || !SCH.child || !me) return;
   const pr=progressOf(me); store.school.cache=store.school.cache||{}; store.school.cache[SCH.child.id]=pr;
@@ -2089,12 +2384,14 @@ function schoolRound(rec){
     p_skill:rec.game_id==='review'?'Review':(gg.skill||gg.name||rec.game), p_level:rec.level||0, p_questions:rec.questions,
     p_right_first_time:rec.right_first_try, p_stars:Math.max(0,Math.min(3,rec.stars||0)),
     p_missed:rec.items.filter(i=>!i.ok).map(i=>({game:i.game, answer:String(i.answer)})).slice(0,20),
-    p_played_at:new Date(Date.now()-rec.seconds*1000).toISOString()});
+    p_played_at:new Date(Date.now()-rec.seconds*1000).toISOString(),
+    p_hints_used:rec.hints_used||0, p_stars_spent:rec.stars_spent||0});
 }
 function profileFromChild(c, pr){
   pr=pr||{};
-  return {id:c.id, name:c.name, age:c.age||5, color:hashColor(c.id), games:pr.games||{}, best:pr.best||{}, review:pr.review||[], words:pr.words||{},
-    practiceDays:pr.practiceDays||[], bonus:pr.bonus||0, subject:pr.subject, last:pr.last||0, band:classCfg(c.class_name).band};
+  return {id:c.id, name:c.name, age:c.age||5, color:hashColor(c.id), avatar:c.avatar||null, theme:c.theme||'savanna', parent_phone:c.parent_phone||null,
+    games:pr.games||{}, best:pr.best||{}, review:pr.review||[], words:pr.words||{},
+    practiceDays:pr.practiceDays||[], bonus:pr.bonus||0, spent:pr.spent||0, themeSet:!!pr.themeSet, subject:pr.subject, last:pr.last||0, band:classCfg(c.class_name).band};
 }
 async function openChild(id, btn){
   const listed=(SCH.kids||[]).find(x=>x.id===id), cached=(store.school.cache||{})[id];
@@ -2115,7 +2412,8 @@ async function openChild(id, btn){
   me=profileFromChild(Object.assign({}, c, {class_name:SCH.cls.name}), pr);
   subject=me.subject==='english'?'english':'maths';
   startChildSession();
-  SCH.child.start_done ? openGames() : startStarting();
+  if(SCH.assess) return startStarting(SCH.assess);
+  SCH.child.start_done ? openGames() : startStarting('baseline');
 }
 function openPreview(k){
   SCH.preview=true; SCH.child=null; SCH.session=null; SCH.cls={id:k.id, name:k.name};
@@ -2126,53 +2424,220 @@ function openPreview(k){
 }
 
 /* ---------- starting exercise: 8 questions from the class's games, once per child ---------- */
-function startStarting(){
+const ASSESS_NAME = {baseline:'Starting exercise', midline:'Mid-pilot check', endline:'End-of-pilot check'};
+function startStarting(kind){
+  kind = ASSESS_NAME[kind] ? kind : 'baseline';
   const c=classCfg(SCH.cls.name), lvls=[1,3,5,7];
   const mp=c.maths.filter(id=>!GAMES[id].isSprint), ep=c.english.filter(id=>START_EN.includes(id));
   const at=(pool,i)=>pool[Math.floor(i*pool.length/4)], list=[];
   for(let i=0;i<4;i++){ const m=at(mp,i); list.push([m, Math.min(capOf(m), lvls[i])]); if(ep.length){ const e=at(ep,i); list.push([e, Math.min(capOf(e), lvls[i])]); } }
   practice=null; stopSprint(); logRound(false);
-  placing={start:true, list, n:0, max:list.length, hist:[]};
+  placing={start:true, kind, list, n:0, max:list.length, hist:[]};
   game='placement'; level=0; plan=[];
   round={game:'placement', level:0, started:Date.now(), items:[], logged:false};
-  show('sPlay'); $('qbar').style.width='0%';
-  $('pTitle').textContent='Starting exercise';
-  $('pText').textContent='Starting exercise';
-  $('stage').innerHTML=`<div class="cele">${mascotSVG('happy')}</div><p style="font-size:20px;font-weight:600;text-align:center;margin:0">A few questions to find<br>where ${esc(me.name)} should start.</p>`;
+  show('sPlay'); $('qbar').style.width='0%'; $('hintRow').innerHTML=''; setOwl('happy');
+  $('pTitle').textContent=ASSESS_NAME[kind];
+  $('pText').textContent=ASSESS_NAME[kind];
+  $('stage').innerHTML=`<div class="cele">${mascotSVG('happy')}</div><p style="font-size:20px;font-weight:600;text-align:center;margin:0">${kind==='baseline'?`A few questions to find<br>where ${esc(me.name)} should start.`:`A few questions to see<br>how much ${esc(me.name)} has learned.`}</p>`;
   say(`Hi ${me.name}! Let's start with a few questions.`).then(()=>{ if(placing) placeQ(); });
 }
 function finishStarting(){
-  const right=placing.hist.filter(h=>h.ok).length, total=placing.hist.length; placing=null;
+  const kind=placing.kind||'baseline', hist=placing.hist; placing=null; SCH.assess=null;
+  const right=hist.filter(h=>h.ok).length, total=hist.length;
+  const part = eng => { const hs=hist.filter(h=>!!(GAMES[h.gid]||{}).skill===eng); return hs.length ? [hs.filter(h=>h.ok).length, hs.length] : [null, null]; };
+  const [ms, mt]=part(false), [es, et]=part(true);
   const r=total?right/total:0, start=r<0.4?1 : r<0.65?2 : r<0.9?3 : 4, c=classCfg(SCH.cls.name);
-  c.maths.concat(c.english).forEach(id=>{ const g=gp(me,id); g.unlocked=Math.max(g.unlocked||1, Math.min(start, capOf(id))); });
+  if(kind==='baseline') c.maths.concat(c.english).forEach(id=>{ const g=gp(me,id); g.unlocked=Math.max(g.unlocked||1, Math.min(start, capOf(id))); });
   if(round){ round.stars=0; round.passed=true; } logRound(true);   // saves the child's progress
-  if(!SCH.preview && SCH.child){ SCH.child.start_done=true; obPush('save_start_score', {p_child_id:SCH.child.id, p_score:right, p_total:total}); }
+  if(!SCH.preview && SCH.child){ if(kind==='baseline') SCH.child.start_done=true;
+    obPush('save_assessment', {p_child_id:SCH.child.id, p_kind:kind, p_maths_score:ms, p_maths_total:mt, p_english_score:es, p_english_total:et}); }
   show('sDone'); bigCelebration();
-  $('result').innerHTML=`<div class="cele">${mascotSVG('cheer')}</div><h2>All done, ${esc(me.name)}!</h2><p>Your games are ready.</p>
-    <div class="placednote">For the teacher: ${right} of ${total} right. ${esc(me.name)} starts at <b>level ${start}</b> in each game.</div>
+  const split = `${mt?` Maths ${ms}/${mt}.`:''}${et?` English ${es}/${et}.`:''}`;
+  $('result').innerHTML=`<div class="cele">${mascotSVG('cheer')}</div><h2>All done, ${esc(me.name)}!</h2><p>${kind==='baseline'?'Your games are ready.':'Thank you for trying your best.'}</p>
+    <div class="placednote">For the teacher: ${right} of ${total} right.${split} ${kind==='baseline'?`${esc(me.name)} starts at <b>level ${start}</b> in each game.`:`Saved as the <b>${ASSESS_NAME[kind].toLowerCase()}</b>.`}</div>
     <div class="btns"><button class="btn primary" id="placedGo">Let's play ▶</button></div>`;
-  say(`Great job, ${me.name}! Your games are ready. Let's play!`);
+  say(`Great job, ${me.name}! ${kind==='baseline'?'Your games are ready. ':''}Let's play!`);
 }
 
 /* ---------- home page doors and the family code ---------- */
+const ICON_HOME='<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+const ICON_SCHOOL='<svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/><path d="M22 9v6"/></svg>';
 function doorsHTML(){
-  return `<div class="head"><h1>Welcome to Tiri</h1><p>Maths and English games for children. Where is this phone being used?</p></div>
+  return `<div class="homelogo">${owlSVG('happy')}${wordmarkHTML()}</div>
+    <div class="head homehead"><h1>Where are you playing?</h1></div>
     <div class="doors">
-      <button class="card door tap" data-s="door-school"><span class="de">🏫</span><b>School</b><span>Teachers and principals</span></button>
-      <button class="card door tap" data-s="door-family"><span class="de">🏠</span><b>Family</b><span>Children playing at home</span></button>
+      <button class="card door tap" data-s="door-family"><span class="di" style="background:#FDE9B8;color:#7A5200">${ICON_HOME}</span><span><b>Family</b><span class="ds">Learn at home with your children</span></span></button>
+      <button class="card door tap" data-s="door-school"><span class="di" style="background:#E0F4F1;color:#0A6F64">${ICON_SCHOOL}</span><span><b>School</b><span class="ds">Teachers and classes</span></span></button>
     </div>${installCard()}
-    <div class="foot"><button class="linkbtn" data-s="go-admin">Admin</button></div>`;
+    <div class="foot"><span class="note">Admin?</span><button class="linkbtn" data-s="go-admin">Open the admin area</button></div>`;
 }
-function familyCodeHTML(){
-  return `<div class="head"><h1>Family code</h1><p>The Tiri admin gives each family a code. You only type it once on this phone.</p></div>
+/* ---------- free family accounts: register with WhatsApp, log in on another phone, or use an old family code ---------- */
+const FAM = { view:'register', data:null, country:'SO', region:'', regionTyped:'', name:'', loc:'', phone:'', pin:'', group:false, err:'', done:null };
+let placesP=null;
+function loadPlaces(){
+  if(!placesP) placesP = fetch('countries-regions.json').then(r=>{ if(!r.ok) throw new Error('places'); return r.json(); })
+    .then(d=>{ FAM.data=d; return d; }).catch(e=>{ placesP=null; throw e; });
+  return placesP;
+}
+const countryOf = code => (FAM.data||[]).find(c=>c.code===code);
+const famDial = () => { const c=countryOf(FAM.country); return c ? c.dial : (FAM.country==='SO' ? '+252' : ''); };
+const famDigits = v => String(v||'').replace(/\D/g,'');
+const groupLink = () => { const l=(store.settings||{}).parents_group_link||''; return /^https:\/\/(chat\.whatsapp\.com|whatsapp\.com\/channel)\//.test(l) ? l : ''; };
+async function loadSettings(){
+  try{ const s=await rpc('public_settings', {}); if(s && typeof s==='object'){ store.settings=s; save(); if(current==='sHome' && FAM.view==='welcome') renderHome(); } }catch(e){}
+}
+const ICON_DOWN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+function famSnap(){
+  const v=id=>{ const el=$(id); return el ? el.value : null; };
+  if(v('famName')!==null) FAM.name=v('famName');
+  if(v('famLoc')!==null) FAM.loc=v('famLoc');
+  if(v('famPhone')!==null) FAM.phone=v('famPhone');
+  if(v('famPin')!==null) FAM.pin=v('famPin');
+  if(v('famRegion')!==null) FAM.regionTyped=v('famRegion');
+  const g=$('famGroup'); if(g) FAM.group=g.checked;
+}
+function famCountryField(){
+  const c=countryOf(FAM.country);
+  return `<div class="fld"><span class="label" id="lCountry">Country</span>
+    <button type="button" class="input pickbtn" data-f="pick-country" aria-labelledby="lCountry">${c?`<span>${esc(c.name)}</span>`:`<span class="ph">${FAM.data?'Choose your country':'Somalia'}</span>`}${ICON_DOWN}</button></div>`;
+}
+function famRegionField(){
+  if(!FAM.data) return `<div class="fld"><span class="label">Region</span><button type="button" class="input pickbtn" disabled><span class="ph">Loading the list…</span>${ICON_DOWN}</button></div>`;
+  const c=countryOf(FAM.country), typed = !c || !c.regions.length || FAM.region==='__other';
+  const pick = c && c.regions.length ? `<button type="button" class="input pickbtn" data-f="pick-region" aria-labelledby="lRegion">${FAM.region && FAM.region!=='__other'?`<span>${esc(FAM.region)}</span>`:`<span class="ph">${FAM.region==='__other'?'Other (type it below)':'Choose your region'}</span>`}${ICON_DOWN}</button>` : '';
+  return `<div class="fld">${pick?'<span class="label" id="lRegion">Region</span>':'<label class="label" for="famRegion">Region</label>'}${pick}
+    ${typed?`<input class="input" id="famRegion" aria-label="Region" maxlength="80" autocomplete="address-level1" placeholder="Type your region or state" value="${esc(FAM.regionTyped)}">`:''}</div>`;
+}
+function famPhoneField(){
+  return `<div class="fld"><label class="label" for="famPhone">WhatsApp number</label>
+    <div class="phone"><span class="cc">${esc(famDial()||'+')}</span><input class="input" id="famPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="16" placeholder="${FAM.country==='SO'?'61 234 5678':'Your number'}" value="${esc(FAM.phone)}"></div></div>`;
+}
+function famPinField(label, note){
+  return `<div class="fld"><label class="label" for="famPin">${label}</label>
+    <input class="input pin" id="famPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="${FAM.view==='login'?'current-password':'new-password'}" placeholder="••••" value="${esc(FAM.pin)}">
+    ${note?`<p class="note">${note}</p>`:''}</div>`;
+}
+function familyStartHTML(){
+  const err=`<p class="err" id="famErr" ${FAM.err?'':'hidden'}>${esc(FAM.err)}</p>`;
+  if(FAM.view==='welcome' && FAM.done){
+    const link=groupLink();
+    return `<div class="card empty"><div class="cele" style="width:120px">${mascotSVG('cheer')}</div>
+      <h1 style="font-size:28px">Welcome, ${esc(FAM.done.name)}!</h1>
+      <p>Your free family account is ready. To open Garaad on another phone, log in with your WhatsApp number and PIN.</p>
+      ${FAM.done.group ? (link ? `<a class="btn primary" href="${esc(link)}" target="_blank" rel="noopener">Join the parents' WhatsApp group</a>` : `<p class="note">We will send you the parents' WhatsApp group link soon.</p>`) : ''}
+      <button class="btn${FAM.done.group && link ? '' : ' primary'}" data-f="welcome-go">Add your children</button></div>`;
+  }
+  if(FAM.view==='login') return `<div class="head"><h1>Log in to your family</h1><p>Use the WhatsApp number and PIN you chose when you registered.</p></div>
+    <div class="card form">${famCountryField()}${famPhoneField()}${famPinField('Your 4-digit PIN')}${err}
+      <div class="btns"><button class="btn primary" data-f="login">Log in</button></div>
+      <p class="note">Forgot your PIN? Ask the Garaad admin to reset it. ${contactHTML()}</p>
+      <p class="note">New to Garaad? <button class="linkbtn" data-f="to-register">Create a free account</button></p></div>`;
+  if(FAM.view==='newpin') return `<div class="head"><h1>Choose a new PIN</h1><p>The admin reset your PIN. Choose a new one for ${esc(famDial())} ${esc(FAM.phone)}.</p></div>
+    <div class="card form">${famPinField('New 4-digit PIN')}${err}
+      <div class="btns"><button class="btn primary" data-f="newpin">Save and continue</button></div>
+      <p class="note"><button class="linkbtn" data-f="to-login">Back to log in</button></p></div>`;
+  if(FAM.view==='code') return `<div class="head"><h1>Family code</h1><p>Families who were given a code by the Garaad admin can still use it.</p></div>
     <div class="card form">
       <label class="label" for="famCode">Family code</label>
       <input class="input" id="famCode" maxlength="20" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase" placeholder="For example, AHMED">
-      <p class="err" id="famErr" hidden></p>
+      ${err}
       <div class="btns"><button class="btn primary" data-s="famcode">Continue</button></div>
       ${store.profiles.length?`<p class="note">The children already on this phone keep their progress.</p>`:''}
+      <p class="note">No code? <button class="linkbtn" data-f="to-register">Create a free account</button></p>
+    </div>`;
+  return `<div class="head"><h1>Create a free family account</h1><p>Garaad is free for families. Register once and your children's games are ready.</p></div>
+    <div class="card form" id="famForm">
+      <div class="fld"><label class="label" for="famName">Your name</label><input class="input" id="famName" maxlength="80" autocomplete="name" placeholder="Parent's name" value="${esc(FAM.name)}"></div>
+      ${famCountryField()}${famRegionField()}
+      <div class="fld"><label class="label" for="famLoc">Location</label><input class="input" id="famLoc" maxlength="120" autocomplete="address-level2" placeholder="District, e.g. Hodan" value="${esc(FAM.loc)}"></div>
+      ${famPhoneField()}
+      ${famPinField('Choose a 4-digit PIN', 'You use your WhatsApp number and this PIN to open Garaad on another phone.')}
+      <label class="tickrow"><input type="checkbox" id="famGroup" ${FAM.group?'checked':''}><span>Add me to the Garaad parents' WhatsApp group<small>For news and tips. You can leave at any time.</small></span></label>
+      ${err}
+      <div class="btns"><button class="btn primary" data-f="register">Create account</button></div>
+      <p class="note">Already registered? <button class="linkbtn" data-f="to-login">Log in</button></p>
     </div>
-    <div class="foot">${contactHTML()}</div>`;
+    <div class="foot"><button class="linkbtn" data-f="to-code">I have a family code</button></div>`;
+}
+function famErr(m){ FAM.err=m||''; setErr('famErr', FAM.err); const el=$('famErr'); if(el && m) el.scrollIntoView({block:'center', behavior:'smooth'}); }
+function famIn(r, isNew){
+  store.familyToken=r.token; store.family=r.name||store.family;
+  store.familyAccount={whatsapp:r.whatsapp||(famDial()+famDigits(FAM.phone).replace(/^0+/,'')), country:FAM.country};
+  delete store.familyLegacy; save();
+  FAM.err=''; FAM.pin='';
+  if(isNew){ FAM.done={name:r.name||FAM.name, group:!!r.wants_group}; FAM.view='welcome'; } else { FAM.view='register'; FAM.done=null; }
+  renderHome(); show('sHome'); window.scrollTo(0,0); liveSync(); loadSettings();
+}
+function openPicker(title, items, cur, onPick){
+  const el=document.createElement('div'); el.className='picker'; el.setAttribute('role','dialog'); el.setAttribute('aria-modal','true'); el.setAttribute('aria-label', title);
+  const search = items.length > 12;
+  el.innerHTML=`<div class="pk-box"><div class="pk-head"><b>${esc(title)}</b><button type="button" class="pk-x" aria-label="Close">✕</button></div>
+    ${search?'<input class="input pk-q" type="search" placeholder="Search" autocomplete="off" aria-label="Search">':''}<div class="pk-list" role="listbox"></div></div>`;
+  const list=el.querySelector('.pk-list'), q=el.querySelector('.pk-q');
+  const fold=s=>String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+  const draw=()=>{ const f=q?fold(q.value.trim()):''; const xs=items.filter(it=>!f || fold(it.label).includes(f) || (it.sub && it.sub.includes(f)));
+    list.innerHTML = xs.length ? xs.map(it=>`<button type="button" class="pk-it${it.v===cur?' on':''}" role="option" aria-selected="${it.v===cur}" data-v="${esc(it.v)}"><span>${esc(it.label)}</span>${it.sub?`<small>${esc(it.sub)}</small>`:''}</button>`).join('') : '<p class="note" style="padding:14px 10px">Nothing found. Try another spelling.</p>'; };
+  const close=()=>{ el.remove(); document.removeEventListener('keydown', esc_); };
+  const esc_=e=>{ if(e.key==='Escape') close(); };
+  draw(); if(q) q.addEventListener('input', draw);
+  el.addEventListener('click', e=>{ const b=e.target.closest('.pk-it'); if(b){ close(); onPick(b.dataset.v); return; } if(e.target===el || e.target.closest('.pk-x')) close(); });
+  document.addEventListener('keydown', esc_);
+  document.body.appendChild(el);
+  const on=list.querySelector('.pk-it.on'); if(on) on.scrollIntoView({block:'center'});
+  if(q && !('ontouchstart' in window)) setTimeout(()=>q.focus(), 50);
+}
+async function famAction(a, btn){
+  famSnap();
+  if(a==='to-login' || a==='to-register' || a==='to-code'){ FAM.view=a.slice(3); FAM.err=''; renderHome(); show('sHome'); window.scrollTo(0,0); return; }
+  if(a==='welcome-go'){ FAM.view='register'; FAM.done=null; renderHome(); return; }
+  if(a==='pick-country'){
+    if(!FAM.data){ try{ await busy(btn, loadPlaces); }catch(e){ return famErr('The country list did not load. Check the internet and try again.'); } }
+    const items=FAM.data.map(c=>({v:c.code, label:c.name, sub:c.dial}));
+    return openPicker('Your country', items, FAM.country, v=>{ if(v!==FAM.country){ FAM.country=v; FAM.region=''; FAM.regionTyped=''; } FAM.err=''; renderHome(); });
+  }
+  if(a==='pick-region'){
+    const c=countryOf(FAM.country); if(!c) return;
+    const items=c.regions.map(r=>({v:r[1], label:r[1]})).concat([{v:'__other', label:'Other / not listed'}]);
+    return openPicker('Your region', items, FAM.region, v=>{ FAM.region=v; FAM.err=''; renderHome(); if(v==='__other') setTimeout(()=>{ const i=$('famRegion'); if(i) i.focus(); },60); });
+  }
+  const ph=famDigits(FAM.phone), dial=famDial();
+  if(a==='register'){
+    const name=FAM.name.trim().replace(/\s+/g,' '), loc=FAM.loc.trim().replace(/\s+/g,' ');
+    const c=countryOf(FAM.country), region=(c && c.regions.length && FAM.region!=='__other') ? FAM.region : FAM.regionTyped.trim();
+    if(!name) return famErr('Type your name.');
+    if(!dial) return famErr('Choose your country.');
+    if(!region) return famErr(c && c.regions.length && FAM.region!=='__other' ? 'Choose your region.' : 'Type your region.');
+    if(!loc) return famErr('Type your location, for example your district or neighbourhood.');
+    if(ph.length<6) return famErr('Type your WhatsApp number.');
+    if(!/^\d{4}$/.test(FAM.pin)) return famErr('Choose a PIN of 4 numbers.');
+    return busy(btn, async()=>{
+      try{ const r=await rpc('register_family', {p_name:name, p_dial:dial, p_number:ph, p_country:FAM.country, p_region:region, p_location:loc, p_pin:FAM.pin, p_wants_group:FAM.group});
+        if(!r || !r.ok) return famErr(serr(r && r.error));
+        famIn(r, true);
+      }catch(e){ famErr(serr(e)); }
+    });
+  }
+  if(a==='login'){
+    if(!dial) return famErr('Choose your country.');
+    if(ph.length<6) return famErr('Type your WhatsApp number.');
+    if(!/^\d{4}$/.test(FAM.pin)) return famErr('Type your 4-number PIN.');
+    return busy(btn, async()=>{
+      try{ const r=await rpc('family_phone_login', {p_dial:dial, p_number:ph, p_pin:FAM.pin});
+        if(r && r.error==='pin_reset'){ FAM.view='newpin'; FAM.pin=''; FAM.err=''; return renderHome(); }
+        if(!r || !r.ok) return famErr(serr(r && r.error));
+        famIn(r, false);
+      }catch(e){ famErr(serr(e)); }
+    });
+  }
+  if(a==='newpin'){
+    if(!/^\d{4}$/.test(FAM.pin)) return famErr('Choose a PIN of 4 numbers.');
+    return busy(btn, async()=>{
+      try{ const r=await rpc('family_set_new_pin', {p_dial:dial, p_number:ph, p_new_pin:FAM.pin});
+        if(!r || !r.ok) return famErr(serr(r && r.error));
+        famIn(r, false);
+      }catch(e){ famErr(serr(e)); }
+    });
+  }
 }
 async function submitFamilyCode(btn){
   const code=($('famCode').value||'').trim().toUpperCase();
@@ -2181,7 +2646,7 @@ async function submitFamilyCode(btn){
     try{ const r=await rpc('family_login', {p_family_code:code});
       if(!r||!r.ok) return setErr('famErr', serr(r&&r.error));
       store.familyCode=code; store.familyToken=r.token; if(!store.family && r.name) store.family=r.name; save();
-      renderHome(); show('sHome'); liveSync();
+      FAM.view='register'; renderHome(); show('sHome'); liveSync();
     }catch(e){ setErr('famErr', serr(e)); }
   });
 }
@@ -2195,9 +2660,10 @@ function openSchoolHome(){
 }
 function openSchool(v, err){
   SCH.view=v; SCH.err=err||''; SCH.arm='';
-  if(v==='children'){ SCH.search=''; SCH.kids=null; loadKids(); }
+  if(v==='children'){ SCH.search=''; SCH.kids=null; SCH.help=null; loadKids(); loadNeedHelp(); }
   if(v==='classes' && !SCH.classes) loadClasses();
-  if(v==='addchild'){ SCH.addAge=null; SCH.addGroup=null; }
+  if(v==='addchild'){ SCH.addAge=null; SCH.addGroup=null; SCH.addOwl=OWL_KEYS[Math.floor(Math.random()*OWL_KEYS.length)]; }
+  if(v==='pilot'){ SCH.pilot=null; loadPilot(); }
   renderSchool(); show('sSchool');
   setTimeout(()=>{ const a=document.activeElement, f=$('schoolBody').querySelector('input');
     if(f && v!=='children' && SCH.view===v && !(a && a.tagName==='INPUT')) f.focus(); },60);
@@ -2210,6 +2676,7 @@ function schoolBack(){
   if(v==='register'||v==='setpin') return openSchool('login');
   if(v==='children') return openSchool('classes');
   if(v==='addchild') return openSchool('children');
+  if(v==='report') return SCH.klass ? openSchool('children') : openSchool('task');
   openSchool('task');
 }
 async function loadClasses(){
@@ -2233,12 +2700,304 @@ function kidRowsHTML(){
   if(!SCH.kids.length) return add + `<p class="note" style="text-align:center;margin-top:8px">No children in this class yet. Add the first one.</p>`;
   return add + (ks.length ? ks.map(k=>{
     const lp=k.last_played?Date.parse(k.last_played):0, start=k.start_score!=null?`starting exercise ${k.start_score}/${k.start_total}`:'starting exercise not done';
-    return `<button class="card crow tap" data-child="${esc(k.id)}">${avatar({name:k.name,color:hashColor(k.id)})}<span class="cn"><b>${esc(k.name)}</b><small>${k.age?`Age ${k.age} · `:''}${ago(lp)} · ${start}</small></span>${k.expected_group?`<span class="grp ${esc(k.expected_group)}">${esc(GROUP_LABEL[k.expected_group]||k.expected_group)}</span>`:''}</button>`; }).join('')
+    return `<div class="crowwrap"><button class="card crow tap" data-child="${esc(k.id)}">${avatar(k)}<span class="cn"><b>${esc(k.name)}</b><small>${k.age?`Age ${k.age} · `:''}${ago(lp)} · ${start}</small></span>${k.expected_group?`<span class="grp ${esc(k.expected_group)}">${esc(GROUP_LABEL[k.expected_group]||k.expected_group)}</span>`:''}</button>
+      <button class="repbtn" data-report="${esc(k.id)}" aria-label="Weekly report for ${esc(k.name)}">${ICON_REPORT}</button></div>`; }).join('')
     : `<p class="note" style="text-align:center;margin-top:8px">No child called “${esc(SCH.search.trim())}”.</p>`);
+}
+const ICON_REPORT='<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>';
+const ICON_HEART='<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.3-9A5.3 5.3 0 0 1 12 6.6 5.3 5.3 0 0 1 21.3 12C19 16.5 12 21 12 21z"/></svg>';
+/* children who struggled today: low first-try score or many hints (from the database) */
+function needHelpHTML(){
+  const h=SCH.help; if(!h || !h.length) return '';
+  return `<div class="needhelp"><h3>${ICON_HEART}Needs help today</h3>${h.map(r=>{
+    const g=GAMES[r.game], where=g?` on ${esc(g.name)}`:'';
+    const why = r.hints>=3 ? `used ${r.hints} hints${where}` : `${r.right_pct}% right first time${where}`;
+    return `<button class="nh" data-report="${esc(r.id)}"><b>${esc(r.name)}</b><span>${why}</span><svg viewBox="0 0 24 24" width="16" height="16" style="stroke:#5F6B6E;fill:none;stroke-width:2.4;stroke-linecap:round"><path d="M9 6l6 6-6 6"/></svg></button>`; }).join('')}</div>`;
+}
+/* ---------- weekly report for a child, shared with the parent ---------- */
+const HOME_TIPS = {
+  'Counting':'Count spoons, shoes or steps together before dinner.', 'Listening':'Give two-step instructions, like “touch your nose, then clap”.',
+  'Speaking':'Ask them to name five things they can see outside.', 'Sound play':'Play “I spy” with the first sound of words.',
+  'Vocabulary':'Name opposites together: big and small, hot and cold.', 'Letters':'Look for the letters of their name on signs and packets.',
+  'Reading':'Read a short story together and ask what happened first.', 'Writing':'Let them write a shopping list with you.',
+  'Plus and Minus':'Add and take away with fruit at the market.', 'Telling Time':'Ask what time it is at breakfast and bedtime.',
+  'Coins and Change':'Let them count coins and give change when shopping.', 'Times Tables':'Practise one times table on the way to school.'
+};
+const tipFor = s => !s ? 'Play Garaad together for 10 minutes and talk about the answers.' : (HOME_TIPS[s.skill] || HOME_TIPS[(GAMES[s.skill]||{}).name] || `Practise ${s.skill.toLowerCase()} together for 10 minutes.`);
+function openReport(id){
+  const k=(SCH.kids||[]).find(x=>x.id===id) || (SCH.help||[]).find(x=>x.id===id) || {id};
+  SCH.rep={id, name:k.name||'', avatar:k.avatar, data:null, err:'', phoneMsg:''};
+  openSchool('report'); loadReport();
+}
+async function loadReport(){
+  const r=SCH.rep; if(!r) return;
+  try{ await obFlush(); }catch(e){}
+  try{ const [d, det]=await Promise.all([rpc('child_week_report', {p_token:tokenOf(), p_child_id:r.id}), rpc('child_detail', {p_token:tokenOf(), p_child_id:r.id}).catch(()=>null)]);
+    r.data=d; r.err=''; if(d&&d.child){ r.name=d.child.name; r.avatar=d.child.avatar; }
+    r.journey = det ? journeyOf((d&&d.child&&d.child.class_name)||(det.child&&det.child.class_name), det.rounds) : null; }
+  catch(e){ if(e.code==='invalid_token') return needLogin(); r.err=serr(e); }
+  if(current==='sSchool' && SCH.view==='report') renderSchool();
+}
+const fmtDay = s => { try{ return new Date(s+'T12:00:00').toLocaleDateString('en-GB', {day:'numeric', month:'short'}); }catch(e){ return s; } };
+/* ---------- the journey map on the report: skills of the child's class, from Start to the next class ---------- */
+const MATH_SKILL = {count:'Numbers', findnum:'Numbers', order:'Numbers', place:'Numbers', sequence:'Numbers',
+  shapes:'Shapes and colours', colours:'Shapes and colours', sizes:'Comparing', more:'Comparing', compare:'Comparing',
+  odd:'Patterns', pattern:'Patterns', logic:'Patterns',
+  addpics:'Plus and minus', takeaway:'Plus and minus', addsub:'Plus and minus', missing:'Plus and minus', doubles:'Plus and minus', story:'Plus and minus',
+  skip:'Times and groups', groups:'Times and groups', times:'Times and groups', divide:'Times and groups',
+  clock:'Time and money', money:'Time and money', fractions:'Fractions', decimals:'Fractions', percent:'Fractions',
+  area:'Problem solving', orderops:'Problem solving', words:'Problem solving'};
+const skillOfGame = id => MATH_SKILL[id] || (GAMES[id] && GAMES[id].skill) || null;
+const NEXT_CLASS = {'KG1':'KG2', 'KG2':'KG3', 'KG3':'Standard 1', 'Standard 1':'Standard 2', 'Standard 2':'Standard 3'};
+function classKey(name){ if(CLASS_GAMES[name]) return name; const c=classCfg(name); return Object.keys(CLASS_GAMES).find(k=>CLASS_GAMES[k]===c)||'Standard 2'; }
+const STRONG = 0.7;   // a skill is "strong" once 70% of its levels are passed
+function journeyOf(className, rounds){
+  const key=classKey(className), cfg=CLASS_GAMES[key], caps=cfg.caps||{}, order=[], games={};
+  for(let i=0;i<Math.max(cfg.maths.length, cfg.english.length);i++) [cfg.maths[i], cfg.english[i]].forEach(id=>{   // maths and English side by side, easiest first
+    const s=id&&skillOfGame(id); if(!s) return; if(!games[s]){ games[s]=[]; order.push(s); } games[s].push(id); });
+  const passed={}; (rounds||[]).forEach(r=>{ if(r.stars>0 && r.level>0) (passed[r.game]=passed[r.game]||new Set()).add(r.level); });
+  const all=order.slice(0,12).map((s,i)=>{ let tot=0, done=0;
+    games[s].forEach(id=>{ const cap=caps[id]||10; tot+=cap; done+=[...(passed[id]||[])].filter(l=>l<=cap).length; });
+    const p=tot?done/tot:0; return {name:s, p, i, state:p>=STRONG?'done':p>0?'started':'todo'}; });
+  // along the trail: strong skills first, then the ones being practised, then the ones ahead
+  const rank={done:0, started:1, todo:2}, skills=all.slice().sort((a,b)=>rank[a.state]-rank[b.state] || (a.state==='started'?b.p-a.p:0) || a.i-b.i);
+  const strong=skills.filter(s=>s.state==='done').length;
+  return {key, goal:NEXT_CLASS[key]||'the next class', skills, strong, ready:skills.length>0 && strong===skills.length};
+}
+/* the map: one winding trail across an island, Start bottom left, the goal top right */
+const journeySize = () => ({W:1000, H:780});
+const MAP_TREES = [[470,690],[500,705],[120,560],[900,410],[600,180]];
+const TRAIL_PTS = [[.08,.87],[.27,.83],[.25,.63],[.43,.53],[.63,.64],[.79,.52],[.64,.35],[.75,.21],[.9,.12]];
+function trailLine(W, H){
+  const P=TRAIL_PTS.map(([x,y])=>[x*W,y*H]), out=[];
+  for(let i=0;i<P.length-1;i++){ const p0=P[Math.max(0,i-1)], p1=P[i], p2=P[i+1], p3=P[Math.min(P.length-1,i+2)];
+    for(let t=0;t<1;t+=1/40){ const t2=t*t, t3=t2*t, f=(a,b,c,d)=>.5*(2*b+(-a+c)*t+(2*a-5*b+4*c-d)*t2+(-a+3*b-3*c+d)*t3);
+      out.push([f(p0[0],p1[0],p2[0],p3[0]), f(p0[1],p1[1],p2[1],p3[1])]); } }
+  out.push(P[P.length-1]);
+  const len=[0]; for(let i=1;i<out.length;i++) len.push(len[i-1]+Math.hypot(out[i][0]-out[i-1][0], out[i][1]-out[i-1][1]));
+  return {pts:out, len};
+}
+function trailAt(T, s){   // point and direction at distance s along the trail
+  const L=T.len; let i=1; while(i<L.length-1 && L[i]<s) i++;
+  const a=T.pts[i-1], b=T.pts[i], f=(s-L[i-1])/((L[i]-L[i-1])||1), dx=b[0]-a[0], dy=b[1]-a[1], d=Math.hypot(dx,dy)||1;
+  return {x:a[0]+dx*f, y:a[1]+dy*f, tx:dx/d, ty:dy/d, i};
+}
+const ptsD = pts => 'M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L');
+function journeyLayout(j, W, H){
+  const T=trailLine(W,H), total=T.len[T.len.length-1], n=j.skills.length, F=27, LH=30;
+  const hereS = j.ready ? total : j.strong===0 ? 0 : total*(.07+.81*(n>1?(j.strong-.5)/(n-1):.5)), here=trailAt(T, hereS);
+  const cut=T.len.findIndex(l=>l>=hereS), walked=T.pts.slice(0, cut<0?T.pts.length:cut+1);
+  const start=T.pts[0], goal=T.pts[T.pts.length-1];
+  const at=k=>total*(.07+.81*(n>1?k/(n-1):.5)), stops=j.skills.map((s,k)=>Object.assign({s}, trailAt(T, at(k))));
+  // things labels must not cover: the owl and its tag, the stops, the trophy, the compass
+  const boxes=[], add=(x0,y0,x1,y1)=>boxes.push([x0,y0,x1,y1]);
+  stops.forEach(st=>add(st.x-28,st.y-28,st.x+28,st.y+28)); add(goal[0]-46,goal[1]-46,goal[0]+46,goal[1]+46); const gx=Math.min(goal[0], W-44-j.goal.length*32*.3), gw=j.goal.length*32*.3+6; add(gx-gw,goal[1]+50,gx+gw,goal[1]+92); add(40,50,180,190); MAP_TREES.forEach(([x,y])=>add(x-24,y-42,x+24,y+20));
+  const tw = t => t.length*F*0.56;
+  const hit0=(r)=>hit(r), hit=(r)=>{ let bad=0; boxes.forEach(b=>{ const ox=Math.min(r[2],b[2])-Math.max(r[0],b[0]), oy=Math.min(r[3],b[3])-Math.max(r[1],b[1]); if(ox>0&&oy>0) bad+=4000+ox*oy*4; });
+    T.pts.forEach(p=>{ if(p[0]>r[0]-6&&p[0]<r[2]+6&&p[1]>r[1]-6&&p[1]<r[3]+6) bad+=12; });
+    if(r[0]<34||r[2]>W-34||r[1]<34||r[3]>H-34) bad+=1e6; return bad; };
+  let owl={x:goal[0], y:goal[1]};
+  let tag=null;
+  if(!j.ready){ owl={x:here.x, y:here.y}; add(owl.x-40,owl.y-40,owl.x+40,owl.y+40);   // the owl stands on the trail; its tag goes where there is room
+    let best=null; [[0,-70],[0,70],[132,0],[-132,0]].forEach(([dx,dy],ci)=>{ const x=owl.x+dx, y=owl.y+dy, r=[x-90,y-22,x+90,y+22], sc=hit(r)+ci;
+      if(!best||sc<best.sc) best={sc,x,y,r}; });
+    tag={x:best.x, y:best.y}; add(...best.r); }
+  stops.forEach(st=>{ const t=st.s.name, w=t.split(' '), h=Math.ceil(w.length/2);
+    const ln=t.length>12&&w.length>1?[w.slice(0,h).join(' '), w.slice(h).join(' ')]:[t], wd=Math.max(...ln.map(tw)), ht=ln.length*LH;
+    const cands=[['start',st.x+36,st.y-ht/2],['end',st.x-36,st.y-ht/2],['middle',st.x,st.y+34],['middle',st.x,st.y-34-ht]];
+    let best=null; cands.forEach(([a,x,y],ci)=>{ const x0=a==='start'?x:a==='end'?x-wd:x-wd/2, r=[x0,y,x0+wd,y+ht], sc=hit(r)+ci*5; if(!best||sc<best.sc) best={sc,a,x,y,r}; });
+    add(...best.r); st.label={a:best.a, x:best.x, y:best.y, ln}; });
+  return {T, stops, here, owl, tag, walked, start, goal};
+}
+function journeyTexts(j, W, H){
+  const L=journeyLayout(j,W,H), out=[];
+  L.stops.forEach(st=>st.label.ln.forEach((l,i)=>out.push({t:l, x:st.label.x, y:st.label.y+22+i*30, f:27, w:600, a:st.label.a, c:st.s.state==='todo'?'#8A6F4A':'#3B2A1A'})));
+  out.push({t:j.goal, x:Math.min(L.goal[0], W-44-j.goal.length*32*.3), y:L.goal[1]+82, f:32, w:700, a:'middle', c:'#7A4A10'});
+  out.push({t:'Start', x:L.start[0], y:L.start[1]+50, f:26, w:600, a:'middle', c:'#5C4630'});
+  if(!j.ready) out.push({t:'You are here', x:L.tag.x, y:L.tag.y+9, f:24, w:600, a:'middle', c:'#FFFFFF', halo:false});
+  return out;
+}
+function journeySVG(j, ownerKey, name, bare){
+  const {W,H}=journeySize(j), L=journeyLayout(j,W,H), P=TRAIL_PTS.map(([x,y])=>[x*W,y*H]), d=ptsD(L.T.pts);
+  const [oc]=ownerKey.split('-'), o=OWLCOL[oc]||OWLCOL.teal, g=L.goal, me=L.owl;
+  const tot=L.T.len[L.T.len.length-1], blobs=[];
+  for(let q=0;q<=tot;q+=34){ const at=trailAt(L.T,q), r=78+26*Math.sin(q/95)+14*Math.sin(q/31+1), sh=18*Math.sin(q/70);
+    blobs.push([at.x-at.ty*sh, at.y+at.tx*sh, r]); }
+  [[.17,.91,60],[.36,.70,62],[.72,.66,66],[.86,.44,60],[.6,.24,58],[.84,.09,52]].forEach(([x,y,r])=>blobs.push([x*W,y*H,r]));
+  blobs.forEach(b=>{ b[2]=Math.min(b[2], b[0]-34, W-34-b[0], b[1]-34, H-34-b[1]); });
+  const land=(c,dr)=>blobs.map(([x,y,r])=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${Math.max(4,r+dr).toFixed(1)}" fill="${c}"/>`).join('');
+  const wave=(x,y)=>`<path d="M${x} ${y}q12 -10 24 0t24 0t24 0" fill="none" stroke="#C2A97C" stroke-width="3.5" stroke-linecap="round"/>`;
+  const tree=(x,y)=>`<g transform="translate(${x} ${y})"><path d="M0 -40L18 -6H-18Z M0 -26L22 10H-22Z" fill="#3F7D52"/><rect x="-4" y="10" width="8" height="10" rx="2" fill="#7A5534"/></g>`;
+  const ring=(x,y,p)=>{ const r=22, a=2*Math.PI*Math.min(p,.999), ex=x+r*Math.sin(a), ey=y-r*Math.cos(a); return `<path d="M${x} ${y-r}A${r} ${r} 0 ${a>Math.PI?1:0} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="#F5B400" stroke-width="8" stroke-linecap="round"/>`; };
+  const cx=110, cy=120;   // compass, top left
+  const compass=`<g transform="translate(${cx} ${cy})"><circle r="58" fill="#FBF3E2" stroke="#B89A6A" stroke-width="4"/><circle r="44" fill="none" stroke="#D9C49C" stroke-width="2"/>
+    <path d="M0 -50L10 -10L50 0L10 10L0 50L-10 10L-50 0L-10 -10Z" fill="#D2552E"/><path d="M0 -50L10 -10L0 0Z M50 0L10 10L0 0Z M0 50L-10 10L0 0Z M-50 0L-10 -10L0 0Z" fill="#A63E1F"/>
+    <circle r="6" fill="#FBF3E2"/>${bare?'':'<text y="-66" text-anchor="middle" font-size="22" font-weight="700" fill="#5C4630">N</text>'}</g>`;
+  return `<svg class="jmap" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(name)}'s journey to ${esc(j.goal)}: ${j.strong} of ${j.skills.length} skills strong" font-family="Lexend, sans-serif">
+    <rect width="${W}" height="${H}" rx="36" fill="#F6EBD3"/><rect x="18" y="18" width="${W-36}" height="${H-36}" rx="24" fill="none" stroke="#D8C29A" stroke-width="3"/>
+    ${wave(60,330)}${wave(110,365)}${wave(800,690)}${wave(860,725)}${wave(470,110)}${wave(300,250)}
+    <ellipse cx="905" cy="560" rx="26" ry="16" fill="#E8D2A4" stroke="#A5814F" stroke-width="4"/><ellipse cx="560" cy="730" rx="18" ry="11" fill="#E8D2A4" stroke="#A5814F" stroke-width="4"/>
+    <path d="${d}" fill="none" stroke="#A5814F" stroke-width="118" stroke-linecap="round" stroke-linejoin="round"/>${land('#A5814F',5)}<path d="${d}" fill="none" stroke="#E8D2A4" stroke-width="108" stroke-linecap="round" stroke-linejoin="round"/>${land('#E8D2A4',0)}
+    ${MAP_TREES.map(([x,y])=>tree(x,y)).join('')}
+    ${compass}
+    <path d="${d}" fill="none" stroke="#B4572F" stroke-width="7" stroke-linecap="round" stroke-dasharray="3 15" opacity=".75"/>
+    <path d="${ptsD(L.walked.length>1?L.walked:[L.start,L.start])}" fill="none" stroke="#D2552E" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${L.start[0]}" cy="${L.start[1]}" r="15" fill="#0E8C7E" stroke="#FBF3E2" stroke-width="5"/>
+    ${L.stops.map(st=>{ const s=st.s;
+      return s.state==='done' ? `<circle cx="${st.x}" cy="${st.y}" r="26" fill="#F5B400" stroke="#FBF3E2" stroke-width="5"/><path d="M${st.x-11} ${st.y} l8 8 l14 -16" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`
+        : s.state==='started' ? `<circle cx="${st.x}" cy="${st.y}" r="26" fill="#FBF3E2" stroke="#E6D3AE" stroke-width="8"/>${ring(st.x,st.y,s.p)}`
+        : `<circle cx="${st.x}" cy="${st.y}" r="20" fill="#FBF3E2" stroke="#B89A6A" stroke-width="4" stroke-dasharray="5 5"/>`; }).join('')}
+    <circle cx="${g[0]}" cy="${g[1]}" r="42" fill="#FDE9B8" stroke="#F5B400" stroke-width="7"/>
+    <path d="M${g[0]-15} ${g[1]-18}h30v11a15 15 0 0 1-30 0zM${g[0]-15} ${g[1]-14}h-7a7 7 0 0 0 7 10M${g[0]+15} ${g[1]-14}h7a7 7 0 0 1-7 10M${g[0]} ${g[1]+8}v8M${g[0]-11} ${g[1]+20}h22" fill="none" stroke="#B07D00" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${j.ready?`<circle cx="${g[0]}" cy="${g[1]}" r="42" fill="#FDE9B8"/>`:''}<g transform="translate(${me.x-(j.ready?33:38)} ${me.y-(j.ready?36:40)})"><svg width="${j.ready?66:76}" height="${j.ready?66:76}" viewBox="0 0 100 100"><path d="${OWL_HEAD}" fill="${o.h}"/><g transform="translate(6 13) scale(0.88)"><circle cx="33" cy="46" r="12" fill="#fff" stroke="#fff" stroke-width="8"/><circle cx="67" cy="46" r="12" fill="#fff" stroke="#fff" stroke-width="8"/><rect x="41" y="30" width="8" height="32" rx="4" fill="#fff"/><rect x="75" y="30" width="8" height="32" rx="4" fill="#fff"/><circle cx="34" cy="47" r="5.5" fill="${o.p}"/><circle cx="68" cy="47" r="5.5" fill="${o.p}"/><path d="M38 74 Q50 84 62 74" fill="none" stroke="#F5B400" stroke-width="6" stroke-linecap="round"/></g><polygon points="46,63 54,63 50,70" fill="#F5B400"/></svg></g>
+    ${j.ready?'':`<rect x="${L.tag.x-90}" y="${L.tag.y-22}" width="180" height="44" rx="22" fill="#0E8C7E"/>`}
+    ${bare?'':journeyTexts(j,W,H).map(t=>`<text x="${t.x.toFixed(1)}" y="${t.y.toFixed(1)}" text-anchor="${t.a}" font-size="${t.f}" font-weight="${t.w}" fill="${t.c}"${t.halo===false?'':' stroke="#F3E4C4" stroke-width="9" stroke-linejoin="round" paint-order="stroke"'}>${esc(t.t)}</text>`).join('')}
+  </svg>`;
+}
+function journeyHead(j, name){ return j.ready ? `${name} is ready for ${j.goal}!` : `${name}'s journey to ${j.goal}`; }
+function svgToImg(svg){ return new Promise(res=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null);
+  im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg.replace('<svg class="jmap"', '<svg xmlns="http://www.w3.org/2000/svg" class="jmap"')); }); }
+function reportCardHTML(d, r){
+  const c=d.child||{}, skills=(d.improving&&d.improving.length?d.improving:(d.practised||[])).slice(0,3);
+  return `<div class="repcard" id="repCard" role="img" aria-label="Weekly report card for ${esc(c.name||r.name)}">
+    <div class="rtop"><div class="brand">${owlSVG('happy')}${wordmarkHTML()}</div><span style="font-size:13px;font-weight:500;color:#6B5743">${esc(fmtDay(d.from))} – ${esc(fmtDay(d.to))}</span></div>
+    <div class="rwho">${avatar({id:r.id, avatar:c.avatar||r.avatar},'lg')}<div><h2>${esc(c.name||r.name)}'s week</h2><p>${esc([c.class_name, d.teacher_name].filter(Boolean).join(' · '))}</p></div></div>
+    <div class="rstats"><div><b>${ICON_STAR}${d.stars||0}</b><span>${d.stars===1?'star':'stars'} earned</span></div><div><b>${d.games||0}</b><span>${d.games===1?'game':'games'} played</span></div><div><b>${Math.round(d.minutes||0)}</b><span>${Math.round(d.minutes||0)===1?'minute':'minutes'}</span></div></div>
+    ${skills.length?`<div><p style="margin:0 0 6px;font-size:14px;font-weight:600">${d.improving&&d.improving.length?'Getting better at':'Practised this week'}</p><div class="rchips">${skills.map(s=>`<span>${esc(s)}</span>`).join('')}</div></div>`:''}
+    ${r.journey&&r.journey.skills.length?`<div class="rjour"><div class="rjh"><b>${esc(journeyHead(r.journey, c.name||r.name))}</b><span>${r.journey.strong} of ${r.journey.skills.length} skills strong</span></div>${journeySVG(r.journey, owlKey({id:r.id,avatar:c.avatar||r.avatar}), c.name||r.name)}</div>`:''}
+    <div class="rtip">${ICON_HOME}<span><b style="font-weight:600">Try at home:</b> ${esc(tipFor(d.practise))}</span></div>
+  </div>`;
+}
+function reportText(d, r){
+  const c=d.child||{}, n=c.name||r.name, sk=(d.improving&&d.improving.length?d.improving:(d.practised||[])).slice(0,3);
+  return `${n}'s week on Garaad (${fmtDay(d.from)} – ${fmtDay(d.to)})\n⭐ ${d.stars||0} star${d.stars===1?'':'s'} · ${d.games||0} game${d.games===1?'':'s'} · ${Math.round(d.minutes||0)} minute${Math.round(d.minutes||0)===1?'':'s'}`
+    + (sk.length?`\n${d.improving&&d.improving.length?'Getting better at':'Practised'}: ${sk.join(', ')}`:'')
+    + (r.journey&&r.journey.skills.length?`\n🗺️ ${journeyHead(r.journey, n)}: ${r.journey.strong} of ${r.journey.skills.length} skills strong`:'')
+    + `\nTry at home: ${tipFor(d.practise)}` + (d.teacher_name?`\n— ${d.teacher_name}`:'');
+}
+function reportViewHTML(){
+  const r=SCH.rep||{}, d=r.data, ro=store.school&&store.school.role==='principal';
+  if(r.err) return `<div class="head"><h1>Weekly report</h1></div><p class="err">${esc(r.err)}</p>`;
+  if(!d) return `<div class="head"><h1>Weekly report</h1><p>${esc(r.name||'')}</p></div><div class="spin">Loading the report…</div>`;
+  const ph=(d.child&&d.child.parent_phone)||'', phD=String(ph).replace(/\D/g,'');
+  return `<div class="head"><h1>Weekly report</h1><p>The image the parent receives. Tap “Share image” to send it on WhatsApp.</p></div>
+    ${reportCardHTML(d, r)}
+    <div class="btns" style="margin-top:14px;max-width:440px;flex-direction:column">
+      <button class="btn primary" data-s="rep-share">Share image</button>
+      ${phD?`<a class="btn wa" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/${esc(phD)}?text=${encodeURIComponent(reportText(d,r))}">Send as a WhatsApp message to the parent</a>`:''}
+    </div>
+    ${ro?'':`<div class="card form" style="margin-top:16px;max-width:440px">
+      <label class="label" for="repPhone">Parent's WhatsApp number</label>
+      <div class="phone"><span class="cc">+252</span><input class="input" id="repPhone" type="tel" inputmode="numeric" maxlength="14" placeholder="61 234 5678" value="${esc(phD.replace(/^252/,''))}"></div>
+      ${r.phoneMsg?`<p class="okmsg">${esc(r.phoneMsg)}</p>`:''}<p class="err" id="sErr" hidden></p>
+      <div class="btns"><button class="btn small" data-s="rep-phone">Save number</button></div>
+    </div>
+    <div class="card panel" style="margin-top:16px;max-width:440px"><h3>End-of-pilot check</h3><p>The same short check as the starting exercise. Run it once at the end of the pilot to measure progress.</p>
+      <div class="btns"><button class="btn small" data-s="rep-endline">Start the check with ${esc(d.child&&d.child.name||r.name)}</button></div></div>`}`;
+}
+/* draw the report as a picture (1080 × 1350) for sharing */
+async function reportImage(d, r){
+  try{ await document.fonts.ready; }catch(e){}
+  const W=1080, H=2600, cv=document.createElement('canvas'); cv.width=W; cv.height=H; const x=cv.getContext('2d');   // drawn tall, cropped at the end
+  const rr=(X,Y,w,h,rad,fill)=>{ x.beginPath(); x.moveTo(X+rad,Y); x.arcTo(X+w,Y,X+w,Y+h,rad); x.arcTo(X+w,Y+h,X,Y+h,rad); x.arcTo(X,Y+h,X,Y,rad); x.arcTo(X,Y,X+w,Y,rad); x.closePath(); x.fillStyle=fill; x.fill(); };
+  const owlImg = (key, mood) => new Promise(res=>{ const [c,a]=(key||'teal-').split('-'), o=OWLCOL[c]||OWLCOL.teal;
+    const svg=owlSVG(mood||'happy',{acc:a}).replace('<svg ', `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" `).replace('aria-hidden="true">', `aria-hidden="true"><style>.oh{fill:${o.h}}.op2{fill:${o.p}}.og{fill:${o.g}}.ogs{stroke:${o.g}}.acc-dark{fill:#2B2118}.acc-gls{fill:none;stroke:#2B2118;stroke-width:3}</style>`);
+    const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null); im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg); });
+  const c=d.child||{}, name=c.name||r.name, sk=(d.improving&&d.improving.length?d.improving:(d.practised||[])).slice(0,3);
+  rr(0,0,W,H,0,'#FFF7E8');
+  const logo=await owlImg('teal-none','happy'); if(logo) x.drawImage(logo,70,60,90,90);
+  x.fillStyle='#2B2118'; x.font='800 64px "Baloo 2", Lexend, sans-serif'; x.textBaseline='alphabetic'; x.fillText('Garaad',175,130);
+  x.font='500 34px Lexend, sans-serif'; x.fillStyle='#6B5743'; x.textAlign='right'; x.fillText(`${fmtDay(d.from)} – ${fmtDay(d.to)}`, W-70, 125); x.textAlign='left';
+  rr(70,200,190,190,95,(OWLCOL[(owlKey({id:r.id,avatar:c.avatar||r.avatar}).split('-')[0])]||OWLCOL.teal).bg);
+  const av=await owlImg(owlKey({id:r.id,avatar:c.avatar||r.avatar}),'happy'); if(av) x.drawImage(av,95,225,140,140);
+  x.fillStyle='#2B2118'; let fs=76; do{ x.font=`800 ${fs}px "Baloo 2", Lexend, sans-serif`; fs-=4; }while(x.measureText(`${name}'s week`).width>W-360 && fs>36); x.fillText(`${name}'s week`, 290, 300);
+  x.font='400 36px Lexend, sans-serif'; x.fillStyle='#6B5743'; x.fillText([c.class_name, d.teacher_name].filter(Boolean).join(' · '), 292, 355);
+  const mins=Math.round(d.minutes||0), stats=[[String(d.stars||0),d.stars===1?'star earned':'stars earned'],[String(d.games||0),d.games===1?'game played':'games played'],[String(mins),mins===1?'minute':'minutes']];
+  stats.forEach(([v,l],i)=>{ const X=70+i*320; rr(X,440,300,210,36,'#FFFFFF'); x.textAlign='center'; x.fillStyle='#2B2118'; x.font='800 96px "Baloo 2", Lexend, sans-serif'; x.fillText(v, X+150, 570); x.font='400 32px Lexend, sans-serif'; x.fillStyle='#6B5743'; x.fillText(l, X+150, 620); x.textAlign='left'; });
+  let y=730;
+  if(sk.length){ x.fillStyle='#2B2118'; x.font='600 38px Lexend, sans-serif'; x.fillText(d.improving&&d.improving.length?'Getting better at':'Practised this week', 70, y); y+=30;
+    let X=70; x.font='500 34px Lexend, sans-serif'; sk.forEach(s=>{ const w=x.measureText(s).width+56; if(X+w>W-70){ X=70; y+=84; } rr(X,y,w,70,22,'#E0F4F1'); x.fillStyle='#0A6F64'; x.fillText(s, X+28, y+47); X+=w+16; }); y+=130; }
+  const j=r.journey;
+  if(j && j.skills.length){   // the journey map under the progress
+    x.fillStyle='#2B2118'; x.font='600 38px Lexend, sans-serif'; x.fillText(journeyHead(j, name), 70, y);
+    x.font='400 30px Lexend, sans-serif'; x.fillStyle='#6B5743'; x.fillText(`${j.strong} of ${j.skills.length} skills strong`, 70, y+46);
+    const {W:mw, H:mh}=journeySize(j), dw=W-140, k=dw/mw, my=y+80;
+    const im=await svgToImg(journeySVG(j, owlKey({id:r.id,avatar:c.avatar||r.avatar}), name, true)); if(im) x.drawImage(im, 70, my, dw, mh*k);
+    journeyTexts(j, mw, mh).forEach(t=>{ x.font=`${t.w} ${Math.round(t.f*k)}px Lexend, sans-serif`; x.fillStyle=t.c; x.textAlign=t.a==='middle'?'center':t.a==='end'?'right':'left'; if(t.halo!==false){ x.strokeStyle='#F3E4C4'; x.lineWidth=9*k; x.lineJoin='round'; x.strokeText(t.t, 70+t.x*k, my+t.y*k); } x.fillText(t.t, 70+t.x*k, my+t.y*k); });
+    x.textAlign='left'; y = my + mh*k + 50; }
+  const tip='Try at home: '+tipFor(d.practise); x.font='400 36px Lexend, sans-serif';
+  const words=tip.split(' '), lines=[]; let line=''; words.forEach(w=>{ const t=line?line+' '+w:w; if(x.measureText(t).width>W-220){ lines.push(line); line=w; } else line=t; }); lines.push(line);
+  rr(70,y,W-140,lines.length*52+70,36,'#FDE9B8'); x.fillStyle='#5A3D00'; lines.forEach((l,i)=>x.fillText(l, 110, y+70+i*52));
+  const FH=Math.max(1350, Math.ceil(y+lines.length*52+70+150));
+  x.font='400 28px Lexend, sans-serif'; x.fillStyle='#6B5743'; x.textAlign='center'; x.fillText('Maths and English games for children · Garaad', W/2, FH-60);
+  const out=document.createElement('canvas'); out.width=W; out.height=FH; out.getContext('2d').drawImage(cv,0,0);
+  return await new Promise(res=>out.toBlob(res,'image/png'));
+}
+async function shareReport(btn){
+  const r=SCH.rep; if(!r||!r.data) return;
+  await busy(btn, async()=>{
+    const blob=await reportImage(r.data, r), name=`garaad-${String(r.name||'report').toLowerCase().replace(/[^a-z0-9]+/g,'-')}-week.png`, text=reportText(r.data, r);
+    try{
+      const file=new File([blob], name, {type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], text}); return; }
+    }catch(e){ if(e && e.name==='AbortError') return; }
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500); toast('Report image saved');
+  });
+}
+/* ---------- pilot results (principal: own school; admin: one or all schools) ---------- */
+async function loadPilot(){
+  try{ SCH.pilot=await rpc('pilot_summary', {p_token:tokenOf()}); SCH.err=''; }
+  catch(e){ if(e.code==='invalid_token') return needLogin(); SCH.pilot={error:serr(e)}; }
+  if(current==='sSchool' && SCH.view==='pilot') renderSchool();
+}
+const pctOr = v => v===null||v===undefined ? '–' : v+'%';
+function pilotHTML(d, ctx){
+  if(!d) return '';
+  if(d.error) return `<p class="err">${esc(d.error)}</p>`;
+  const ch = v => v===null||v===undefined ? '' : `<span class="pct ${v>0?'good':v<0?'low':'mid'}">${v>0?'+':''}${v} pts</span>`;
+  const bars = (d.by_class||[]).map(c=>`<div class="cbar"><span style="font-weight:500">${esc(c['class'])}</span><div class="bb">
+      <div><i style="width:${c.baseline_pct||0}%"></i>${pctOr(c.baseline_pct)}</div><div class="now"><i style="width:${c.latest_pct||0}%"></i>${pctOr(c.latest_pct)}</div></div></div>`).join('');
+  const subj = (d.by_subject||[]).map(s=>`<tr><td>${s.subject==='maths'?'Maths':'English'}</td><td class="n">${pctOr(s.baseline_pct)}</td><td class="n">${pctOr(s.latest_pct)}</td><td class="n">${s.baseline_pct!=null&&s.latest_pct!=null?ch(s.latest_pct-s.baseline_pct):'–'}</td></tr>`).join('');
+  const rows = (d.by_class||[]).map(c=>`<tr><td>${esc(c['class'])}</td><td class="n">${c.children}</td><td class="n">${c.with_both}</td><td class="n">${pctOr(c.baseline_pct)}</td><td class="n">${pctOr(c.latest_pct)}</td><td class="n">${ch(c.change_pts)||'–'}</td><td class="n">${c.played_this_week} of ${c.children}</td></tr>`).join('');
+  return `<div class="kgrid">
+      <div class="kcard"><p>Children taking part</p><b>${d.children||0}</b><p>${d.schools>1?`${d.schools} schools · `:''}${d.teachers||0} teacher${d.teachers===1?'':'s'}</p></div>
+      <div class="kcard"><p>Average starting score</p><b>${pctOr(d.baseline_pct)}</b><p>${d.with_baseline||0} ${d.with_baseline===1?'child':'children'} did the starting exercise</p></div>
+      <div class="kcard"><p>Score at the latest check</p><b>${pctOr(d.latest_pct)} ${ch(d.change_pts)}</b><p>${d.with_both||0} ${d.with_both===1?'child':'children'} with both checks${d.improved_pct!=null?` · ${d.improved_pct}% improved`:''}</p></div>
+      <div class="kcard"><p>Time learning</p><b>${d.minutes_per_child_per_week||0} min</b><p>per child, per week</p></div>
+    </div>
+    ${(d.with_both||0)===0?`<div class="banner">No end-of-pilot checks yet. Teachers start one from a child's weekly report. The comparison fills in as they are done.</div>`:''}
+    <div class="card panel"><h3 style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">Starting check and latest check, by class <span class="legend2"><span><i></i>Starting</span><span><i class="n"></i>Latest</span></span></h3>
+      <div class="cbars">${bars||'<p>No classes yet.</p>'}</div><p style="margin-top:6px">Only children with both checks are compared.</p></div>
+    <div class="card panel"><h3>By subject</h3><div class="tablewrap"><table class="gtable"><thead><tr><th>Subject</th><th class="n">Starting</th><th class="n">Latest</th><th class="n">Change</th></tr></thead><tbody>${subj}</tbody></table></div>
+      <p>Children added before this update did the starting exercise without a maths and English split, so they appear only in the overall scores.</p></div>
+    <div class="card panel"><h3>Classes</h3><div class="tablewrap"><table class="gtable"><thead><tr><th>Class</th><th class="n">Children</th><th class="n">Both checks</th><th class="n">Starting</th><th class="n">Latest</th><th class="n">Change</th><th class="n">Played this week</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+    <div class="card panel"><h3>Share with funders</h3><p>Names are removed from the download. Each child appears as a code.</p>
+      <div class="btns"><button class="btn small primary" ${ctx==='admin'?'data-a="pilot-csv"':'data-s="pilot-csv"'}>Download data (CSV)</button></div></div>`;
+}
+async function downloadPilotCSV(tok, schoolId, btn){
+  await busy(btn, async()=>{
+    try{
+      const rows=await rpc('pilot_export', {p_token:tok, p_school_id:schoolId||null}) || [];
+      if(!rows.length){ toast('No children to export yet'); return; }
+      const cols=Object.keys(rows[0]), q=v=>{ if(v===null||v===undefined) return ''; const s=String(v); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+      const csv=[cols.join(',')].concat(rows.map(r=>cols.map(c=>q(r[c])).join(','))).join('\n');
+      const d=new Date(), a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+      a.download=`garaad-pilot-${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}.csv`; document.body.appendChild(a); a.click();
+      setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500);
+    }catch(e){ toast(serr(e)); }
+  });
+}
+async function loadNeedHelp(){
+  const k=SCH.klass; if(!k) return;
+  try{ await obFlush(); }catch(e){}   // send this phone's waiting results first, so today's list includes them
+  try{ const rows=await rpc('class_needs_help', {p_token:tokenOf(), p_class_id:k.id}); if(SCH.klass===k) SCH.help=rows||[]; }
+  catch(e){ SCH.help=[]; }
+  if(current==='sSchool' && SCH.view==='children'){ const el=$('needHelp'); if(el) el.innerHTML=needHelpHTML(); }
 }
 function renderSchool(){
   const sc=store.school||{}, v=SCH.view, b=$('schoolBody');
-  if(v==='code') b.innerHTML=`<div class="head"><h1>School</h1><p>Type the school code. The school or the Tiri admin gives it to you.</p></div>
+  if(v==='code') b.innerHTML=`<div class="head"><h1>School</h1><p>Type the school code. The school or the Garaad admin gives it to you.</p></div>
     <div class="card form"><label class="label" for="sCode">School code</label>
       <input class="input" id="sCode" maxlength="20" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase" placeholder="For example, ARAN" value="${esc(sc.code||'')}">
       ${errP()}<div class="btns"><button class="btn primary" data-s="code">Continue</button></div></div>
@@ -2250,7 +3009,7 @@ function renderSchool(){
     <div class="foot"><button class="linkbtn" data-s="change-school">Change school</button><button class="linkbtn" data-s="go-admin">Admin</button>${contactHTML()}</div>`;
   else if(v==='register') b.innerHTML=`<div class="head"><h1>New teacher</h1><p>${esc(sc.name||'')}</p></div>
     <div class="card form"><label class="label" for="sName">Your name</label><input class="input" id="sName" maxlength="40" autocomplete="name" placeholder="For example, Asha Ali">
-      ${phoneInput(sc.phone)}<p class="note">We'll add this number to the Tiri teachers' WhatsApp group to share guidance.</p>
+      ${phoneInput(sc.phone)}<p class="note">We'll add this number to the Garaad teachers' WhatsApp group to share guidance.</p>
       ${pinInput('sPin','Choose a 4-number PIN','new-password')}${pinInput('sPin2','Type the PIN again','new-password')}
       ${errP()}<div class="btns"><button class="btn primary" data-s="register">Register</button></div></div>
     <div class="foot">${contactHTML()}</div>`;
@@ -2264,10 +3023,10 @@ function renderSchool(){
     b.innerHTML=`<div class="head"><h1>Hi ${esc(sc.teacher||'')}!</h1><p>${pr?'Principal · look at each class and try the questions.':'What would you like to do?'}</p></div>
     ${SCH.msg?`<p class="okmsg" style="margin:0 0 12px">${esc(SCH.msg)}</p>`:''}
     <div class="tasks">
-      <button class="card task tap" data-s="inclass"><span class="te">🏫</span><span><b>In-class exercise</b><small>${pr?'See the games for each class':'A child plays now, on this phone'}</small></span></button>
-      <button class="card task" disabled aria-disabled="true"><span class="te">🏠</span><span><b>Send homework</b><small>Children practise at home</small><br><span class="soon">Coming soon</span></span></button>
+      <button class="card task tap" data-s="inclass"><span class="te">${ICON_SCHOOL}</span><span><b>In-class exercise</b><small>${pr?'See the games for each class':'A child plays now, on this phone'}</small></span></button>
+      ${pr?`<button class="card task tap" data-s="pilot"><span class="te">${ICON_REPORT}</span><span><b>Pilot results</b><small>Starting scores and progress, by class</small></span></button>`:''}
+      <button class="card task" disabled aria-disabled="true"><span class="te">${ICON_HOME}</span><span><b>Send homework</b><small>Children practise at home</small><br><span class="soon">Coming soon</span></span></button>
     </div>
-    ${pr?`<p class="note" style="margin-top:14px">The principal dashboard with every child's scores is coming soon.</p>`:''}
     ${wait?`<p class="note" style="margin-top:14px">${wait} result${wait>1?'s':''} waiting to be sent. They go when the internet is back.</p>`:''}
     <div class="foot"><button class="linkbtn" data-s="go-changepin">Change PIN</button><button class="linkbtn" data-s="logout">${SCH.arm==='logout'?'Results are waiting. Tap again to log out':'Log out'}</button>${contactHTML()}</div>`;
     SCH.msg=''; }
@@ -2275,12 +3034,20 @@ function renderSchool(){
     ${SCH.classes===null?`<div class="spin">Loading classes…</div>`:`<div class="classes">${SCH.classes.map((k,i)=>`<button class="card cls tap" data-cls="${i}">${esc(k.name)}</button>`).join('')}</div>`}`;
   else if(v==='children') b.innerHTML=`<div class="head"><h1>${esc(SCH.klass?SCH.klass.name:'')}</h1><p>Who is playing?</p></div>
     <div class="search"><input class="input" id="sSearch" type="search" autocomplete="off" placeholder="Search a name" value="${esc(SCH.search)}" aria-label="Search children"></div>
+    <div id="needHelp">${needHelpHTML()}</div>
     ${errP()}<div class="rows" id="kidRows">${kidRowsHTML()}</div>`;
   else if(v==='addchild') b.innerHTML=`<div class="head"><h1>Add a child</h1><p>${esc(SCH.klass?SCH.klass.name:'')} · a short starting exercise comes next.</p></div>
     <div class="card form"><label class="label" for="sName">Child's name</label><input class="input" id="sName" maxlength="40" autocomplete="off" placeholder="For example, Hodan">
       <div class="label" id="sAgeL">Age</div><div class="ages" role="group" aria-labelledby="sAgeL">${[3,4,5,6,7,8,9,10,11,12].map(a=>`<button class="age" data-sage="${a}" aria-pressed="${a===SCH.addAge}">${a}</button>`).join('')}</div>
       <div class="label" id="sGrpL">Expected performance</div><div class="seg" role="group" aria-labelledby="sGrpL">${Object.keys(GROUP_LABEL).map(k=>`<button data-sgroup="${k}" aria-pressed="${k===SCH.addGroup}">${GROUP_LABEL[k]}</button>`).join('')}</div>
+      <div class="label" id="sOwlL">The child's owl</div><div class="owls" id="sOwlPick" role="radiogroup" aria-labelledby="sOwlL">${owlPickHTML(SCH.addOwl, 'data-sowl')}</div>
+      <p class="note" style="margin-top:-6px">The child finds their owl on the list, even before they can read their name.</p>
+      <label class="label" for="sParentPh">Parent's WhatsApp number <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+      <div class="phone"><span class="cc">+252</span><input class="input" id="sParentPh" type="tel" inputmode="numeric" maxlength="14" placeholder="61 234 5678"></div>
+      <p class="note" style="margin-top:-6px">Used to send the weekly report to the parent.</p>
       ${errP()}<div class="btns"><button class="btn primary" data-s="addchild">Save and start</button></div></div>`;
+  else if(v==='report') b.innerHTML=reportViewHTML();
+  else if(v==='pilot') b.innerHTML=`<div class="head"><h1>Pilot results</h1><p>${esc(sc.name||'')}</p></div>${errP()}${SCH.pilot===null?`<div class="spin">Loading results…</div>`:pilotHTML(SCH.pilot, 'school')}`;
 }
 async function schoolAction(a, btn){
   const sc=store.school||(store.school={outbox:[]});
@@ -2308,20 +3075,31 @@ async function schoolAction(a, btn){
     const tok=sc.token; if(tok) rpc('logout', {p_token:tok}).catch(()=>{});
     sc.token=null; SCH.classes=null; if(a==='change-school'){ sc.code=''; sc.name=''; } save();
     return openSchool(a==='logout'?'login':'code'); }
+  if(a==='pilot') return openSchool('pilot');
+  if(a==='pilot-csv') return downloadPilotCSV(tokenOf(), null, btn);
+  if(a==='rep-share') return shareReport(btn);
+  if(a==='rep-phone'){ const r=SCH.rep; if(!r) return; const pp=phoneDigits(($('repPhone')||{}).value);
+    if(pp && !/^\d{7,9}$/.test(pp)) return setErr('sErr','Type the number after +252, for example 61 234 5678.');
+    return busy(btn, async()=>{ try{ await rpc('update_child', {p_token:tokenOf(), p_child_id:r.id, p_parent_phone:pp?'+252'+pp:''});
+      if(r.data&&r.data.child) r.data.child.parent_phone=pp?'+252'+pp:null; r.phoneMsg=pp?'Number saved.':'Number removed.'; renderSchool(); }
+      catch(e){ if(e.code==='invalid_token') return needLogin(); setErr('sErr', serr(e)); } }); }
+  if(a==='rep-endline'){ const r=SCH.rep; if(!r) return; SCH.assess='endline'; return openChild(r.id, btn); }
   if(a==='inclass') return openSchool('classes');
   if(a==='go-register') return openSchool('register');
   if(a==='go-changepin') return openSchool('changepin');
   if(a==='go-addchild') return openSchool('addchild');
   if(a==='addchild'){ const name=($('sName').value||'').trim().replace(/\s+/g,' ');
     if(!name) return setErr('sErr','Type the child’s name.'); if(!SCH.addAge) return setErr('sErr','Pick the child’s age.'); if(!SCH.addGroup) return setErr('sErr','Pick the expected performance.');
-    return busy(btn, async()=>{ try{ const r=await rpc('add_child', {p_token:tokenOf(), p_class_id:SCH.klass.id, p_name:name, p_age:SCH.addAge, p_expected_group:SCH.addGroup});
+    const pp=phoneDigits(($('sParentPh')||{}).value); if(pp && !/^\d{7,9}$/.test(pp)) return setErr('sErr','Type the parent’s number after +252, for example 61 234 5678, or leave it empty.');
+    return busy(btn, async()=>{ try{ const r=await rpc('add_child', {p_token:tokenOf(), p_class_id:SCH.klass.id, p_name:name, p_age:SCH.addAge, p_expected_group:SCH.addGroup,
+        p_avatar:SCH.addOwl, p_theme:'savanna', p_parent_phone:pp?'+252'+pp:null});
       if(!r.ok) return setErr('sErr', serr(r.error)); await openChild(r.child_id); }catch(e){ if(e.code==='invalid_token') return needLogin(); setErr('sErr', serr(e)); } }); }
 }
 function loggedIn(r){ const sc=store.school; Object.assign(sc, {token:r.token, teacher:r.name, role:r.role, name:r.school||sc.name}); save(); SCH.classes=null; openSchool('task'); obFlush(); }
 
 /* ---------- admin: school and family codes, PIN resets ---------- */
 function openAdmin(){ ADM.err=''; ADM.arm=''; renderAdmin(); show('sAdmin'); if(ADM.tok) adminLoad(); else setTimeout(()=>{ const i=$('aPin'); if(i) i.focus(); },60); }
-function adminBack(){ if(store.mode==='school') return openSchoolHome(); renderHome(); show('sHome'); }
+function adminBack(){ if(ADM.pilot){ ADM.pilot=null; return renderAdmin(); } if(store.mode==='school') return openSchoolHome(); renderHome(); show('sHome'); }
 async function adminLoad(){
   try{ ADM.data=await rpc('admin_overview', {p_token:ADM.tok}); ADM.err=''; }
   catch(e){ if(e.code==='invalid_token'||e.code==='admin_only'){ ADM.tok=null; ADM.err='Please log in again.'; } else ADM.err=serr(e); }
@@ -2329,14 +3107,19 @@ async function adminLoad(){
 }
 function renderAdmin(){
   const b=$('adminBody'), err=`<p class="err" id="aErr" ${ADM.err?'':'hidden'}>${esc(ADM.err)}</p>`;
-  if(!ADM.tok){ b.innerHTML=`<div class="head"><h1>Admin</h1><p>For the Tiri organiser: school codes, family codes and teacher PINs.</p></div>
+  if(!ADM.tok){ b.innerHTML=`<div class="head"><h1>Admin</h1><p>For the Garaad organiser: schools, families, PINs and pilot results.</p></div>
       <div class="card form"><label class="label" for="aPin">Admin PIN</label><input class="input pin" id="aPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" autocomplete="current-password" placeholder="••••••" style="max-width:260px">
       ${err}<div class="btns"><button class="btn primary" data-a="login">Log in</button></div></div>`; return; }
+  if(ADM.pilot){ const p=ADM.pilot;
+    b.innerHTML=`<div class="head"><h1>Pilot results</h1><p>${esc(p.name)}</p></div>${err}
+      ${p.data?pilotHTML(p.data,'admin'):`<div class="spin">Loading results…</div>`}
+      <div class="foot"><button class="linkbtn" data-a="pilot-back">Back to admin</button></div>`; return; }
   const d=ADM.data;
   if(!d){ b.innerHTML=`<div class="head"><h1>Admin</h1></div>${err}<div class="spin">Loading…</div>`; return; }
   const schools=d.schools.map(s=>`<div class="card panel adm">
       <h3><span>${esc(s.name)}</span><span class="chip">Code ${esc(s.code)}</span></h3>
       <p>${s.children} child${s.children===1?'':'ren'} · ${(s.teachers||[]).length} teacher${(s.teachers||[]).length===1?'':'s'}</p>
+      <div class="btns"><button class="btn small" data-a="pilot" data-sid="${esc(s.id)}" data-sname="${esc(s.name)}">Pilot results</button></div>
       <div class="chips">${(s.classes||[]).map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>
       <div class="inline"><input class="input" id="cls-${esc(s.id)}" maxlength="30" placeholder="New class, e.g. Standard 3"><button class="btn small" data-a="addclass" data-sid="${esc(s.id)}">Add class</button></div>
       ${(s.teachers||[]).length?`<div class="tlist">
@@ -2345,16 +3128,54 @@ function renderAdmin(){
         <div class="btns"><button class="btn small" data-a="reset" data-tid="${esc(t.id)}">${ADM.arm==='reset'+t.id?'Tap again to reset':'Reset PIN'}</button><button class="btn small" data-a="role" data-tid="${esc(t.id)}" data-role="${t.role==='principal'?'teacher':'principal'}">${t.role==='principal'?'Make teacher':'Make principal'}</button></div></div>`).join('')}
       </div><div class="btns"><button class="btn small" data-a="copyphones" data-sid="${esc(s.id)}">Copy teacher numbers</button></div>`:'<p>No teachers yet. They register with the school code.</p>'}
     </div>`).join('');
-  b.innerHTML=`<div class="head"><h1>Admin</h1><p>Reset a teacher's PIN, make the principal, and create codes.</p></div>${err}
+  b.innerHTML=`<div class="head"><h1>Admin</h1><p>Schools and teachers, registered families, WhatsApp links and pilot results.</p></div>${err}
     ${ADM.msg?`<p class="okmsg" style="margin:0 0 12px">${esc(ADM.msg)}</p>`:''}
+    ${d.schools.length>1?`<div class="btns" style="margin-bottom:14px"><button class="btn small primary" data-a="pilot" data-sid="" data-sname="All pilot schools">Pilot results · all schools</button></div>`:''}
     ${schools||'<div class="card panel"><p>No schools yet.</p></div>'}
     <div class="card panel adm"><h3>New school</h3><p>Creates the school with KG1, KG2, KG3, Standard 1 and Standard 2.</p>
       <div class="inline"><input class="input" id="nsName" maxlength="60" placeholder="School name"><input class="input" id="nsCode" maxlength="20" placeholder="School code" style="text-transform:uppercase"><button class="btn small primary" data-a="newschool">Create</button></div></div>
-    <div class="card panel adm"><h3>Families</h3>
-      ${d.families.length?`<div class="tablewrap"><table class="gtable"><thead><tr><th>Family</th><th>Code</th></tr></thead><tbody>${d.families.map(f=>`<tr><td>${esc(f.name||'')}</td><td>${esc(f.code)}</td></tr>`).join('')}</tbody></table></div>`:'<p>No family codes yet.</p>'}
-      <div class="inline"><input class="input" id="nfName" maxlength="40" placeholder="Family name"><input class="input" id="nfCode" maxlength="20" placeholder="Family code" style="text-transform:uppercase"><button class="btn small primary" data-a="newfamily">Create</button></div></div>
+    ${admFamiliesHTML(d)}
     <div class="foot"><button class="linkbtn" data-a="logout">Log out of admin</button></div>`;
   ADM.msg='';
+}
+function admFamiliesHTML(d){
+  if(!FAM.data){ loadPlaces().then(()=>{ if(current==='sAdmin') renderAdmin(); }).catch(()=>{}); }
+  const cname = code => { const c=countryOf(code); return c ? c.name : (code||''); };
+  const all=d.families||[], st=d.settings||{};
+  const countries=[...new Set(all.map(f=>f.country).filter(Boolean))].sort((a,b)=>cname(a).localeCompare(cname(b)));
+  if(ADM.fc && !countries.includes(ADM.fc)) ADM.fc='';
+  const regions=[...new Set(all.filter(f=>!ADM.fc || f.country===ADM.fc).map(f=>f.region).filter(Boolean))].sort();
+  if(ADM.fr && !regions.includes(ADM.fr)) ADM.fr='';
+  const shown=all.filter(f=>(!ADM.fc || f.country===ADM.fc) && (!ADM.fr || f.region===ADM.fr));
+  const wantN=shown.filter(f=>f.wants_group && !f.blocked && f.whatsapp).length;
+  const row = f => {
+    const where=[f.location, f.region, f.country?cname(f.country):''].filter(Boolean).map(esc).join(', ');
+    const chips=[f.blocked?'<span class="chip warn">Blocked</span>':'', f.code?`<span class="chip">Code ${esc(f.code)}</span>`:'',
+      f.registered && !f.pin_set?'<span class="chip">PIN reset</span>':'', f.wants_group?'<span class="chip">Wants group</span>':''].join(' ');
+    const wa=f.whatsapp?`<a href="https://wa.me/${esc(String(f.whatsapp).replace(/\D/g,''))}" target="_blank" rel="noopener">${esc(f.whatsapp)}</a>`:'';
+    const meta=[wa, where, `${f.children||0} child${(f.children||0)===1?'':'ren'}`, f.created_at?'joined '+esc(new Date(f.created_at).toLocaleDateString()):''].filter(Boolean).join(' · ');
+    return `<div class="trow"><div><b>${esc(f.name||'(no name)')}</b> ${chips}<small>${meta}</small></div>
+      <div class="btns">${f.registered?`<button class="btn small" data-a="freset" data-fid="${esc(f.id)}">${ADM.arm==='freset'+f.id?'Tap again to reset':'Reset PIN'}</button>`:''}
+      <button class="btn small" data-a="fblock" data-fid="${esc(f.id)}" data-block="${f.blocked?'0':'1'}">${f.blocked?'Unblock':(ADM.arm==='fblock'+f.id?'Tap again to block':'Block')}</button></div></div>`;
+  };
+  return `<div class="card panel adm"><h3><span>Families</span><span class="chip">${all.length}</span></h3>
+      <p>Parents register themselves for free. ${shown.length!==all.length?`Showing ${shown.length} of ${all.length}. `:''}${wantN} want to join the parents' WhatsApp group.</p>
+      ${all.length?`<div class="inline">
+        <select class="input" id="afCountry" aria-label="Filter by country"><option value="">All countries</option>${countries.map(c=>`<option value="${esc(c)}" ${ADM.fc===c?'selected':''}>${esc(cname(c))}</option>`).join('')}</select>
+        <select class="input" id="afRegion" aria-label="Filter by region"><option value="">All regions</option>${regions.map(r=>`<option value="${esc(r)}" ${ADM.fr===r?'selected':''}>${esc(r)}</option>`).join('')}</select></div>
+      <div class="tlist">${shown.map(row).join('') || '<p>No families here.</p>'}</div>
+      ${wantN?`<div class="btns"><button class="btn small" data-a="copygroup">Copy numbers that want the group</button></div>`:''}`
+      : '<p>No families yet.</p>'}
+      <details class="oldcodes"><summary>Family codes (the old way)</summary>
+        <div class="inline"><input class="input" id="nfName" maxlength="40" placeholder="Family name"><input class="input" id="nfCode" maxlength="20" placeholder="Family code" style="text-transform:uppercase"><button class="btn small" data-a="newfamily">Create</button></div></details>
+    </div>
+    <div class="card panel adm"><h3>WhatsApp links</h3>
+      <p>Parents who tick the box see the group link after registering. The admin number is used for every “Contact admin” link.</p>
+      <label class="label" for="setGroup">Parents' group invite link</label>
+      <div class="inline"><input class="input" id="setGroup" maxlength="200" placeholder="https://chat.whatsapp.com/…" value="${esc(st.parents_group_link||'')}"><button class="btn small" data-a="setgroup">Save</button></div>
+      <label class="label" for="setAdminWa">Admin WhatsApp number (with country code)</label>
+      <div class="inline"><input class="input" id="setAdminWa" type="tel" maxlength="20" placeholder="252 61 234 5678" value="${esc(st.admin_whatsapp||'')}"><button class="btn small" data-a="setadminwa">Save</button></div>
+    </div>`;
 }
 async function adminAction(a, el){
   const call = async (fn, args, okMsg) => { try{ const r=await rpc(fn, Object.assign({p_token:ADM.tok}, args)); if(r && r.ok===false){ ADM.err=serr(r.error); renderAdmin(); return false; } ADM.msg=okMsg||''; ADM.err=''; await adminLoad(); return true; }
@@ -2362,7 +3183,13 @@ async function adminAction(a, el){
   if(a==='login'){ const pin=($('aPin').value||'').trim(); if(!pin) return setErr('aErr','Type the admin PIN.');
     return busy(el, async()=>{ try{ const r=await rpc('admin_login', {p_pin:pin}); if(!r.ok) return setErr('aErr', r.error==='wrong_pin'?'That PIN is not right. After 5 wrong tries admin login locks for 15 minutes.':serr(r.error));
       ADM.tok=r.token; ADM.data=null; ADM.err=''; renderAdmin(); adminLoad(); }catch(e){ setErr('aErr', serr(e)); } }); }
-  if(a==='logout'){ if(ADM.tok) rpc('logout', {p_token:ADM.tok}).catch(()=>{}); ADM.tok=null; ADM.data=null; return renderAdmin(); }
+  if(a==='logout'){ if(ADM.tok) rpc('logout', {p_token:ADM.tok}).catch(()=>{}); ADM.tok=null; ADM.data=null; ADM.pilot=null; return renderAdmin(); }
+  if(a==='pilot'){ ADM.pilot={sid:el.dataset.sid||null, name:el.dataset.sname||'', data:null}; ADM.err=''; renderAdmin(); window.scrollTo(0,0);
+    try{ ADM.pilot.data=await rpc('pilot_summary', {p_token:ADM.tok, p_school_id:ADM.pilot.sid}); }
+    catch(e){ if(e.code==='invalid_token'||e.code==='not_allowed'){ ADM.tok=null; ADM.pilot=null; ADM.err='Please log in again.'; } else ADM.pilot.data={error:serr(e)}; }
+    return renderAdmin(); }
+  if(a==='pilot-back'){ ADM.pilot=null; return renderAdmin(); }
+  if(a==='pilot-csv') return downloadPilotCSV(ADM.tok, ADM.pilot&&ADM.pilot.sid, el);
   if(a==='reset'){ const k='reset'+el.dataset.tid; if(ADM.arm!==k){ ADM.arm=k; return renderAdmin(); } ADM.arm=''; return busy(el, ()=>call('admin_reset_pin', {p_teacher_id:el.dataset.tid}, 'PIN reset. The teacher chooses a new PIN at their next login.')); }
   if(a==='role') return busy(el, ()=>call('admin_set_role', {p_teacher_id:el.dataset.tid, p_role:el.dataset.role}, el.dataset.role==='principal'?'Now a principal. The new role applies at their next login.':'Now a teacher. The new role applies at their next login.'));
   if(a==='addclass'){ const i=$('cls-'+el.dataset.sid), name=(i&&i.value||'').trim(); if(!name) return; return busy(el, ()=>call('admin_add_class', {p_school_id:el.dataset.sid, p_name:name}, `Class ${name} added.`)); }
@@ -2370,30 +3197,43 @@ async function adminAction(a, el){
     return busy(el, ()=>call('admin_create_school', {p_name:name, p_code:code}, `School created. Its code is ${code}.`)); }
   if(a==='newfamily'){ const name=$('nfName').value.trim(), code=$('nfCode').value.trim().toUpperCase(); if(!code){ ADM.err='Type a family code.'; return renderAdmin(); }
     return busy(el, ()=>call('admin_create_family', {p_name:name, p_code:code}, `Family code ${code} created.`)); }
+  if(a==='freset'){ const k='freset'+el.dataset.fid; if(ADM.arm!==k){ ADM.arm=k; return renderAdmin(); } ADM.arm=''; return busy(el, ()=>call('admin_reset_family_pin', {p_family_id:el.dataset.fid}, 'PIN reset. The family chooses a new PIN at their next login.')); }
+  if(a==='fblock'){ const block=el.dataset.block==='1', k='fblock'+el.dataset.fid; if(block && ADM.arm!==k){ ADM.arm=k; return renderAdmin(); } ADM.arm='';
+    return busy(el, ()=>call('admin_block_family', {p_family_id:el.dataset.fid, p_blocked:block}, block?'Family blocked and signed out.':'Family unblocked.')); }
+  if(a==='setgroup'){ const v=($('setGroup').value||'').trim(); return busy(el, ()=>call('admin_set_setting', {p_key:'parents_group_link', p_value:v}, v?'Group link saved.':'Group link removed.')); }
+  if(a==='setadminwa'){ const v=($('setAdminWa').value||'').trim(); return busy(el, async()=>{ if(await call('admin_set_setting', {p_key:'admin_whatsapp', p_value:v}, v?'Admin number saved.':'Admin number removed.')) loadSettings(); }); }
+  if(a==='copygroup'){ const fams=(ADM.data.families||[]).filter(f=>f.wants_group && !f.blocked && f.whatsapp && (!ADM.fc||f.country===ADM.fc) && (!ADM.fr||f.region===ADM.fr));
+    const list=fams.map(f=>`${f.name}: ${f.whatsapp}`).join('\n');
+    try{ await navigator.clipboard.writeText(list); toast(`${fams.length} number${fams.length===1?'':'s'} copied`); }catch(e){ ADM.msg=list; renderAdmin(); } return; }
   if(a==='copyphones'){ const s=(ADM.data.schools||[]).find(x=>x.id===el.dataset.sid); const list=(s&&s.teachers||[]).map(t=>`${t.name}: ${t.phone}`).join('\n');
     try{ await navigator.clipboard.writeText(list); toast('Teacher numbers copied'); }catch(e){ ADM.msg=list; renderAdmin(); } }
 }
 
 /* ---------- taps and typing on the doors, school and admin screens ---------- */
 document.addEventListener('click', e=>{
-  const t=e.target, s=t.closest('[data-s]');
+  const t=e.target, f=t.closest('[data-f]');
+  if(f){ audio(); return famAction(f.dataset.f, f); }
+  const s=t.closest('[data-s]');
   if(s){ const a=s.dataset.s; audio();
     if(a==='door-school') return openSchoolHome();
-    if(a==='door-family'){ store.mode='family'; save(); renderHome(); show('sHome'); return; }
+    if(a==='door-family'){ store.mode='family'; FAM.view='register'; FAM.err=''; save(); renderHome(); show('sHome'); if(needsFamilyStart()) loadPlaces().catch(()=>{}); return; }
     if(a==='go-admin') return openAdmin();
     if(a==='famcode') return submitFamilyCode(s);
     return schoolAction(a, s); }
   const c=t.closest('[data-cls]'); if(c && SCH.classes){ audio(); const k=SCH.classes[+c.dataset.cls]; SCH.klass=k; return store.school.role==='principal' ? openPreview(k) : openSchool('children'); }
-  const ch=t.closest('[data-child]'); if(ch){ audio(); return openChild(ch.dataset.child, ch); }
+  const ch=t.closest('[data-child]'); if(ch){ audio(); SCH.assess=null; return openChild(ch.dataset.child, ch); }
+  const rp=t.closest('[data-report]'); if(rp){ audio(); return openReport(rp.dataset.report); }
+  const so=t.closest('[data-sowl]'); if(so){ SCH.addOwl=so.dataset.sowl; const box=$('sOwlPick'); if(box){ box.innerHTML=owlPickHTML(SCH.addOwl,'data-sowl'); const f=box.querySelector(`[data-sowl="${SCH.addOwl}"]`); if(f) f.focus(); } return; }
   const ag=t.closest('[data-sage]'); if(ag){ setErr('sErr',''); SCH.addAge=+ag.dataset.sage; ag.parentNode.querySelectorAll('[data-sage]').forEach(x=>x.setAttribute('aria-pressed', String(x===ag))); return; }
   const gr=t.closest('[data-sgroup]'); if(gr){ setErr('sErr',''); SCH.addGroup=gr.dataset.sgroup; gr.parentNode.querySelectorAll('[data-sgroup]').forEach(x=>x.setAttribute('aria-pressed', String(x===gr))); return; }
   const ad=t.closest('[data-a]'); if(ad){ audio(); return adminAction(ad.dataset.a, ad); }
   if(t.closest('#switchDoors')){ store.mode=null; delete store.familyLegacy; save(); renderHome(); show('sHome'); }
 });
+document.addEventListener('change', e=>{ if(e.target.id==='afCountry'){ ADM.fc=e.target.value; ADM.fr=''; renderAdmin(); } else if(e.target.id==='afRegion'){ ADM.fr=e.target.value; renderAdmin(); } });
 document.addEventListener('input', e=>{ if(e.target.id==='sSearch'){ SCH.search=e.target.value; const r=$('kidRows'); if(r) r.innerHTML=kidRowsHTML(); } });
 document.addEventListener('keydown', e=>{
-  if(e.key!=='Enter' || !e.target.matches || !e.target.matches('#schoolBody input, #adminBody input, #famCode')) return;
-  const form=e.target.closest('.form, .inline'), go=form && form.querySelector('[data-s].btn.primary, [data-a].btn, [data-s="famcode"]');
+  if(e.key!=='Enter' || !e.target.matches || !e.target.matches('#schoolBody input, #adminBody input, #homeBody .form input:not([type=checkbox])')) return;
+  const form=e.target.closest('.form, .inline'), go=form && form.querySelector('[data-s].btn.primary, [data-f].btn.primary, [data-a].btn, [data-s="famcode"]');
   if(go){ e.preventDefault(); go.click(); }
 });
 
@@ -2430,7 +3270,7 @@ function logRound(completed){
   if(!round||round.logged||!me) return;
   round.logged=true;
   const items=round.items; if(!items.length){ round=null; return; }
-  const d=new Date(round.started), right=items.filter(i=>i.ok).length;
+  const d=new Date(round.started), right=items.filter(i=>i.ok && !i.hint).length;   // an answer found after a hint is not counted as right first time
   const rec={
     id:'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
     date:`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`, time:`${pad2(d.getHours())}:${pad2(d.getMinutes())}`,
@@ -2438,7 +3278,8 @@ function logRound(completed){
     game:GAMES[round.game].name, game_id:round.game, level:round.level,
     questions:items.length, right_first_try:right, wrong_tries:items.reduce((a,i)=>a+i.wrong,0), answers_shown:items.filter(i=>i.shown).length,
     stars:round.stars||0, passed:!!round.passed, seconds:Math.round((Date.now()-round.started)/1000), completed:!!completed,
-    sprint_score: round.game==='sprint'?right:null, device:store.device, items, synced:false
+    sprint_score: round.game==='sprint'?right:null, device:store.device,
+    hints_used: items.filter(i=>i.hint).length, stars_spent: round.spent||0, items, synced:false
   };
   if(SCH.cls){ schoolRound(rec); round=null; return; }      // school children are saved to the school database, not this device's log
   store.sessions.push(rec); if(store.sessions.length>1500) store.sessions=store.sessions.slice(-1500);
@@ -2455,7 +3296,7 @@ async function syncPending(){
 (async()=>{ try{ if(!window.claude||!window.claude.use){ dbState='off'; return; }
   const [db,dl]=await Promise.all([claude.use('db'),claude.use('downloads')]); dbRef=db; dlRef=dl; dbState=db?'on':'off';
   if(current==='sParent') renderParent(); syncPending(); }catch(e){ dbState='off'; } })();
-const CSV_COLS=['id','date','time','child','child_age','age_group','game','level','questions','right_first_try','wrong_tries','answers_shown','stars','passed','seconds','completed','sprint_score','device'];
+const CSV_COLS=['id','date','time','child','child_age','age_group','game','level','questions','right_first_try','wrong_tries','answers_shown','hints_used','stars','passed','seconds','completed','sprint_score','device'];
 function toCSV(){ const q=v=>{ if(v===null||v===undefined) return ''; const s=String(v); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
   return [CSV_COLS.join(',')].concat(store.sessions.map(r=>CSV_COLS.map(c=>q(r[c])).join(','))).join('\n'); }
 function totals(p){ const rs=store.sessions.filter(r=>r.child_id===p.id); return {rounds:rs.length, answers:rs.reduce((a,r)=>a+r.questions,0), right:rs.reduce((a,r)=>a+r.right_first_try,0), wrong:rs.reduce((a,r)=>a+r.wrong_tries,0)}; }
@@ -2466,14 +3307,14 @@ function sendHelp(){
   if(canShare()) return 'Tap <b>Send results</b> and choose Gmail or WhatsApp.';
   return 'Tap <b>Copy results message</b> and paste it into an email or WhatsApp message.';
 }
-function csvName(){ const d=new Date(); return `tiri-${store.device}-${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}.csv`; }
+function csvName(){ const d=new Date(); return `garaad-${store.device}-${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}.csv`; }
 function summaryText(){ return resultsMessage().split('\n--- Spreadsheet data')[0].trim(); }
 async function shareResults(){
   const summary=summaryText();
   try{
     const file = typeof File==='function' ? new File([toCSV()], csvName(), {type:'text/csv'}) : null;
-    if(file && navigator.canShare && navigator.canShare({files:[file]})) await navigator.share({title:'Tiri results', text:summary, files:[file]});
-    else await navigator.share({title:'Tiri results', text:resultsMessage()});
+    if(file && navigator.canShare && navigator.canShare({files:[file]})) await navigator.share({title:'Garaad results', text:summary, files:[file]});
+    else await navigator.share({title:'Garaad results', text:resultsMessage()});
     dataMsg='';
   }catch(err){ if(!(err&&err.name==='AbortError')) dataMsg='Sharing did not open. Use “Copy results message” instead.'; }
 }
@@ -2481,11 +3322,11 @@ function emailResults(){
   let body=resultsMessage();
   if(body.length>7000){ const lines=body.split('\n'); while(lines.join('\n').length>6800 && lines.length>12) lines.splice(lines.findIndex(l=>/^s[a-z0-9]+,/.test(l)),1); body=lines.join('\n')+'\n(Older rounds left out to fit the email. Use Download spreadsheet for everything.)'; }
   const names=store.profiles.map(p=>p.name).join(', ');
-  location.href=`mailto:${encodeURIComponent(store.sendTo)}?subject=${encodeURIComponent('Tiri results'+(names?' — '+names:''))}&body=${encodeURIComponent(body)}`;
+  location.href=`mailto:${encodeURIComponent(store.sendTo)}?subject=${encodeURIComponent('Garaad results'+(names?' — '+names:''))}&body=${encodeURIComponent(body)}`;
 }
 function resultsMessage(){
   const d=new Date(), today=`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
-  const lines=[`Tiri results — ${today} — device ${store.device}`,''];
+  const lines=[`Garaad results — ${today} — device ${store.device}`,''];
   store.profiles.forEach(p=>{ const t=totals(p), acc=t.answers?Math.round(100*t.right/t.answers):0;
     const lv=GROUPS[bandOf(p)].games.concat(ENGLISH.games).filter(id=>!GAMES[id].isSprint&&p.games[id]&&levelsDone(p.games[id])).map(id=>`${GAMES[id].name} ${levelsDone(p.games[id])}/10`).join(', ');
     lines.push(`${p.name} (age ${p.age}): ${t.rounds} rounds played, ${t.answers} answers, ${t.right} right first time (${acc}%), ${t.wrong} wrong tries.${lv?` Levels completed: ${lv}.`:''}`); });
@@ -2504,18 +3345,61 @@ function show(id){
   current=id; SCREENS.forEach(s=>$(s).hidden=s!==id);
   if(id!=='sPlay'){ const m=$('mascot'); if(m){ clearTimeout(mascotT); m.classList.remove('show'); } }
   $('backBtn').hidden = id==='sHome';
+  const kidScreen = !!me && ['sGames','sLevels','sPlay','sDone','sGarden'].includes(id);
+  applyTheme(kidScreen ? kidTheme(me) : ['sSchool','sAdmin','sParent'].includes(id) ? (phoneDark()?'adultdark':'adult') : (phoneDark()?'night':'savanna'));
   const mid=$('topMid');
-  if(me && ['sGames','sLevels','sPlay','sDone','sGarden'].includes(id)) mid.innerHTML=`<div class="childchip">${avatar(me)}<b>${esc(me.name)}</b><span class="starcount">★ ${starTotal(me)}</span></div>`;
-  else if(id==='sParent') mid.innerHTML=`<div class="brand">Parent area</div>`;
-  else if(id==='sAdmin') mid.innerHTML=`<div class="brand"><span class="mark">123</span>Tiri admin</div>`;
-  else if(id==='sSchool' && store.school && store.school.name) mid.innerHTML=`<div class="brand"><span class="mark">123</span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(store.school.name)}</span></div>`;
-  else mid.innerHTML=`<div class="brand"><span class="mark">123</span>Tiri</div>`;
+  if(kidScreen) renderChip();
+  else if(id==='sParent') mid.innerHTML=brandHTML('Parents');
+  else if(id==='sAdmin') mid.innerHTML=brandHTML('Admin');
+  else if(id==='sSchool' && store.school && store.school.name) mid.innerHTML=brandHTML(store.school.name);
+  else if(id==='sHome' && !store.mode) mid.innerHTML='';
+  else mid.innerHTML=brandHTML();
   if(id==='sSchool') $('backBtn').hidden = SCH.view==='task';
-  if(id==='sHome') $('backBtn').hidden = !(store.mode==='family' && !store.familyCode && !store.familyLegacy);   // the family code screen can go back to the two doors
+  if(id==='sHome') $('backBtn').hidden = !needsFamilyStart();   // the family screens can go back to the two doors
   if(id==='sPlay') document.querySelector('.app').style.setProperty('--acc', GAMES[game].acc);
 }
+/* ---------- themes: each child picks Savanna sun, Ocean blue or Night sky ---------- */
+const THEMES = {
+  savanna:{name:'Savanna sun', note:'Warm and sunny', bg:'#FFF7E8', owl:'#0E8C7E', pupil:'#0A5E55', gold:'#F5B400', meta:'#FFF7E8'},
+  ocean:{name:'Ocean blue', note:'Cool and calm', bg:'#F2F6FF', owl:'#3657E0', pupil:'#172041', gold:'#FFB800', meta:'#F2F6FF'},
+  night:{name:'Night sky', note:'For evening play', bg:'#1E2257', owl:'#8E7CFF', pupil:'#1E2257', gold:'#FFC93C', meta:'#1E2257'}
+};
+const DARKQ = window.matchMedia ? matchMedia('(prefers-color-scheme: dark)') : null;
+const phoneDark = () => !!(DARKQ && DARKQ.matches);
+/* a theme the child picked always wins; otherwise Night sky when the phone is in dark mode */
+const kidTheme = p => (p.themeSet || (p.theme && p.theme!=='savanna')) ? (THEMES[p.theme]?p.theme:'savanna') : (phoneDark()?'night':'savanna');
+function applyTheme(t){
+  if(t!=='adult' && t!=='adultdark' && !THEMES[t]) t='savanna';
+  document.body.dataset.theme=t;
+  const m=document.querySelector('meta[name="theme-color"]'); if(m) m.content = t==='adult' ? '#F5F6F5' : t==='adultdark' ? '#15191A' : THEMES[t].meta;
+}
+if(DARKQ){ const re=()=>{ try{ show(current); }catch(e){} }; DARKQ.addEventListener ? DARKQ.addEventListener('change', re) : DARKQ.addListener(re); }
+const ICON_PALETTE='<svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.6-.8 1.6-1.6 0-1.3-1.1-1.5-1.1-2.6 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4-4-7.2-9-7.2z"/><circle cx="7.5" cy="11" r="1.1"/><circle cx="10.5" cy="7" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/></svg>';
+function renderChip(){
+  if(!me) return;
+  $('topMid').innerHTML=`<div class="childchip">${avatar(me)}<b>${esc(me.name)}</b><span class="starcount" aria-label="${starBalance(me)} stars">${ICON_STAR}${starBalance(me)}</span>${current==='sGames'?`<button class="ibtn paletteBtn" id="themeBtn" aria-label="Change colours">${ICON_PALETTE}</button>`:''}</div>`;
+}
+function openThemeSheet(){
+  closeSheet();
+  const cur=kidTheme(me), w=document.createElement('div'); w.className='sheetwrap'; w.id='sheet';
+  w.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="Pick your colours"><span class="grab"></span>
+    <div style="display:flex;align-items:center;justify-content:space-between"><h2>Pick your colours</h2><button class="ibtn" id="sheetX" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    ${Object.keys(THEMES).map(k=>{ const t=THEMES[k]; return `<button class="themeopt" data-theme-pick="${k}" aria-pressed="${k===cur}"><span class="tp" style="background:${t.bg};--owl:${t.owl};--owl-pupil:${t.pupil};--owl-gold:${t.gold}">${owlSVG('happy')}</span><span><b>${t.name}</b><small>${t.note}</small></span><span class="tick"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span></button>`; }).join('')}
+  </div>`;
+  document.body.appendChild(w);
+  w.addEventListener('click', e=>{ if(e.target===w || e.target.closest('#sheetX')) closeSheet(); });
+  setTimeout(()=>{ const b=w.querySelector('[aria-pressed="true"]'); if(b) b.focus(); },50);
+}
+function closeSheet(){ const s=$('sheet'); if(s) s.remove(); }
+function pickTheme(t){
+  if(!me || !THEMES[t]) return;
+  me.theme=t; me.themeSet=true; me.dirty=true; save(); applyTheme(t); closeSheet(); renderChip();
+  if(SCH.child && !SCH.preview){ obPush('update_child', {p_child_id:SCH.child.id, p_theme:t}); }
+  say(`${THEMES[t].name}!`);
+}
 function goBack(){
-  if(current==='sHome'){ store.mode=null; save(); renderHome(); show('sHome'); return; }
+  if($('sheet')){ closeSheet(); return; }
+  if(current==='sHome'){ if(needsFamilyStart() && FAM.view!=='register'){ FAM.view=FAM.view==='newpin'?'login':'register'; FAM.err=''; } else store.mode=null; save(); renderHome(); show('sHome'); return; }
   if(current==='sSchool') return schoolBack();
   if(current==='sAdmin') return adminBack();
   if(current==='sGames' && SCH.cls){ logRound(false); stopSprint(); return leaveChild(); }
@@ -2535,14 +3419,17 @@ function installCard(){
   return '';
 }
 const aboutLinks = () => `<p class="aboutlinks"><a href="about.html">About Garaad</a> · <a href="privacy.html">Privacy</a></p>`;
+const needsFamilyStart = () => store.mode==='family' && !store.familyCode && !store.familyToken && !store.familyLegacy;
 function renderHome(){
   if(!store.mode){ $('homeBody').innerHTML = doorsHTML() + aboutLinks(); return; }
-  if(store.mode==='family' && !store.familyCode && !store.familyLegacy){ $('homeBody').innerHTML = familyCodeHTML() + aboutLinks(); setTimeout(()=>{ const i=$('famCode'); if(i) i.focus(); },50); return; }
+  if(needsFamilyStart() || (store.mode==='family' && FAM.view==='welcome' && FAM.done)){ $('homeBody').innerHTML = familyStartHTML() + aboutLinks();
+    if(!FAM.data) loadPlaces().then(()=>{ if(current==='sHome' && needsFamilyStart() && FAM.view!=='code'){ famSnap(); renderHome(); } }).catch(()=>{ if(current==='sHome' && needsFamilyStart()) famErr('The country list did not load. Check the internet and try again.'); });
+    if(FAM.view==='code') setTimeout(()=>{ const i=$('famCode'); if(i) i.focus(); },50); return; }
   const ps=store.profiles;
-  $('homeBody').innerHTML = (ps.length ? `<div class="head"><h1>Who is playing?</h1><p>Tap your name to start.</p></div>
-    <div class="kids">${ps.map(p=>`<button class="card kid tap" data-kid="${p.id}">${avatar(p,true)}<b>${esc(p.name)}</b><span>Age ${p.age} · ★ ${starTotal(p)}</span></button>`).join('')}
+  $('homeBody').innerHTML = (ps.length ? `<div class="head"><h1>Who's learning today?</h1><p>Tap your owl to start.</p></div>
+    <div class="kids">${ps.map(p=>`<button class="card kid tap" data-kid="${p.id}">${avatar(p,true)}<b>${esc(p.name)}</b><span style="display:inline-flex;align-items:center;gap:5px">Age ${p.age} · ${ICON_STAR}${starBalance(p)}</span></button>`).join('')}
     <button class="card kid add tap" id="addKid"><span class="plus">+</span>Add a child</button></div>`
-  : `<div class="card empty"><div class="big">👋</div><h1 style="font-size:24px">Welcome to Tiri</h1><p>Maths games for children aged 3 to 12. Add each child with their name and age, and the right games appear for them.</p><button class="btn primary" id="addKid">Add a child</button></div>`)
+  : `<div class="card empty"><div class="cele" style="width:120px;animation:none">${owlSVG('happy')}</div><h1 style="font-size:28px">Welcome to Garaad</h1><p>Maths and English games for children aged 3 to 12. Add each child with their name, age and owl, and the right games appear for them.</p><button class="btn primary" id="addKid">Add a child</button></div>`)
   + installCard()
   + `<div class="parentlink"><button class="btn small hold" id="parentBtn"><span class="fill"></span>${ICON_LOCK.replace('<svg','<svg width="18" height="18" style="stroke:currentColor;fill:none;stroke-width:2.2"')} Parent area</button><p class="hint">Press and hold to open</p></div>`;
   $('homeBody').insertAdjacentHTML('beforeend', aboutLinks());
@@ -2550,9 +3437,14 @@ function renderHome(){
 }
 
 /* ---------- add / edit child ---------- */
-let editing=null, edAge=null, editReturn='sHome';
+let editing=null, edAge=null, edOwl=null, editReturn='sHome';
+function owlPickHTML(sel, attr){
+  return OWL_KEYS.map(k=>{ const [c,a]=k.split('-'); return `<button type="button" class="owlpick" ${attr}="${k}" role="radio" aria-checked="${k===sel}" aria-label="${c} owl with ${a==='glasses'?'glasses':a==='cap'?'a school cap':'a '+a}" style="${owlStyle(k)};background:var(--av-bg)">${owlAvatarSVG(k)}</button>`; }).join('');
+}
+function freeOwl(){ const used=new Set(store.profiles.map(p=>p.avatar)); return OWL_KEYS.find(k=>!used.has(k)) || OWL_KEYS[0]; }
+function renderOwls(){ $('owlPick').innerHTML=owlPickHTML(edOwl, 'data-owl'); }
 function openEditor(p,from){
-  editing=p||null; editReturn=from||'sHome'; edAge=p?p.age:null;
+  editing=p||null; editReturn=from||'sHome'; edAge=p?p.age:null; edOwl=p?owlKey(p):freeOwl(); renderOwls();
   $('editTitle').textContent=p?`Edit ${p.name}`:'Add a child';
   $('fName').value=p?p.name:''; $('fErr').hidden=true; $('fRemove').hidden=!p; $('fRemove').textContent='Remove child'; removeArmed=false;
   const askFam = LIVE.url && STANDALONE && !store.family;
@@ -2570,8 +3462,8 @@ function saveChild(){
   const err=(!$('famWrap').hidden && !fam)?'Type your family name.':!name?'Type the child’s name.':!edAge?'Pick the child’s age.':'';
   if(err){ $('fErr').textContent=err; $('fErr').hidden=false; return; }
   if(!$('famWrap').hidden){ store.family=fam; }
-  if(editing){ editing.name=name; editing.age=edAge; editing.dirty=true; }
-  else store.profiles.push({id:'k'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), name, age:edAge, color:AVCOL[store.profiles.length%AVCOL.length], games:{}, best:{}, last:0, dirty:true});
+  if(editing){ editing.name=name; editing.age=edAge; editing.avatar=edOwl; editing.dirty=true; }
+  else store.profiles.push({id:'k'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), name, age:edAge, avatar:edOwl, theme:'savanna', color:AVCOL[store.profiles.length%AVCOL.length], games:{}, best:{}, last:0, dirty:true});
   save(); liveSync(); editReturn==='sParent'?openParent():goHome();
 }
 
@@ -2581,7 +3473,7 @@ function openGames(){
   const grp=G(), eng=subject==='english';
   $('gamesTitle').textContent=`Hi ${me.name}!`;
   practice=null;
-  $('subjTabs').innerHTML=`<button class="tap${eng?'':' on'}" data-subject="maths" aria-pressed="${!eng}">🔢 Maths</button><button class="tap${eng?' on':''}" data-subject="english" aria-pressed="${eng}">🔤 English</button>`;
+  $('subjTabs').innerHTML=`<button class="tap${eng?'':' on'}" data-subject="maths" aria-pressed="${!eng}"><svg viewBox="0 0 24 24"><path d="M7 4v7M3.5 7.5h7M14 17.5h7M4 16l6 6M10 16l-6 6M17.5 3.5v0M17.5 11v0M14 7.5h7"/></svg>Maths</button><button class="tap${eng?' on':''}" data-subject="english" aria-pressed="${eng}"><svg viewBox="0 0 24 24"><path d="M4 19l5-14 5 14M6 14h6M15 9h5v10M15 14h5"/></svg>English</button>`;
   $('gamesSub').innerHTML=`<span class="tag">${grp.label}</span>&nbsp; ${eng?'Listen, speak, read and write.':'Start today\'s practice, or pick a game.'}`;
   const due=dueReviews().length, days=practiceDays(me), doneToday=(me.practiceDays||[]).includes(todayStr());
   const card=`<button class="card practice tap" id="practiceBtn"><span class="pi">${doneToday?'✅':'🌟'}</span><span class="pt"><b>Today's ${eng?'English ':''}practice</b><small>${doneToday?'Done today. You can play it again.':'About 10 minutes · games picked for you'}</small>${days?`<small class="streak">⭐ ${days} day${days>1?'s':''} in a row</small>`:''}</span><span class="btn primary small go">${doneToday?'Again':'Start'}</span></button>`;
@@ -2624,7 +3516,7 @@ function openLevels(id){
   $('ltop').innerHTML=`<span class="gicon" style="--acc:${g.acc}">${g.icon}</span><div><h1>${g.name}</h1><p>${g.learn}</p></div>`;
   $('levels').innerHTML=Array.from({length:capOf(id)},(_,i)=>{ const n=i+1, locked=n>s.unlocked, st=s.stars[n]||0, cur=n===s.unlocked&&!st;
     return locked ? `<button class="lvl locked" disabled aria-label="Level ${n} locked">${ICON_LOCK}<span style="font-size:13px">${n}</span></button>`
-                  : `<button class="card lvl tap${cur?' current':''}" data-level="${n}" aria-label="Level ${n}">${n}${starsHTML(st)}</button>`; }).join('');
+                  : `<button class="card lvl tap${cur?' current':''}${st?' done':''}" data-level="${n}" aria-label="Level ${n}${st?`, ${st} star${st>1?'s':''}`:cur?', play now':''}">${n}${starsHTML(st)}</button>`; }).join('');
   const per=G().perLevel, need=Math.ceil(per*0.5);
   $('legend').textContent = bandOf(me)==='little' ? `Each level has ${per} questions. Finish a level to open the next one.` : `Each level has ${per} questions. Get at least ${need} right first time to open the next level. Get them all right for 3 stars.`;
   if(G().voice) say(`${g.name}. Pick a level.`);
@@ -2707,6 +3599,46 @@ function renderQ(){
   $('stage').innerHTML = (q.isReview?'<div class="revtag">🔁 One to try again</div>':'') + q.html + (q.pad ? padHTML(q.decimal) : '');
   typed=''; tries=0; locked=false;
   if(q.mount) q.mount($('stage'));
+  setOwl('think'); renderHint();
+}
+/* the owl beside the question: thinking, cheering on a right answer, a gentle "try again" face on a wrong one */
+let owlT=null;
+function setOwl(mood, back){
+  const el=$('pOwl'); if(!el) return;
+  clearTimeout(owlT); el.innerHTML=owlSVG(mood); el.classList.remove('bounce');
+  if(mood==='cheer'){ void el.offsetWidth; el.classList.add('bounce'); }
+  if(back) owlT=setTimeout(()=>{ if(current==='sPlay' && !locked) el.innerHTML=owlSVG('think'); }, back);
+}
+/* hints bought with stars: tap choices lose some wrong answers; typed answers get a worked first step */
+function hintKind(){
+  if(!q || placing || sprint || q.seq) return null;
+  if(q.pad) return (q.hint||maskHint(q)) ? 'pad' : null;
+  const opts=[...$('stage').querySelectorAll('[data-choice]')];
+  return opts.length>=3 && opts.some(b=>b.dataset.choice===q.answer) ? 'choice' : null;
+}
+function renderHint(){
+  const row=$('hintRow'); if(!row) return;
+  const kind=hintKind();
+  if(!kind || !me){ row.innerHTML=''; return; }
+  if(q.hinted){ row.innerHTML=`<p class="hintnote">Hint used${kind==='choice'?' · some wrong answers removed':''}</p>`; return; }
+  const free=SCH.preview, ok=free || starBalance(me)>=HINT_COST;
+  row.innerHTML=`<button class="hintbtn" id="hintBtn" ${ok?'':'disabled'} aria-label="${ok?`Get a hint for ${HINT_COST} stars`:`A hint needs ${HINT_COST} stars`}"><svg class="bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>${ok?'Get a hint':'Hint'}<span class="cost">${free?'free':HINT_COST}${free?'':ICON_STAR}</span></button>`;
+}
+function useHint(){
+  const kind=hintKind();
+  if(!kind || q.hinted || locked) return;
+  if(!SCH.preview){ if(starBalance(me)<HINT_COST) return; me.spent=(me.spent||0)+HINT_COST; if(round) round.spent=(round.spent||0)+HINT_COST; }
+  q.hinted=true; save();
+  if(kind==='choice'){
+    const wrong=shuffle([...$('stage').querySelectorAll('[data-choice]')].filter(b=>b.dataset.choice!==q.answer && !b.classList.contains('wrong')));
+    wrong.slice(0, Math.max(1, wrong.length-1)).forEach(b=>{ b.classList.add('hinted'); b.setAttribute('aria-disabled','true'); });
+    setOwl('happy');
+    say(wrong.length>1?'Let me help. Some answers are gone. Look again.':'Let me help. One answer is gone. Look again.');
+  } else {
+    const h=q.hint||maskHint(q); if(h){ showWhy(h.html); say(['Here is a hint.', h.say]); }
+    setOwl('happy');
+  }
+  renderHint(); renderChip();
 }
 function showWhy(html){
   const st=$('stage'); let w=st.querySelector('.why');
@@ -2735,7 +3667,7 @@ function submitTyped(){
   if(sprint){ sprintAnswer(isRight()); return; }
   const s=$('slot');
   if(isRight()){ locked=true; s.classList.add('ok'); ding(); burst(s); celebrateCorrect(); completeQ(tries===0, false, async()=>{ if(G().voice) await say(`Correct! ${speakify(q.explain)}.`); else await wait(700); }); return; }
-  tries++; boop(); s.classList.remove('shake'); void s.offsetWidth; s.classList.add('shake'); typed=''; setTimeout(updateSlot,300);
+  tries++; boop(); setOwl('oops', 1600); s.classList.remove('shake'); void s.offsetWidth; s.classList.add('shake'); typed=''; setTimeout(updateSlot,300);
   if(tries===1){ const h=q.hint||maskHint(q); if(h){ showWhy(h.html); if(G().voice) say(['Not quite. Here is a hint.', h.say]); return; } }
   if(tries>=2){ locked=true;
     setTimeout(async()=>{ s.textContent=q.answer; s.classList.remove('empty'); s.classList.add('reveal'); $('pText').textContent=q.explain;
@@ -2762,7 +3694,7 @@ function onChoice(btn){
   if(btn.dataset.choice===q.answer){ locked=true; btn.classList.add('right'); ding(); burst(btn); celebrateCorrect();
     completeQ(tries===0,false, q.after ? ()=>q.after($('stage')) : ()=>say(`${pick(['Well done!','Great!','Yes!'])} ${q.praise||''}`)); }
   else {
-    tries++; btn.classList.add('wrong'); boop();
+    tries++; btn.classList.add('wrong'); boop(); setOwl('oops', 1600);
     const w = q.why ? q.why($('stage'), btn.dataset.choice, btn) : null;
     if(w && w.html) showWhy(w.html);
     if(tries>=2){ const c=[...$('stage').querySelectorAll('[data-choice]')].find(b=>b.dataset.choice===q.answer); if(c) c.classList.add('pulse'); }
@@ -2774,7 +3706,7 @@ async function completeQ(firstTry, shown, celebrate){
   if(celebrate) await celebrate();
   const s=gp(me,q.gid); s.tries++; if(firstTry) s.right++; s.last=Date.now();
   if(firstTry){ if(q.isReview) clearReview(q); if(q.word) learnWord(q.word); } else if(!q.noReview) addReview(q);
-  if(round) round.items.push({game:q.gid, answer:q.answer, ok:!!firstTry, wrong:tries, shown:!!shown, review:!!q.isReview});
+  if(round) round.items.push({game:q.gid, answer:q.answer, ok:!!firstTry, wrong:tries, shown:!!shown, review:!!q.isReview, hint:!!q.hinted});
   save(); qi++; setBar(); await wait(350); nextQ();
 }
 function practiceButtons(){
@@ -2852,7 +3784,7 @@ function placeQ(){
 function placeAnswer(ok, btn){
   locked=true;
   const pos=placing.pos;
-  placing.hist.push({pos, ok}); placing.n++;
+  placing.hist.push({pos, ok, gid:q.gid}); placing.n++;
   if(round) round.items.push({game:q.gid, answer:q.answer, ok, wrong:ok?0:1, shown:false});
   if(ok){ ding(); if(btn) btn.classList.add('right'); else { const s=$('slot'); if(s) s.classList.add('ok'); } riseStars(8); }
   else tick();
@@ -2959,10 +3891,10 @@ function renderParent(){
       <p><span class="status ${liveState==='offline'?'bad':'on'}"><i></i>${liveState==='offline'?`No internet right now. ${livePending()} item${livePending()===1?'':'s'} will be sent when it returns.`:livePending()?'Sending…':`Up to date${liveLast?' · last sent '+new Date(liveLast).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):''}`}</span></p>
       <label class="label" for="pFamily" style="font-size:14px">Family name</label>
       <input class="input" id="pFamily" maxlength="30" value="${esc(store.family||'')}" placeholder="For example, Ahmed family" style="font-size:16px;padding:10px 12px">
-      <p>Each child's name and age, and their game results, are shared with the Tiri organiser so progress can be followed.</p>
+      <p>Each child's name and age, and their game results, are shared with the Garaad organiser so progress can be followed.</p>
     </div>`:''}
     <div class="card panel"><h3>This device</h3>
-      <p>Used by a family${store.familyCode?` · family code <b>${esc(store.familyCode)}</b>`:''}. Using Tiri at school instead? Switch this device to School.</p>
+      <p>Used by a family${store.familyAccount&&store.familyAccount.whatsapp?` · account <b>${esc(store.familyAccount.whatsapp)}</b>`:store.familyCode?` · family code <b>${esc(store.familyCode)}</b>`:''}. Using Garaad at school instead? Switch this device to School.</p>
       <div class="btns"><button class="btn small" id="switchDoors">Switch to School</button></div>
     </div>
     <div class="card panel"><h3>Results log</h3>
@@ -2980,6 +3912,10 @@ function renderParent(){
 /* ================= events ================= */
 document.addEventListener('click', async e=>{
   const t=e.target;
+  if(t.closest('#themeBtn')){ audio(); openThemeSheet(); return; }
+  const tpk=t.closest('[data-theme-pick]'); if(tpk){ audio(); pickTheme(tpk.dataset.themePick); return; }
+  const ow=t.closest('[data-owl]'); if(ow){ edOwl=ow.dataset.owl; renderOwls(); const b=$('owlPick').querySelector(`[data-owl="${edOwl}"]`); if(b) b.focus(); return; }
+  if(t.closest('#hintBtn')){ audio(); useHint(); return; }
   if(t.closest('#addKid')||t.closest('#pAdd')){ openEditor(null, current==='sParent'?'sParent':'sHome'); return; }
   const kid=t.closest('[data-kid]'); if(kid){ audio(); me=store.profiles.find(p=>p.id===kid.dataset.kid); subject=me.subject==='english'?'english':'maths';
     const fresh=!me.placement && !me.placementSkipped && !Object.values(me.games||{}).some(g=>g.tries>0);
@@ -3013,7 +3949,7 @@ document.addEventListener('click', async e=>{
   if(t.closest('#emailRes')){ emailResults(); return; }
   if(t.closest('#dlCsv')&&!dlRef&&STANDALONE){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([toCSV()],{type:'text/csv'})); a.download=csvName(); document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1000); return; }
   if(t.closest('#dlCsv')&&dlRef){ const d=new Date();
-    try{ await dlRef.save({filename:`tiri-${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}.csv`,data:toCSV()}); dataMsg=''; }
+    try{ await dlRef.save({filename:`garaad-${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}.csv`,data:toCSV()}); dataMsg=''; }
     catch(err){ dataMsg=err&&err.code==='declined'?'':'Download is not available here. Use “Copy spreadsheet data” instead.'; }
     renderParent(); return; }
 });
@@ -3045,14 +3981,47 @@ function wireHold(){
 }
 try{ speechSynthesis.getVoices(); }catch(e){}
 
-window.__cwm={GAMES,GROUPS,makeQ,maskHint,cur:()=>q,placementEstimate,placementResult,LADDER,START_BY_AGE};
+window.__cwm={GAMES,GROUPS,makeQ,maskHint,journeyOf,journeySVG,journeyHead,cur:()=>q,placementEstimate,placementResult,LADDER,START_BY_AGE};
 /* ---------- installable app (only when opened from its own web address) ---------- */
 let deferredInstall=null;
 const INSTALLED = (()=>{ try{ return matchMedia('(display-mode: standalone)').matches || navigator.standalone===true; }catch(e){ return false; } })();
 const IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); deferredInstall=e; if(current==='sHome') renderHome(); });
-window.addEventListener('appinstalled', ()=>{ deferredInstall=null; toast('Installed. Look for Tiri on your home screen.'); if(current==='sHome') renderHome(); });
+window.addEventListener('appinstalled', ()=>{ deferredInstall=null; toast('Installed. Look for Garaad on your home screen.'); if(current==='sHome') renderHome(); });
 if(STANDALONE && 'serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){ try{ navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){} }
+/* ---------- splash: three short screens the first time Garaad opens on a phone ---------- */
+const SPLASH_SECS=[6,7];   // seconds on screens 1 and 2; screen 3 waits for "Let's start"
+let spI=0, spT=null;
+function splashHTML(i){
+  const star=(s,css,fill)=>`<svg class="sp-star" style="${css}" width="${s}" height="${s}" viewBox="0 0 24 24" aria-hidden="true"><polygon fill="${fill||'#F28C28'}" points="12,2 14.6,8.6 21.5,9 16.2,13.4 18,20.2 12,16.4 6,20.2 7.8,13.4 2.5,9 9.4,8.6"/></svg>`;
+  const dots=`<div class="sp-dots" aria-label="Screen ${i+1} of 3">${[0,1,2].map(k=>k===i?`<span class="on${i===2?' full':''}">${i<2?`<i style="--d:${SPLASH_SECS[i]}s"></i>`:''}</span>`:`<span class="${k<i?'full':''}"></span>`).join('')}</div>`;
+  const back=i?`<button class="sp-back" id="spBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>`:'';
+  if(i===0) return `<div class="sp-top">${back}</div><div class="sp-art"><div class="sp-circle" style="--owl:#0E8C7E;--owl-pupil:#0A5E55;--owl-gold:#F5B400">${owlSVG('happy')}</div>${star(34,'top:8%;right:10%')}${star(22,'bottom:14%;left:6%','#F5B400')}${star(16,'top:20%;left:12%')}</div>
+    <div class="sp-text"><h1 class="sp-title">Hi, I'm Garaad</h1><p class="sp-sub">A wise owl who loves to learn with you.</p></div>${dots}<button class="sp-go" id="spNext">Next</button>`;
+  if(i===1) return `<div class="sp-top">${back}</div><div class="sp-art"><div style="width:min(190px,45vw);--owl:#FFFFFF;--owl-pupil:#0A5E55;--owl-gold:#F5B400">${owlSVG('cheer').replace(/stroke="#fff"/g,'stroke="#0E8C7E"').replace(/fill="#fff"(?= ?\/>)/g,'fill="#0E8C7E"')}</div>
+      <div style="--owl:#F5B400;--wm-pupil:#0A5E55;--owl-gold:#F5B400">${wordmarkHTML()}</div>${star(30,'top:10%;left:6%','#F5B400')}${star(20,'top:22%;right:9%')}</div>
+    <div class="sp-text"><h1 class="sp-title">Unleash your garaad</h1><p class="sp-sub">In Somali, garaad means wisdom. Every child has it.</p></div>${dots}<button class="sp-go" id="spNext">Next</button>`;
+  const feat=(bg,col,icon,t,s)=>`<div class="sp-feat"><span class="fi" style="background:${bg};color:${col}">${icon}</span><span><b>${t}</b><small>${s}</small></span></div>`;
+  return `<div class="sp-top">${back}</div><div class="sp-art" style="gap:28px"><div style="display:flex;flex-direction:column;align-items:center;gap:14px"><div style="width:104px;--owl:#0E8C7E;--owl-pupil:#0A5E55;--owl-gold:#F5B400">${owlSVG('think')}</div><h1 class="sp-title">Learn by playing</h1></div>
+    <div class="sp-feats">${feat('#E0F4F1','#0A6F64','<svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5V5.5M9 8h7M9 12h5"/></svg>','Maths and English','Games for ages 3 to 12')}
+      ${feat('#FDE9B8','#7A5200','<svg viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>','Read aloud','No reading needed to start')}
+      ${feat('#FCE3D0','#9A4A10','<svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>','Earn stars','Works offline, at home or school')}</div></div>
+    ${dots}<button class="sp-go teal" id="spStart">Let's start</button>`;
+}
+function showSplash(i){
+  spI=i||0; clearTimeout(spT);
+  let el=$('splash'); if(!el){ el=document.createElement('div'); el.id='splash'; el.className='splash'; el.setAttribute('role','dialog'); el.setAttribute('aria-modal','true'); el.setAttribute('aria-label','Welcome to Garaad'); document.body.appendChild(el); }
+  el.className='splash'+(spI===1?' dark':''); el.innerHTML=splashHTML(spI);
+  if(spI<2) spT=setTimeout(()=>showSplash(spI+1), SPLASH_SECS[spI]*1000);
+}
+function endSplash(){ clearTimeout(spT); const el=$('splash'); if(el) el.remove(); store.splashSeen=true; save(); }
+document.addEventListener('click', e=>{
+  if(!$('splash')) return;
+  if(e.target.closest('#spNext')){ audio(); showSplash(spI+1); }
+  else if(e.target.closest('#spBack')){ showSplash(Math.max(0,spI-1)); }
+  else if(e.target.closest('#spStart')){ audio(); endSplash(); }
+});
+
 /* ---------- new home: garaad.app ----------
    The same page runs at the old address (amousamf.github.io/Tiri) and at garaad.app.
    Browser storage belongs to one address, so the old address packs the phone's games into the
@@ -3157,6 +4126,7 @@ window.__move={packMove,unpackMove,mergeMove};
   const moved = AT_OLD_HOME ? null : await moveIn();
   load(); renderMute();
   if(store.mode==='school') openSchoolHome(); else { renderHome(); show('sHome'); }
+  if(!store.splashSeen && !store.mode && !store.profiles.length) showSplash(0);   // new phones only
   if(moved==='ok' && hasData(store)) toast('Welcome to Garaad! Your games came with you.');
   if(moved==='failed'){                               // ask the old address once more (once per tab)
     let tried=false; try{ tried=sessionStorage.getItem('garaad.moveRetry')==='1'; sessionStorage.setItem('garaad.moveRetry','1'); }catch(e){ tried=true; }
@@ -3164,6 +4134,7 @@ window.__move={packMove,unpackMove,mergeMove};
     toast('Your games did not come over. Ask for help, they are still safe at the old link.');
   }
   setTimeout(liveSync, 1500);
+  setTimeout(loadSettings, 2500);
 })();
 })();
 </script>

@@ -1,0 +1,2 @@
+Baloo 2 (Ek Type) and Lexend (Bonnie Shaver-Troup, Thomas Jockin and others) are licensed under the SIL Open Font License 1.1: https://openfontlicense.org
+Files from the Fontsource packages @fontsource/baloo-2 and @fontsource/lexend (latin subset).
