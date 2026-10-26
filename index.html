@@ -483,6 +483,13 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .inline .input{flex:1;min-width:140px;font-size:16px;padding:10px 12px}
 .tlist{display:flex;flex-direction:column}
 .trow{display:flex;flex-direction:column;gap:8px;padding:12px 0;border-top:1px solid var(--line)}
+/* manage school (principal) */
+.satabs{margin-top:4px}
+.saclass .chip{cursor:pointer;font:inherit;font-size:13px;font-weight:600}
+.saclass .chip[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
+.trow.off b{color:var(--muted)}
+.saedit{display:flex;flex-direction:column;gap:6px;width:100%;min-width:0;box-sizing:border-box}
+.saedit .input{width:100%;max-width:100%;box-sizing:border-box;margin:0}
 .trow small{display:block;color:var(--muted);font-size:13px;margin-top:3px}
 .trow a{color:var(--primary)}
 @media (max-width:420px){ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} }
@@ -692,13 +699,6 @@ body[data-theme="night"] .readq{color:var(--cta)}
 @media (prefers-color-scheme: dark){ :root{ color-scheme:light dark; } }
 @media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation:none!important;transition:none!important} }
 
-/* manage school (principal) */
-.satabs{margin-top:4px}
-.saclass .chip{cursor:pointer;font:inherit;font-size:13px;font-weight:600}
-.saclass .chip[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
-.trow.off b{color:var(--muted)}
-.saedit{display:flex;flex-direction:column;gap:6px;width:100%;min-width:0;box-sizing:border-box}
-.saedit .input{width:100%;max-width:100%;box-sizing:border-box;margin:0}
 </style>
 
 <div class="app">
