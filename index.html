@@ -483,6 +483,13 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .inline .input{flex:1;min-width:140px;font-size:16px;padding:10px 12px}
 .tlist{display:flex;flex-direction:column}
 .trow{display:flex;flex-direction:column;gap:8px;padding:12px 0;border-top:1px solid var(--line)}
+/* manage school (principal) */
+.satabs{margin-top:4px}
+.saclass .chip{cursor:pointer;font:inherit;font-size:13px;font-weight:600}
+.saclass .chip[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
+.trow.off b{color:var(--muted)}
+.saedit{display:flex;flex-direction:column;gap:6px;width:100%;min-width:0;box-sizing:border-box}
+.saedit .input{width:100%;max-width:100%;box-sizing:border-box;margin:0}
 .trow small{display:block;color:var(--muted);font-size:13px;margin-top:3px}
 .trow a{color:var(--primary)}
 @media (max-width:420px){ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} }
@@ -691,6 +698,10 @@ body[data-theme="night"] .readq{color:var(--cta)}
    do not repaint it, but it keeps the same colours. Form controls stay light. */
 @media (prefers-color-scheme: dark){ :root{ color-scheme:light dark; } }
 @media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation:none!important;transition:none!important} }
+
+/* example before level 1, and an answer shown after two wrong tries */
+.demotag{display:flex;align-items:center;justify-content:space-between;gap:12px;width:min(560px,100%);box-sizing:border-box;background:var(--primary-soft);color:var(--primary-ink);border-radius:14px;padding:6px 8px 6px 14px;font-weight:700}
+.opt.shown{border-color:var(--gold)!important;background:#FFF6DB!important}
 </style>
 
 <div class="app">
@@ -896,8 +907,11 @@ function speakOne(text,rate,token){
   });
 }
 /* say(text) or say([part, part, …]) — parts are spoken one by one with a short pause between them */
+let revealing=false;   // true while showing an answer the child did not get: no "Yes!" or "Well done!"
+const PRAISE_START=/^\s*(yes|well done|great|correct|brilliant|good job|you did it)[^.!?]*[.!?]\s*/i;
 async function say(parts,opts){
   opts=opts||{}; parts=Array.isArray(parts)?parts:[parts];
+  if(revealing) parts=parts.map(p=>typeof p==='string'?p.replace(PRAISE_START,''):p).filter(p=>p!=='');
   const token=++sayToken;
   if(muted||!('speechSynthesis' in window)){ await wait(opts.silentMs||500); return; }
   try{ speechSynthesis.cancel(); }catch(e){}
@@ -2291,6 +2305,9 @@ const tokenOf = () => store.school && store.school.token;
 const phoneDigits = v => { let d=String(v||'').replace(/\D/g,''); if(d.startsWith('252')) d=d.slice(3); return d.replace(/^0+/,''); };
 const hashColor = s => { let h=0; for(const ch of String(s)) h=(h*31+ch.charCodeAt(0))|0; return AVCOL[Math.abs(h)%AVCOL.length]; };
 const SERR = {
+  teacher_removed:'This number was removed from the school. Ask the principal or the Garaad admin.',
+  principal_only:'Only the principal can do this.', not_in_school:'That is not in your school.',
+  not_yourself:'You cannot change your own account here.', principal_protected:'Only the Garaad admin can change a principal.',
   school_not_found:'That school code is not right. Check it with the school or the admin.',
   bad_phone:'Type the phone number after +252, for example 61 234 5678.',
   teacher_not_found:'This number is not registered at this school yet. Tap “New teacher” to register.',
@@ -2509,7 +2526,7 @@ function doorsHTML(){
     <div class="foot"><span class="note">Admin?</span><button class="linkbtn" data-s="go-admin">Open the admin area</button></div>`;
 }
 /* ---------- free family accounts: register with WhatsApp, log in on another phone, or use an old family code ---------- */
-const FAM = { view:'register', data:null, country:'SO', region:'', regionTyped:'', name:'', loc:'', phone:'', pin:'', group:false, err:'', done:null };
+const FAM = { view:'register', data:null, country:'', region:'', regionTyped:'', name:'', loc:'', phone:'', pin:'', group:false, err:'', done:null };
 let placesP=null;
 function loadPlaces(){
   if(!placesP) placesP = fetch('countries-regions.json').then(r=>{ if(!r.ok) throw new Error('places'); return r.json(); })
@@ -2536,10 +2553,11 @@ function famSnap(){
 function famCountryField(){
   const c=countryOf(FAM.country);
   return `<div class="fld"><span class="label" id="lCountry">Country</span>
-    <button type="button" class="input pickbtn" data-f="pick-country" aria-labelledby="lCountry">${c?`<span>${esc(c.name)}</span>`:`<span class="ph">${FAM.data?'Choose your country':'Somalia'}</span>`}${ICON_DOWN}</button></div>`;
+    <button type="button" class="input pickbtn" data-f="pick-country" aria-labelledby="lCountry">${c?`<span>${esc(c.name)}</span>`:`<span class="ph">Choose your country</span>`}${ICON_DOWN}</button></div>`;
 }
 function famRegionField(){
   if(!FAM.data) return `<div class="fld"><span class="label">Region</span><button type="button" class="input pickbtn" disabled><span class="ph">Loading the list…</span>${ICON_DOWN}</button></div>`;
+  if(!FAM.country) return `<div class="fld"><span class="label">Region</span><button type="button" class="input pickbtn" disabled><span class="ph">Choose your country first</span>${ICON_DOWN}</button></div>`;
   const c=countryOf(FAM.country), typed = !c || !c.regions.length || FAM.region==='__other';
   const pick = c && c.regions.length ? `<button type="button" class="input pickbtn" data-f="pick-region" aria-labelledby="lRegion">${FAM.region && FAM.region!=='__other'?`<span>${esc(FAM.region)}</span>`:`<span class="ph">${FAM.region==='__other'?'Other (type it below)':'Choose your region'}</span>`}${ICON_DOWN}</button>` : '';
   return `<div class="fld">${pick?'<span class="label" id="lRegion">Region</span>':'<label class="label" for="famRegion">Region</label>'}${pick}
@@ -2547,7 +2565,7 @@ function famRegionField(){
 }
 function famPhoneField(){
   return `<div class="fld"><label class="label" for="famPhone">WhatsApp number</label>
-    <div class="phone"><span class="cc">${esc(famDial()||'+')}</span><input class="input" id="famPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="16" placeholder="${FAM.country==='SO'?'61 234 5678':'Your number'}" value="${esc(FAM.phone)}"></div></div>`;
+    <div class="phone"><span class="cc">${esc(famDial()||'+')}</span><input class="input" id="famPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="16" placeholder="${FAM.country==='SO'?'61 234 5678':FAM.country==='XS'?'63 412 3456':'Your number'}" value="${esc(FAM.phone)}"></div></div>`;
 }
 function famPinField(label, note){
   return `<div class="fld"><label class="label" for="famPin">${label}</label>
@@ -2702,6 +2720,7 @@ function openSchool(v, err){
   if(v==='classes' && !SCH.classes) loadClasses();
   if(v==='addchild'){ SCH.addAge=null; SCH.addGroup=null; SCH.addOwl=OWL_KEYS[Math.floor(Math.random()*OWL_KEYS.length)]; }
   if(v==='pilot'){ SCH.pilot=null; loadPilot(); }
+  if(v==='sadmin'){ SA.edit=null; SA.arm=''; SA.msg=''; if(SA.tab==='results'){ SCH.pilot=null; loadPilot(); } loadSchoolAdmin(); }
   renderSchool(); show('sSchool');
   setTimeout(()=>{ const a=document.activeElement, f=$('schoolBody').querySelector('input');
     if(f && v!=='children' && SCH.view===v && !(a && a.tagName==='INPUT')) f.focus(); },60);
@@ -2987,7 +3006,7 @@ async function shareReport(btn){
 async function loadPilot(){
   try{ SCH.pilot=await rpc('pilot_summary', {p_token:tokenOf()}); SCH.err=''; }
   catch(e){ if(e.code==='invalid_token') return needLogin(); SCH.pilot={error:serr(e)}; }
-  if(current==='sSchool' && SCH.view==='pilot') renderSchool();
+  if(current==='sSchool' && (SCH.view==='pilot' || (SCH.view==='sadmin' && SA.tab==='results'))) renderSchool();
 }
 const pctOr = v => v===null||v===undefined ? '–' : v+'%';
 function pilotHTML(d, ctx){
@@ -3058,11 +3077,11 @@ function renderSchool(){
     <div class="card form">${pinInput('sPin0','Current PIN','current-password')}${pinInput('sPin','New 4-number PIN','new-password')}${pinInput('sPin2','Type the new PIN again','new-password')}
       ${errP()}<div class="btns"><button class="btn primary" data-s="changepin">Save PIN</button></div></div>`;
   else if(v==='task'){ const pr=sc.role==='principal', wait=(sc.outbox||[]).length;
-    b.innerHTML=`<div class="head"><h1>Hi ${esc(sc.teacher||'')}!</h1><p>${pr?'Principal · look at each class and try the questions.':'What would you like to do?'}</p></div>
+    b.innerHTML=`<div class="head"><h1>Hi ${esc(sc.teacher||'')}!</h1><p>${pr?'Principal · you manage this school on Garaad.':'What would you like to do?'}</p></div>
     ${SCH.msg?`<p class="okmsg" style="margin:0 0 12px">${esc(SCH.msg)}</p>`:''}
     <div class="tasks">
       <button class="card task tap" data-s="inclass"><span class="te">${ICON_SCHOOL}</span><span><b>In-class exercise</b><small>${pr?'See the games for each class':'A child plays now, on this phone'}</small></span></button>
-      ${pr?`<button class="card task tap" data-s="pilot"><span class="te">${ICON_REPORT}</span><span><b>Pilot results</b><small>Starting scores and progress, by class</small></span></button>`:''}
+      ${pr?`<button class="card task tap" data-s="sadmin"><span class="te">${ICON_REPORT}</span><span><b>Manage school</b><small>Results, teachers and children</small></span></button>`:''}
       <button class="card task" disabled aria-disabled="true"><span class="te">${ICON_HOME}</span><span><b>Send homework</b><small>Children practise at home</small><br><span class="soon">Coming soon</span></span></button>
     </div>
     ${wait?`<p class="note" style="margin-top:14px">${wait} result${wait>1?'s':''} waiting to be sent. They go when the internet is back.</p>`:''}
@@ -3085,9 +3104,105 @@ function renderSchool(){
       <p class="note" style="margin-top:-6px">Used to send the weekly report to the parent.</p>
       ${errP()}<div class="btns"><button class="btn primary" data-s="addchild">Save and start</button></div></div>`;
   else if(v==='report') b.innerHTML=reportViewHTML();
+  else if(v==='sadmin') b.innerHTML=sadminHTML();
   else if(v==='pilot') b.innerHTML=`<div class="head"><h1>Pilot results</h1><p>${esc(sc.name||'')}</p></div>${errP()}${SCH.pilot===null?`<div class="spin">Loading results…</div>`:pilotHTML(SCH.pilot, 'school')}`;
 }
+
+/* ---------- the principal is the school admin: results, teachers and children of their own school ---------- */
+const SA = { tab:'results', data:null, kids:null, kclass:'', search:'', edit:null, arm:'', msg:'' };
+async function loadSchoolAdmin(){
+  try{ SA.data=await rpc('school_overview', {p_token:tokenOf()}); SCH.err=''; }
+  catch(e){ if(e.code==='invalid_token') return needLogin(); SCH.err=serr(e); }
+  if(SA.tab==='children') await loadSAKids(); else if(current==='sSchool' && SCH.view==='sadmin') renderSchool();
+}
+async function loadSAKids(){
+  try{ SA.kids=await rpc('list_children', {p_token:tokenOf(), p_class_id:SA.kclass||null, p_search:null})||[]; }
+  catch(e){ if(e.code==='invalid_token') return needLogin(); SA.kids=[]; SCH.err=serr(e); }
+  if(current==='sSchool' && SCH.view==='sadmin') renderSchool();
+}
+const saWhen = d => d ? new Date(d).toLocaleDateString(undefined, {day:'numeric', month:'short'}) : '';
+function saTeachersHTML(d){
+  const ts=d.teachers||[], active=ts.filter(t=>t.active);
+  const row = t => {
+    const chips=[t.me?'<span class="chip">You</span>':'', t.role==='principal'?'<span class="chip">Principal</span>':'',
+      !t.active?'<span class="chip warn">Removed</span>':'', t.active && !t.pin_set?'<span class="chip">PIN reset</span>':''].join(' ');
+    const meta=[`<a href="https://wa.me/${esc(String(t.phone).replace(/\D/g,''))}" target="_blank" rel="noopener">${esc(t.phone)}</a>`,
+      t.last_login?'last login '+esc(saWhen(t.last_login)):'not logged in yet', `${t.children_added||0} child${t.children_added===1?'':'ren'} added`].join(' · ');
+    const can = !t.me && t.role!=='principal';
+    const btns = !can ? '' : t.active
+      ? `<div class="btns"><button class="btn small" data-s="sa-reset" data-tid="${esc(t.id)}">${SA.arm==='reset'+t.id?'Tap again to reset':'Reset PIN'}</button>
+         <button class="btn small" data-s="sa-remove" data-tid="${esc(t.id)}">${SA.arm==='remove'+t.id?'Tap again to remove':'Remove'}</button></div>`
+      : `<div class="btns"><button class="btn small" data-s="sa-restore" data-tid="${esc(t.id)}">Bring back</button></div>`;
+    return `<div class="trow${t.active?'':' off'}"><div><b>${esc(t.name)}</b> ${chips}<small>${meta}</small></div>${btns}</div>`;
+  };
+  return `<div class="card panel adm"><h3><span>Teachers</span><span class="chip">${active.length}</span></h3>
+      <p>New teachers join with the school code <b>${esc(d.school.code)}</b>. A removed teacher cannot log in; their past work stays.</p>
+      <div class="tlist">${ts.map(row).join('')||'<p>No teachers yet.</p>'}</div>
+      ${active.length?`<div class="btns" style="margin-top:10px"><button class="btn small" data-s="sa-copy">Copy teacher numbers</button></div>`:''}</div>`;
+}
+function saKidRowsHTML(d){
+  if(SA.kids===null) return '<div class="spin">Loading children…</div>';
+  const q=SA.search.trim().toLowerCase(), cname=id=>((d.classes||[]).find(c=>c.id===id)||{}).name||'No class';
+  const kids=SA.kids.filter(k=>!q || String(k.name).toLowerCase().includes(q));
+  if(!kids.length) return `<p class="note">${SA.kids.length?'No child with that name.':'No children here yet. Teachers add children when they start an in-class exercise.'}</p>`;
+  return kids.map(k=>{
+    if(SA.edit===k.id) return `<div class="trow"><div class="form saedit">
+        <label class="label" for="saName">Name</label><input class="input" id="saName" maxlength="40" value="${esc(k.name)}">
+        <label class="label" for="saClass">Class</label><select class="input" id="saClass">${(d.classes||[]).map(c=>`<option value="${esc(c.id)}"${c.id===k.class_id?' selected':''}>${esc(c.name)}</option>`).join('')}</select>
+        <div class="btns"><button class="btn small primary" data-s="sa-save" data-skid="${esc(k.id)}">Save</button><button class="btn small" data-s="sa-cancel">Cancel</button></div></div></div>`;
+    const meta=[esc(cname(k.class_id)), k.age?`age ${k.age}`:'', k.start_total?`starting score ${k.start_score}/${k.start_total}`:'no starting exercise yet', k.last_played?'played '+esc(saWhen(k.last_played)):''].filter(Boolean).join(' · ');
+    return `<div class="trow"><div><b>${esc(k.name)}</b><small>${meta}</small></div>
+      <div class="btns"><button class="btn small" data-s="sa-edit" data-skid="${esc(k.id)}">Edit</button>
+      <button class="btn small" data-s="sa-delkid" data-skid="${esc(k.id)}">${SA.arm==='kid'+k.id?'Tap again: removes their scores too':'Remove'}</button></div></div>`;
+  }).join('');
+}
+function saChildrenHTML(d){
+  return `<div class="card panel adm"><h3><span>Children</span><span class="chip">${d.children}</span></h3>
+      <div class="chips saclass" role="group" aria-label="Class">${[{id:'',name:'All classes'},...(d.classes||[])].map(c=>`<button class="chip" data-s="sa-cls" data-cid="${esc(c.id)}" aria-pressed="${SA.kclass===c.id}">${esc(c.name)}</button>`).join('')}</div>
+      <div class="search" style="margin:10px 0 0"><input class="input" id="saSearch" type="search" autocomplete="off" placeholder="Search a name" value="${esc(SA.search)}" aria-label="Search children"></div>
+      <div class="tlist" id="saKids">${saKidRowsHTML(d)}</div></div>`;
+}
+function sadminHTML(){
+  const d=SA.data, sc=store.school||{};
+  const tabs=[['results','Results'],['teachers','Teachers'],['children','Children']];
+  const head=`<div class="head"><h1>Manage school</h1><p>${esc(d?d.school.name:(sc.name||''))}${d?` · code ${esc(d.school.code)}`:''}</p></div>
+    <div class="seg satabs" role="tablist" aria-label="Manage school">${tabs.map(([k,v])=>`<button role="tab" data-s="sa-tab" data-tab="${k}" aria-pressed="${SA.tab===k}" aria-selected="${SA.tab===k}">${v}</button>`).join('')}</div>
+    ${SA.msg?`<p class="okmsg" style="margin:12px 0 0">${esc(SA.msg)}</p>`:''}${errP()}`;
+  if(SA.tab==='results') return head+`<div style="margin-top:14px">${SCH.pilot===null||SCH.pilot===undefined?`<div class="spin">Loading results…</div>`:pilotHTML(SCH.pilot, 'school')}</div>`;
+  if(!d) return head+`<div class="spin">Loading…</div>`;
+  return head+`<div style="margin-top:14px">${SA.tab==='teachers'?saTeachersHTML(d):saChildrenHTML(d)}</div>`;
+}
+async function saCall(btn, fn, args, msg){
+  return busy(btn, async()=>{ try{ const r=await rpc(fn, Object.assign({p_token:tokenOf()}, args));
+      if(r && r.ok===false){ SCH.err=serr(r.error); return renderSchool(); }
+      SA.msg=msg; SA.arm=''; SA.edit=null; SCH.err=''; await loadSchoolAdmin(); }
+    catch(e){ if(e.code==='invalid_token') return needLogin(); SCH.err=serr(e); SA.arm=''; renderSchool(); } });
+}
+async function sadminAction(a, btn){
+  const d=SA.data;
+  if(a==='sadmin') return openSchool('sadmin');
+  if(a==='sa-tab'){ SA.tab=btn.dataset.tab; SA.arm=''; SA.edit=null; SA.msg=''; SCH.err='';
+    if(SA.tab==='results' && !SCH.pilot){ SCH.pilot=null; loadPilot(); }
+    if(SA.tab==='children'){ SA.kids=null; loadSAKids(); }
+    return renderSchool(); }
+  if(a==='sa-reset'){ const k='reset'+btn.dataset.tid; if(SA.arm!==k){ SA.arm=k; SA.msg=''; return renderSchool(); }
+    return saCall(btn, 'school_reset_pin', {p_teacher_id:btn.dataset.tid}, 'PIN reset. The teacher chooses a new PIN at their next login.'); }
+  if(a==='sa-remove'){ const k='remove'+btn.dataset.tid; if(SA.arm!==k){ SA.arm=k; SA.msg=''; return renderSchool(); }
+    return saCall(btn, 'school_set_teacher_active', {p_teacher_id:btn.dataset.tid, p_active:false}, 'Teacher removed. They can no longer log in.'); }
+  if(a==='sa-restore') return saCall(btn, 'school_set_teacher_active', {p_teacher_id:btn.dataset.tid, p_active:true}, 'Teacher brought back. They can log in again.');
+  if(a==='sa-copy'){ const list=(d&&d.teachers||[]).filter(t=>t.active).map(t=>`${t.name}: ${t.phone}`).join('\n');
+    try{ await navigator.clipboard.writeText(list); toast('Teacher numbers copied'); }catch(e){ SA.msg=list; renderSchool(); } return; }
+  if(a==='sa-cls'){ SA.kclass=btn.dataset.cid; SA.kids=null; SA.edit=null; SA.arm=''; renderSchool(); return loadSAKids(); }
+  if(a==='sa-edit'){ SA.edit=btn.dataset.skid; SA.arm=''; SA.msg=''; renderSchool(); const i=$('saName'); if(i) i.focus(); return; }
+  if(a==='sa-cancel'){ SA.edit=null; return renderSchool(); }
+  if(a==='sa-save'){ const name=($('saName').value||'').trim().replace(/\s+/g,' '); if(!name){ SCH.err='Type the child’s name.'; return renderSchool(); }
+    const busyBtn=btn; return saCall(busyBtn, 'school_edit_child', {p_child_id:btn.dataset.skid, p_name:name, p_class_id:$('saClass').value||null}, 'Child saved.').then(()=>{ if(SA.tab==='children'){ SA.kids=null; loadSAKids(); } }); }
+  if(a==='sa-delkid'){ const k='kid'+btn.dataset.skid; if(SA.arm!==k){ SA.arm=k; SA.msg=''; return renderSchool(); }
+    return saCall(btn, 'school_remove_child', {p_child_id:btn.dataset.skid}, 'Child removed.').then(()=>{ SA.kids=null; loadSAKids(); }); }
+}
+
 async function schoolAction(a, btn){
+  if(a==='sadmin' || a.startsWith('sa-')) return sadminAction(a, btn);
   const sc=store.school||(store.school={outbox:[]});
   const pinOk = id => /^\d{4}$/.test(($(id)||{}).value||'');
   if(a==='code'){ const code=($('sCode').value||'').trim().toUpperCase(); if(!code) return setErr('sErr','Type the school code.');
@@ -3161,9 +3276,9 @@ function renderAdmin(){
       <div class="chips">${(s.classes||[]).map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>
       <div class="inline"><input class="input" id="cls-${esc(s.id)}" maxlength="30" placeholder="New class, e.g. Standard 3"><button class="btn small" data-a="addclass" data-sid="${esc(s.id)}">Add class</button></div>
       ${(s.teachers||[]).length?`<div class="tlist">
-      ${s.teachers.map(t=>`<div class="trow"><div><b>${esc(t.name)}</b> <span class="chip">${t.role==='principal'?'Principal':'Teacher'}</span>${t.pin_set?'':' <span class="chip">PIN reset</span>'}
+      ${s.teachers.map(t=>`<div class="trow"><div><b>${esc(t.name)}</b> <span class="chip">${t.role==='principal'?'Principal':'Teacher'}</span>${t.active===false?' <span class="chip warn">Removed</span>':''}${t.pin_set?'':' <span class="chip">PIN reset</span>'}
         <small><a href="https://wa.me/${esc(String(t.phone).replace(/\D/g,''))}" target="_blank" rel="noopener">${esc(t.phone)}</a> · ${t.last_login?'last login '+esc(new Date(t.last_login).toLocaleDateString()):'not logged in yet'}</small></div>
-        <div class="btns"><button class="btn small" data-a="reset" data-tid="${esc(t.id)}">${ADM.arm==='reset'+t.id?'Tap again to reset':'Reset PIN'}</button><button class="btn small" data-a="role" data-tid="${esc(t.id)}" data-role="${t.role==='principal'?'teacher':'principal'}">${t.role==='principal'?'Make teacher':'Make principal'}</button></div></div>`).join('')}
+        <div class="btns"><button class="btn small" data-a="reset" data-tid="${esc(t.id)}">${ADM.arm==='reset'+t.id?'Tap again to reset':'Reset PIN'}</button><button class="btn small" data-a="role" data-tid="${esc(t.id)}" data-role="${t.role==='principal'?'teacher':'principal'}">${t.role==='principal'?'Make teacher':'Make principal'}</button><button class="btn small" data-a="tactive" data-tid="${esc(t.id)}" data-on="${t.active===false?'1':'0'}">${t.active===false?'Bring back':(ADM.arm==='tactive'+t.id?'Tap again to remove':'Remove')}</button></div></div>`).join('')}
       </div><div class="btns"><button class="btn small" data-a="copyphones" data-sid="${esc(s.id)}">Copy teacher numbers</button></div>`:'<p>No teachers yet. They register with the school code.</p>'}
     </div>`).join('');
   b.innerHTML=`<div class="head"><h1>Admin</h1><p>Schools and teachers, registered families, WhatsApp links and pilot results.</p></div>${err}
@@ -3228,6 +3343,8 @@ async function adminAction(a, el){
   if(a==='pilot-csv') return downloadPilotCSV(ADM.tok, ADM.pilot&&ADM.pilot.sid, el);
   if(a==='reset'){ const k='reset'+el.dataset.tid; if(ADM.arm!==k){ ADM.arm=k; return renderAdmin(); } ADM.arm=''; return busy(el, ()=>call('admin_reset_pin', {p_teacher_id:el.dataset.tid}, 'PIN reset. The teacher chooses a new PIN at their next login.')); }
   if(a==='role') return busy(el, ()=>call('admin_set_role', {p_teacher_id:el.dataset.tid, p_role:el.dataset.role}, el.dataset.role==='principal'?'Now a principal. The new role applies at their next login.':'Now a teacher. The new role applies at their next login.'));
+  if(a==='tactive'){ const on=el.dataset.on==='1', k='tactive'+el.dataset.tid; if(!on && ADM.arm!==k){ ADM.arm=k; return renderAdmin(); } ADM.arm='';
+    return busy(el, ()=>call('admin_set_teacher_active', {p_teacher_id:el.dataset.tid, p_active:on}, on?'Teacher brought back.':'Teacher removed. They can no longer log in.')); }
   if(a==='addclass'){ const i=$('cls-'+el.dataset.sid), name=(i&&i.value||'').trim(); if(!name) return; return busy(el, ()=>call('admin_add_class', {p_school_id:el.dataset.sid, p_name:name}, `Class ${name} added.`)); }
   if(a==='newschool'){ const name=$('nsName').value.trim(), code=$('nsCode').value.trim().toUpperCase(); if(!name||!code){ ADM.err='Type the school name and a code.'; return renderAdmin(); }
     return busy(el, ()=>call('admin_create_school', {p_name:name, p_code:code}, `School created. Its code is ${code}.`)); }
@@ -3266,7 +3383,7 @@ document.addEventListener('click', e=>{
   if(t.closest('#switchDoors')){ store.mode=null; delete store.familyLegacy; save(); renderHome(); show('sHome'); }
 });
 document.addEventListener('change', e=>{ if(e.target.id==='afCountry'){ ADM.fc=e.target.value; ADM.fr=''; renderAdmin(); } else if(e.target.id==='afRegion'){ ADM.fr=e.target.value; renderAdmin(); } });
-document.addEventListener('input', e=>{ if(e.target.id==='sSearch'){ SCH.search=e.target.value; const r=$('kidRows'); if(r) r.innerHTML=kidRowsHTML(); } });
+document.addEventListener('input', e=>{ if(e.target.id==='saSearch'){ SA.search=e.target.value; const r=$('saKids'); if(r && SA.data) r.innerHTML=saKidRowsHTML(SA.data); return; } if(e.target.id==='sSearch'){ SCH.search=e.target.value; const r=$('kidRows'); if(r) r.innerHTML=kidRowsHTML(); } });
 document.addEventListener('keydown', e=>{
   if(e.key!=='Enter' || !e.target.matches || !e.target.matches('#schoolBody input, #adminBody input, #homeBody .form input:not([type=checkbox])')) return;
   const form=e.target.closest('.form, .inline'), go=form && form.querySelector('[data-s].btn.primary, [data-f].btn.primary, [data-a].btn, [data-s="famcode"]');
@@ -3608,6 +3725,76 @@ function buildPractice(){
   for(const x of st.slice().sort(()=>Math.random()-.5)){ if(steps.filter(z=>z.g!=='review').length>=3) break; take(x); }
   return steps;
 }
+
+/* ---------- after 2 wrong tries: show and say the right answer with a short why, then move on ----------
+   The question is saved for Review, so it comes back a few minutes later. */
+const labelOf = b => (b && (b.getAttribute('aria-label') || b.textContent || '').trim()) || '';
+async function showAnswer(qq, st){
+  revealing=true;
+  try{
+    if(qq.seq && qq.seqDone) await qq.seqDone();
+    else if(qq.after) await qq.after(st);
+    else { const b=choiceBtn(st,qq.answer); await say(qq.praise ? [qq.praise] : [`It is ${labelOf(b)}.`]); }
+  } finally { revealing=false; }
+}
+async function revealChoice(){
+  locked=true; const myQ=q, st=$('stage'), b=choiceBtn(st,q.answer);
+  setOwl('happy'); $('hintRow').innerHTML='';
+  if(b){ b.classList.add('right','shown'); if(!b.textContent.trim() || b.classList.contains('pic')) tagBtn(b, labelOf(b)); }
+  $('pText').textContent='Here is the right answer';
+  await say('Here is the right answer.', {silentMs:300});
+  if(q!==myQ) return;
+  await showAnswer(q, st);
+  if(q!==myQ) return;
+  await wait(700); completeQ(false, true);
+}
+async function revealSeq(){
+  locked=true; const myQ=q, st=$('stage'); $('hintRow').innerHTML='';
+  st.querySelectorAll('.opt.right').forEach(b=>{ b.classList.remove('right'); const n=b.querySelector('.stepno'); if(n) n.remove(); });
+  $('pText').textContent='Here is the right order';
+  await say('Here is the right order.', {silentMs:300});
+  for(let i=0;i<q.seq.length;i++){
+    if(q!==myQ) return;
+    const b=[...st.querySelectorAll('[data-choice]')].find(x=>x.dataset.choice===q.seq[i] && !x.classList.contains('right'));
+    if(b){ b.classList.add('right','shown'); b.insertAdjacentHTML('beforeend',`<span class="stepno">${i+1}</span>`); tick(); }
+    await wait(550);
+  }
+  if(q!==myQ) return;
+  if(q.seqDone) await showAnswer(q, st); else if(q.seqSay) await say([q.seqSay]);
+  await wait(700); if(q===myQ) completeQ(false, true);
+}
+
+/* ---------- level 1 of every game starts with a short example: the owl answers one question, then "Your turn!" ----------
+   The child can skip it. Speaking and tracing games (their own answer screens) have no example. */
+let demoRun=0;
+function demoable(qq){ return qq && (qq.seq || qq.pad || (!qq.mount && /data-choice=/.test(qq.html))); }
+async function runDemo(){
+  const my=++demoRun; let ex;
+  try{ ex=makeQ(game,1); }catch(e){ ex=null; }
+  if(!demoable(ex)){ nextQ(); return; }
+  q=ex; q.isDemo=true; renderQ(); locked=true;
+  const st=$('stage'), alive=()=>my===demoRun && q===ex && current==='sPlay';
+  $('hintRow').innerHTML=''; $('pText').textContent='Watch me first'; setOwl('happy');
+  st.insertAdjacentHTML('afterbegin', `<div class="demotag"><span>👀 Example</span><button class="btn small" id="demoSkip">Skip ▶</button></div>`);
+  $('demoSkip').addEventListener('click', ()=>{ if(my!==demoRun) return; demoRun++; audio(); hush(); revealing=false; nextQ(); });
+  await wait(300); if(!alive()) return;
+  if(G().voice) await say(['Watch me.', ...(ex.parts || [ex.speak || ex.text])]); else await wait(1200);
+  if(!alive()) return;
+  if(ex.seq){
+    for(let i=0;i<ex.seq.length;i++){ if(!alive()) return;
+      const b=[...st.querySelectorAll('[data-choice]')].find(x=>x.dataset.choice===ex.seq[i] && !x.classList.contains('right'));
+      if(b){ b.classList.add('right'); b.insertAdjacentHTML('beforeend',`<span class="stepno">${i+1}</span>`); tick(); }
+      await wait(500); }
+  } else if(ex.pad){ const s=$('slot'); if(s){ s.textContent=ex.answer; s.classList.remove('empty'); s.classList.add('ok'); } tick(); }
+  else { const b=choiceBtn(st,ex.answer); if(b){ b.classList.add('right'); if(b.classList.contains('pic')) tagBtn(b,labelOf(b)); } tick(); }
+  await wait(250); if(!alive()) return;
+  if(G().voice){ if(ex.pad) await say(speakify(ex.explain||ex.answer)+'.'); else await showAnswer(ex, st); }
+  if(!alive()) return;
+  if(G().voice) await say('Your turn!'); else await wait(900);
+  if(!alive()) return;
+  demoRun++; nextQ();
+}
+
 function startPractice(){ practice={steps:buildPractice(), i:0}; runPracticeStep(); }
 function runPracticeStep(){ const stp=practice.steps[practice.i]; game=stp.g; startLevel(stp.lv); }
 
@@ -3623,7 +3810,8 @@ function startLevel(n){
   if(g0.isSprint){ startSprint(); return; }
   plan=buildPlan(game,n);
   if(!plan.length){ practice ? nextPracticeOrEnd() : openGames(); return; }
-  setBar(); nextQ();
+  setBar();
+  if(n===1 && !g0.isReview && me) runDemo(); else nextQ();
 }
 function setBar(){ $('qbar').style.width = `${100*qi/Math.max(1,plan.length)}%`; }
 function nextQ(){
@@ -3727,8 +3915,8 @@ function onChoice(btn){
     }
     tries++; boop(); btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
     q.pos=0; $('stage').querySelectorAll('.opt.right').forEach(b=>{ b.classList.remove('right'); const n=b.querySelector('.stepno'); if(n) n.remove(); });
-    if(tries>=2){ const first=choiceBtn($('stage'),q.seq[0]); if(first) first.classList.add('pulse'); }
-    say(q.seqRetry ? (tries>=2?[q.seqRetry,'Start with the one that is shining.']:q.seqRetry) : tries>=2?['Start again. Listen.', q.seqSay, 'Start with the one that is shining.']:['Oops! Start again. Listen.', q.seqSay]);
+    if(tries>=2){ revealSeq(); return; }
+    say(q.seqRetry ? q.seqRetry : ['Oops! Start again. Listen.', q.seqSay]);
     return;
   }
   if(btn.dataset.choice===q.answer){ locked=true; btn.classList.add('right'); ding(); burst(btn); celebrateCorrect();
@@ -3737,8 +3925,8 @@ function onChoice(btn){
     tries++; btn.classList.add('wrong'); boop(); setOwl('oops', 1600);
     const w = q.why ? q.why($('stage'), btn.dataset.choice, btn) : null;
     if(w && w.html) showWhy(w.html);
-    if(tries>=2){ const c=[...$('stage').querySelectorAll('[data-choice]')].find(b=>b.dataset.choice===q.answer); if(c) c.classList.add('pulse'); }
-    if(G().voice){ const first=(w&&w.say)||pick(['Try again.','Not that one. Try again.','Almost! Try again.']); say(tries>=2?[first,'Tap the one that is shining.']:first); }
+    if(tries>=2){ revealChoice(); return; }
+    if(G().voice){ say((w&&w.say)||pick(['Try again.','Not that one. Try again.','Almost! Try again.'])); }
   }
 }
 function customDone(firstTry, celebrate){ if(locked||!q) return; locked=true; if(firstTry){ ding(); celebrateCorrect(); } else tick(); completeQ(firstTry, false, celebrate||null); }

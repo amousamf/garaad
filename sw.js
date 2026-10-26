@@ -1,4 +1,4 @@
-// Garaad offline cache — version g5-light-1
+// Garaad offline cache — version g5-light-2
 const CACHE = 'garaad-g5-light-2';
 const CORE = ['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','favicon-64.png',
   'fonts/baloo2-800.woff2','fonts/lexend-400.woff2','fonts/lexend-500.woff2','fonts/lexend-600.woff2','fonts/lexend-700.woff2'];
@@ -7,6 +7,7 @@ self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Pr
 self.addEventListener('fetch', e => {
   const req = e.request; if (req.method !== 'GET') return;
   const url = new URL(req.url);
+  if (url.origin === location.origin && url.pathname.startsWith('/test/')) return;   // the test copy has its own offline cache
   // the game page: try the network first so updates arrive, fall back to the saved copy offline
   if (req.mode === 'navigate' || (url.origin === location.origin && url.pathname.endsWith('/index.html'))) {
     e.respondWith(fetch(req).then(r => { const c = r.clone(); caches.open(CACHE).then(ca => ca.put('index.html', c)); return r; })
