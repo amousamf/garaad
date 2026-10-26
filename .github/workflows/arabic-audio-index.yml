@@ -1,0 +1,37 @@
+# Keeps audio/ar/index.json up to date. Upload Arabic recordings into audio/ar/ (on GitHub: Add file › Upload files)
+# and this lists them, so the app knows which sounds have a teacher's recording.
+name: Arabic recordings list
+on:
+  push:
+    branches: [main]
+    paths: ['audio/ar/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: List recordings
+        run: |
+          python3 - <<'PY'
+          import json, os, re
+          d = 'audio/ar'
+          files = sorted(f for f in os.listdir(d) if re.search(r'\.(mp3|m4a|ogg|webm|wav)$', f, re.I))
+          new = json.dumps(files, ensure_ascii=False, indent=0) + '\n'
+          p = os.path.join(d, 'index.json')
+          old = open(p).read() if os.path.exists(p) else ''
+          if old != new:
+              open(p, 'w').write(new)
+          print(len(files), 'recordings')
+          PY
+      - name: Save the list
+        run: |
+          if ! git diff --quiet audio/ar/index.json; then
+            git config user.name "garaad-bot"
+            git config user.email "garaad-bot@users.noreply.github.com"
+            git add audio/ar/index.json
+            git commit -m "Update Arabic recordings list"
+            git push
+          fi
