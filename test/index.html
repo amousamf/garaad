@@ -2924,7 +2924,7 @@ function doorsHTML(){
     <div class="foot"><span class="note">Admin?</span><button class="linkbtn" data-s="go-admin">Open the admin area</button></div>`;
 }
 /* ---------- free family accounts: register with WhatsApp, log in on another phone, or use an old family code ---------- */
-const FAM = { view:'register', data:null, country:'SO', region:'', regionTyped:'', name:'', loc:'', phone:'', pin:'', group:false, err:'', done:null };
+const FAM = { view:'register', data:null, country:'', region:'', regionTyped:'', name:'', loc:'', phone:'', pin:'', group:false, err:'', done:null };
 let placesP=null;
 function loadPlaces(){
   if(!placesP) placesP = fetch('countries-regions.json').then(r=>{ if(!r.ok) throw new Error('places'); return r.json(); })
@@ -2951,10 +2951,11 @@ function famSnap(){
 function famCountryField(){
   const c=countryOf(FAM.country);
   return `<div class="fld"><span class="label" id="lCountry">Country</span>
-    <button type="button" class="input pickbtn" data-f="pick-country" aria-labelledby="lCountry">${c?`<span>${esc(c.name)}</span>`:`<span class="ph">${FAM.data?'Choose your country':'Somalia'}</span>`}${ICON_DOWN}</button></div>`;
+    <button type="button" class="input pickbtn" data-f="pick-country" aria-labelledby="lCountry">${c?`<span>${esc(c.name)}</span>`:`<span class="ph">Choose your country</span>`}${ICON_DOWN}</button></div>`;
 }
 function famRegionField(){
   if(!FAM.data) return `<div class="fld"><span class="label">Region</span><button type="button" class="input pickbtn" disabled><span class="ph">Loading the list…</span>${ICON_DOWN}</button></div>`;
+  if(!FAM.country) return `<div class="fld"><span class="label">Region</span><button type="button" class="input pickbtn" disabled><span class="ph">Choose your country first</span>${ICON_DOWN}</button></div>`;
   const c=countryOf(FAM.country), typed = !c || !c.regions.length || FAM.region==='__other';
   const pick = c && c.regions.length ? `<button type="button" class="input pickbtn" data-f="pick-region" aria-labelledby="lRegion">${FAM.region && FAM.region!=='__other'?`<span>${esc(FAM.region)}</span>`:`<span class="ph">${FAM.region==='__other'?'Other (type it below)':'Choose your region'}</span>`}${ICON_DOWN}</button>` : '';
   return `<div class="fld">${pick?'<span class="label" id="lRegion">Region</span>':'<label class="label" for="famRegion">Region</label>'}${pick}
