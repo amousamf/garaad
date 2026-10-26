@@ -1,6 +1,6 @@
 # Garaad
 
-Maths and English games for children aged 3 to 12. *Garaad* is Somali for "wisdom". (The app was called Tiri before.)
+Maths, English and Arabic games for children aged 3 to 12. *Garaad* is Somali for "wisdom". (The app was called Tiri before.)
 
 The mascot is Garaad, a wise owl whose eyes are the double "aa" of the name. Brand files and decisions are in the Kids Learning App project (`claude/garaad-brand.md`).
 
@@ -13,6 +13,7 @@ The mascot is Garaad, a wise owl whose eyes are the double "aa" of the name. Bra
 - 10 games per age group (3–5, 6–8, 9–12), each with 10 levels that unlock in order.
 - Questions are read aloud for younger children.
 - **English:** a Maths / English switch on each child's games page, with 21 games in five steps: 1 *Listening ears*, 2 *Sound play*, 3 *Words and letters* (Opposites, Word Sort, Letter Hunt, Trace the Trail), 4 *Reading* (Caption Catch, Yes or No Island, Story Steps, Read and Answer) and 5 *Writing* (Missing Letter, Spell the Picture, Spelling Bee, Sentence Builder, Fix-It Doctor). Younger children see Steps 1–3 first; ages 6–12 see Reading and Writing first. Every word learned grows a flower in the child's Word Garden.
+- **Arabic** (families now; schools when the admin switches it on): a third tab with 15 games in six steps that follow the order of Al-Qaida an-Nooraniyya: 1 *Letters* (Letter Sounds, Twin Letters, Letter Train), 2 *Letter shapes* (Letter Shapes, Joined Letters), 3 *Vowel marks* (Short Vowels, Tanween, Long Vowels), 4 *Sukoon and shaddah* (Sukoon, Shaddah, Say It Back), 5 *Arabic words* (Arabic Words, Say It in Arabic) and 6 *Arabic and English* (English to Arabic, Arabic to English). Arabic screens use the Noto Naskh Arabic font with large vowel marks. Each Arabic sound plays a teacher's recording when there is one, otherwise the phone's Arabic voice. The recording list, and how to add recordings, is in `audio/ar/RECORDINGS.md`. Every Arabic word learned grows a flower in the Arabic Word Garden. A school phone can be shown the Arabic tab for testing by opening `garaad.app/?arabic=1` once (`?arabic=0` hides it again).
 - Speaking games use the microphone. Recordings stay on the phone and are never uploaded; a grown-up can always confirm an answer.
 - Installs to the phone's home screen and works offline after the first visit.
 - Progress stays on the device. Parents can send results by email or WhatsApp from the Parent area (press and hold to open).
@@ -42,4 +43,4 @@ The **admin** screen (link on the first page) creates school codes, adds classes
 
 ## Database
 
-The scripts in `database/` set up Supabase. Run them in order in the Supabase SQL Editor: `01-schema.sql`, then `02-progress-and-offline.sql`, then `03-design-features.sql` (owl avatars, themes, hints bought with stars, parent phone, assessments, needs-help list, weekly report and pilot results), then `04-family-registration.sql` (free family accounts, family login with WhatsApp and PIN, admin family tools and WhatsApp settings), then `05-family-data.sql` (family children and results saved to the account). The app holds only the publishable key; every read and write goes through database functions that check the login.
+The scripts in `database/` set up Supabase. Run them in order in the Supabase SQL Editor: `01-schema.sql`, then `02-progress-and-offline.sql`, then `03-design-features.sql` (owl avatars, themes, hints bought with stars, parent phone, assessments, needs-help list, weekly report and pilot results), then `04-family-registration.sql` (free family accounts, family login with WhatsApp and PIN, admin family tools and WhatsApp settings), then `05-family-data.sql` (family children and results saved to the account), then `06-arabic.sql` (Arabic results and the schools switch for Arabic). The app holds only the publishable key; every read and write goes through database functions that check the login.

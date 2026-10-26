@@ -120,6 +120,22 @@
 @font-face{font-family:"Lexend";src:url(fonts/lexend-500.woff2) format("woff2");font-weight:500;font-display:swap}
 @font-face{font-family:"Lexend";src:url(fonts/lexend-600.woff2) format("woff2");font-weight:600;font-display:swap}
 @font-face{font-family:"Lexend";src:url(fonts/lexend-700.woff2) format("woff2");font-weight:700;font-display:swap}
+/* Arabic: Noto Naskh Arabic, a clear book style with large vowel marks (harakat) */
+@font-face{font-family:"Naskh";src:url(fonts/naskh-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Naskh";src:url(fonts/naskh-700.woff2) format("woff2");font-weight:700;font-display:swap}
+.ar{font-family:"Naskh","Noto Naskh Arabic","Amiri","Scheherazade New","Geeza Pro","Arial",serif;direction:rtl;unicode-bidi:isolate;line-height:1.7;font-weight:700;letter-spacing:0}
+.opt.arl{min-width:clamp(74px,20vw,96px);min-height:clamp(92px,24vw,118px);padding:14px 12px 10px;line-height:1.9;font-size:clamp(42px,11.5vw,58px);color:var(--ink)}
+.opt.arl.long{font-size:clamp(32px,8.6vw,44px);min-width:clamp(96px,26vw,130px)}
+.opt.arw{flex:1 1 140px;max-width:260px;min-height:76px;padding:4px 14px 10px;font-size:clamp(28px,7.6vw,38px);color:var(--ink)}
+.opt.enw{flex:1 1 140px;max-width:260px;min-height:70px;padding:6px 14px;font:inherit;font-size:clamp(20px,5.4vw,26px);font-weight:700;color:var(--ink)}
+.opt.pic .tagname.ar,.opt .tagname.ar{font-size:clamp(17px,4.6vw,22px);line-height:1.5}
+.arbig{font-size:clamp(76px,22vw,120px);line-height:1.5;padding:0 16px;background:var(--surface);border:2px dashed var(--line);border-radius:22px;min-width:clamp(120px,34vw,170px);text-align:center}
+.arseq{display:flex;flex-direction:row-reverse;gap:10px;align-items:center;justify-content:center}
+.arseq span{font-size:clamp(40px,11vw,56px);min-width:clamp(58px,15vw,74px);text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:0 6px}
+.arseq span.gap{border:2px dashed var(--primary);color:var(--primary)}
+.target .tw.ar{font-size:clamp(28px,7.6vw,38px);letter-spacing:0}
+.pword.ar{font-size:clamp(34px,9vw,48px)}
+.arnote{grid-column:1/-1;font-size:14px;line-height:1.5;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:0}
 /* Layout: app shell — top bar, one screen at a time (family → games → levels → play → result).
    Colours are tokens. Each child picks a theme (Savanna sun, Ocean blue, Night sky); grown-up screens use the calm "adult" style.
    --bg/--page-ink: the page and text on it. --surface/--ink: cards and play pieces and the text on them. */
@@ -879,7 +895,60 @@ function chooseVoice(){
     cachedVoice=best; voiceIsFemale=!!best && FEMALE_V.test(best.name+' '+(best.voiceURI||''));
   }catch(e){}
 }
-try{ chooseVoice(); speechSynthesis.addEventListener ? speechSynthesis.addEventListener('voiceschanged',chooseVoice) : (speechSynthesis.onvoiceschanged=chooseVoice); }catch(e){}
+/* Arabic voice: a teacher's recording when there is one (audio/ar/<id>.mp3, listed in audio/ar/index.json),
+   otherwise the phone's own Arabic voice. */
+let arVoice=null;
+function chooseArVoice(){
+  try{
+    const vs=speechSynthesis.getVoices().filter(v=>/^ar/i.test(v.lang)); if(!vs.length){ arVoice=null; return; }
+    let best=null, bs=-1e9;
+    for(const v of vs){ const nm=v.name+' '+(v.voiceURI||''); let s=0;
+      if(/ar[-_](SA|EG|AE|JO|KW|QA)/i.test(v.lang)) s+=2; if(FEMALE_V.test(nm)||/hoda|zariyah|salma|laila|mariam|amira|x-arc|x-arz/i.test(nm)) s+=5;
+      if(/natural|neural|enhanced|premium|online/i.test(nm)) s+=3; if(v.localService) s+=1;
+      if(s>bs){ bs=s; best=v; } }
+    arVoice=best;
+  }catch(e){}
+}
+const hasArVoice = () => { if(!arVoice) chooseArVoice(); return !!arVoice; };
+const AR_REC = new Map();   // recording id → file name, e.g. 'letter-b' → 'letter-b.mp3'
+let arRecLoaded=false;
+function loadArRecordings(){
+  if(arRecLoaded) return; arRecLoaded=true;
+  fetch('audio/ar/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():[]).then(list=>{ (Array.isArray(list)?list:[]).forEach(f=>{ f=String(f); const m=f.match(/^(.+)\.(mp3|m4a|ogg|webm|wav)$/i); AR_REC.set(m?m[1]:f, m?f:f+'.mp3'); }); }).catch(()=>{});
+}
+let arPrefetched=false;
+function prefetchArRecordings(){   // save every recording on the phone while online, so Arabic works offline later
+  if(arPrefetched || !AR_REC.size || !navigator.onLine) return; arPrefetched=true;
+  const files=[...AR_REC.values()]; let i=0;
+  const next=()=>{ if(i>=files.length) return; const f=files[i++]; fetch(`audio/ar/${f}`).catch(()=>{}).finally(next); };
+  next(); next(); next();
+}
+let arAudio=null;
+function playRec(id, token){
+  return new Promise(res=>{
+    if(token!==sayToken) return res(false);
+    const a=new Audio(`audio/ar/${AR_REC.get(id)}`); arAudio=a; let done=false;
+    const fin=ok=>{ if(!done){ done=true; if(arAudio===a) arAudio=null; res(ok); } };
+    a.onended=()=>fin(true); a.onerror=()=>fin(false); a.play().catch(()=>fin(false)); setTimeout(()=>fin(true), 8000);
+  });
+}
+function speakAr(part, rate, token){
+  return new Promise(async res=>{
+    if(token!==sayToken) return res();
+    if(part.rec && AR_REC.has(part.rec)){ const ok=await playRec(part.rec, token); if(ok) return res(); }
+    if(!part.ar) return res();
+    try{
+      if(!arVoice) chooseArVoice();
+      const u=new SpeechSynthesisUtterance(part.ar);
+      if(arVoice){ u.voice=arVoice; u.lang=arVoice.lang; } else u.lang='ar-SA';
+      u.rate=Math.min(rate,.8); u.pitch=1.05; u.volume=1;
+      let done=false; const fin=()=>{ if(!done){ done=true; res(); } };
+      u.onend=fin; u.onerror=fin; setTimeout(fin, Math.max(1800, part.ar.length*260/u.rate));
+      speechSynthesis.speak(u);
+    }catch(e){ res(); }
+  });
+}
+try{ chooseVoice(); chooseArVoice(); speechSynthesis.addEventListener ? speechSynthesis.addEventListener('voiceschanged',()=>{ chooseVoice(); chooseArVoice(); }) : (speechSynthesis.onvoiceschanged=()=>{ chooseVoice(); chooseArVoice(); }); }catch(e){}
 let sayToken=0;
 function speakOne(text,rate,token){
   return new Promise(res=>{
@@ -899,19 +968,27 @@ function speakOne(text,rate,token){
 async function say(parts,opts){
   opts=opts||{}; parts=Array.isArray(parts)?parts:[parts];
   const token=++sayToken;
-  if(muted||!('speechSynthesis' in window)){ await wait(opts.silentMs||500); return; }
+  const recorded = parts.some(p=>p && typeof p==='object' && p.rec && AR_REC.has(p.rec));
+  if(muted||(!('speechSynthesis' in window) && !recorded)){ await wait(opts.silentMs||500); return; }
   try{ speechSynthesis.cancel(); }catch(e){}
+  try{ if(arAudio){ arAudio.pause(); arAudio=null; } }catch(e){}
   const base = me ? {little:.75, middle:.82, older:.9}[bandOf(me)] : .82;
-  const rate = opts.rate || (subject==='english' ? Math.min(base,.78) : base);
+  const rate = opts.rate || (subject!=='maths' ? Math.min(base,.78) : base);
   for(let i=0;i<parts.length;i++){
     if(token!==sayToken) return;
-    await speakOne(parts[i], rate, token);
+    const pt=parts[i];
+    if(pt && typeof pt==='object') await speakAr(pt, rate, token);   // {ar:'قِطَّة', rec:'word-cat'} is spoken in Arabic
+    else await speakOne(pt, rate, token);
     if(i<parts.length-1) await wait(opts.gap||450);
   }
 }
 /* the question, then its key word twice more, so the child hears it three times */
 const questionParts = q => q.parts ? q.parts : q.key ? [q.speak, q.key+'.', q.key+'.'] : [q.speak];
-let subject='maths';   // 'maths' or 'english', remembered per child
+let subject='maths';   // 'maths', 'english' or 'arabic', remembered per child
+/* Arabic is open to families. Schools see it only after the admin switches it on (store.arabicSchools),
+   or on a test phone opened once with ?arabic=1 (?arabic=0 switches the test off). */
+const arabicOn = () => store.mode!=='school' || !!store.arabicTest || (store.settings||{}).arabic_schools==='on';
+const subjOf = p => { const s=p&&p.subject; return s==='english' ? 'english' : (s==='arabic' && arabicOn()) ? 'arabic' : 'maths'; };
 const reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 function burst(el){
   if(reduceMotion||!el||!el.animate) return;
@@ -1526,7 +1603,7 @@ const picBtns = (list,cls) => choices(list.map(it=>`<button class="opt pic${cls?
 const targetCard = (e,w,id) => `<div class="target"${id?` id="${id}"`:''}><span class="te">${e}</span><span class="tw">${esc(w)}</span></div>`;
 const choiceBtn = (st,v) => st.querySelector(`[data-choice="${v}"]`);
 function learnWord(w){ if(!me||!ALL_WORDS.some(x=>x.w===w)) return; me.words=me.words||{}; if(!me.words[w]) me.words[w]=Date.now(); }
-function hush(){ sayToken++; try{ speechSynthesis.cancel(); }catch(e){} }
+function hush(){ sayToken++; try{ speechSynthesis.cancel(); }catch(e){} try{ if(arAudio){ arAudio.pause(); arAudio=null; } }catch(e){} }
 
 /* ---------- Tap What I Say (listening) ---------- */
 function eTap(lv){
@@ -1633,10 +1710,10 @@ function playParrot(blob){
 }
 const squawk = () => { tone(1400,0,.08,'sawtooth',.06); tone(1800,.09,.1,'sawtooth',.06); };
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-function listenOnce(){
+function listenOnce(lang){
   return new Promise(res=>{
     let r; try{ r=new SR(); }catch(e){ return res({err:'nosr'}); }
-    r.lang='en-US'; r.interimResults=false; r.maxAlternatives=5;
+    r.lang=lang||'en-US'; r.interimResults=false; r.maxAlternatives=5;
     let out=null;
     r.onresult=e=>{ out=[...e.results[0]].map(a=>a.transcript.toLowerCase().trim()); };
     r.onerror=e=>{ if(!out) out={err:e.error||'error'}; };
@@ -2135,6 +2212,325 @@ const ENGLISH = {
   get games(){ return this.steps.flatMap(s=>s.games); }
 };
 
+/* ================= ARABIC · Qaida steps (letters → shapes → vowel marks → sukoon and shaddah) · then words ================= */
+/* Follows the order of Al-Qaida an-Nooraniyya. Every Arabic sound is a part {ar, rec}: the teacher's recording
+   audio/ar/<rec>.mp3 plays when it exists, otherwise the phone's Arabic voice reads the text.
+   All Arabic text here needs a check by an Arabic teacher before schools use it (see audio/ar/RECORDINGS.md). */
+const AR_LETTERS = [
+  ['a','ا','أَلِف'],['b','ب','بَاء'],['t','ت','تَاء'],['th','ث','ثَاء'],['j','ج','جِيم'],['hh','ح','حَاء'],['kh','خ','خَاء'],
+  ['d','د','دَال'],['dh','ذ','ذَال'],['r','ر','رَاء'],['z','ز','زَاي'],['s','س','سِين'],['sh','ش','شِين'],['ss','ص','صَاد'],
+  ['dd','ض','ضَاد'],['tt','ط','طَاء'],['zz','ظ','ظَاء'],['ay','ع','عَيْن'],['gh','غ','غَيْن'],['f','ف','فَاء'],['q','ق','قَاف'],
+  ['k','ك','كَاف'],['l','ل','لَام'],['m','م','مِيم'],['n','ن','نُون'],['h','ه','هَاء'],['w','و','وَاو'],['y','ي','يَاء']
+].map(([k,c,n],i)=>({k,c,n,i,joins:!'ادذرزو'.includes(c)}));   // joins: connects to the next letter
+const AR_HAMZA = {k:'hm', c:'ء', n:'هَمْزَة', joins:false};
+const AL = k => k==='hm' ? AR_HAMZA : AR_LETTERS.find(l=>l.k===k);
+const ALc = cs => [...cs].map(c=>AR_LETTERS.find(l=>l.c===c));
+const AR_SIMILAR = ['بتثني','جحخ','دذ','رز','سش','صض','طظ','عغ','فق'].map(g=>ALc(g));
+const similarOf = L => (AR_SIMILAR.find(g=>g.includes(L))||[L]);
+const AR_LEVEL_SETS = ['ابتث','جحخدذ','رزسش','صضطظ','عغفق','كلمنهوي','ابتثجحخدذ','رزسشصضطظعغفق', null, 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي'].map(g=>g?ALc(g):null);
+const arSnd = (ar, rec) => ({ar, rec});
+const sndL = L => arSnd(L.n, 'letter-'+L.k);
+const arBtns = (list, cls) => choices(list.map(o=>`<button class="opt arl ar${cls?' '+cls:''}" data-choice="${esc(o.v)}" aria-label="${esc(o.label||o.v)}">${esc(o.t)}</button>`));
+const arTag = (btn, a) => { if(btn && !btn.querySelector('.tagname')) btn.insertAdjacentHTML('beforeend',`<span class="tagname ar">${esc(a)}</span>`); };
+const sameAs = (opts, it, n) => { const out=[it]; for(const o of shuffle(opts)){ if(out.length>=n) break; if(!out.includes(o)) out.push(o); } return shuffle(out); };
+const arWrong = (o, target) => ['That is', o, 'Find', target];   // spoken after a wrong tap
+
+/* ---------- Step 1 · Letters ---------- */
+function letterPool(lv){ return lv===9 ? pick(AR_SIMILAR.filter(g=>g.length>=2)) : T(lv, AR_LEVEL_SETS); }
+function aLetter(lv){
+  const pool=letterPool(lv), k=Math.min(pool.length, T(lv,[3,3,3,3,3,4,4,4,4,6])), it=pick(pool), opts=sameAs(pool, it, k);
+  return {text:'Tap the letter you hear', parts:['Find the letter.', sndL(it), sndL(it)], answer:it.k,
+    html:arBtns(opts.map(L=>({v:L.k, t:L.c, label:L.n}))),
+    why:(st,c)=>({say:arWrong(sndL(AL(c)), sndL(it))}),
+    async after(){ await say(['Yes!', sndL(it)]); }};
+}
+function aMatch(lv){
+  const pool=T(lv, AR_LEVEL_SETS)||AR_LETTERS, it=pick(pool), n=T(lv,[3,3,3,3,4,4,4,4,5,6]);
+  const near=lv>=4 ? similarOf(it).filter(x=>x!==it) : [];
+  const rest=shuffle(AR_LETTERS.filter(x=>x!==it && !near.includes(x)));
+  const opts=shuffle([it, ...near.slice(0, Math.min(near.length, n-2)), ...rest].slice(0, n));
+  return {text:'Find the same letter', speak:'Find the same letter.', answer:it.k,
+    html:`<div class="arbig ar">${it.c}</div>`+arBtns(opts.map(L=>({v:L.k, t:L.c, label:L.n}))),
+    why:(st,c)=>({say:['Look at the dots and the shape. Find the same letter.']}),
+    async after(){ await say(['Yes! This is', sndL(it)]); }};
+}
+function aOrder(lv){
+  const span=T(lv,[10,10,14,18,22,28,28,28,28,28]), n=lv<=3?2:3, mid=lv>=7;
+  const start=R(0, Math.min(span, AR_LETTERS.length)-n-1), shown=AR_LETTERS.slice(start, start+n+1);
+  const gapAt = mid ? R(1, n-1) : n, it=shown[gapAt];
+  const near=AR_LETTERS.filter(x=>Math.abs(x.i-it.i)<=3 && !shown.includes(x));
+  const opts=sameAs([...near, ...shown.filter(x=>x!==it)].filter((x,i,a)=>a.indexOf(x)===i), it, T(lv,[3,3,3,4,4,4,4,4,4,4]));
+  const seq=shown.map((L,i)=>i===gapAt?'<span class="gap">?</span>':`<span>${L.c}</span>`).join('');
+  return {text: mid?'Which letter is missing?':'What comes next?', answer:it.k,
+    parts:[...shown.filter((L,i)=>i!==gapAt).map(sndL), mid?'Which letter is missing?':'What comes next?'],
+    html:`<div class="arseq ar">${seq}</div>`+arBtns(opts.map(L=>({v:L.k, t:L.c, label:L.n}))),
+    why:()=>({say:['Say the letters in order.', ...shown.slice(0,gapAt).map(sndL)]}),
+    async after(){ await say(['Yes!', ...shown.map(sndL)]); }};
+}
+
+/* ---------- Step 2 · Letter shapes: letters change shape when they join ---------- */
+const TAT='ـ';
+const formOf = (L, f) => f==='start' ? L.c+TAT : f==='mid' ? TAT+L.c+TAT : TAT+L.c;
+function aForms(lv){
+  const f = lv<=3 ? 'start' : lv<=6 ? 'end' : lv<=8 ? 'mid' : pick(['start','mid','end']);
+  const pool = f==='end' ? AR_LETTERS : AR_LETTERS.filter(L=>L.joins);
+  const it=pick(pool), n=T(lv,[3,3,3,3,4,4,4,4,4,4]);
+  const near = lv>=5 ? similarOf(it).filter(x=>x!==it && pool.includes(x)) : [];
+  const opts=shuffle([it, ...near.slice(0,n-2), ...shuffle(pool.filter(x=>x!==it && !near.includes(x)))].slice(0,n));
+  const where={start:'at the start of a word', mid:'in the middle of a word', end:'at the end of a word'}[f];
+  return {text:'Which letter is this?', speak:`This letter is ${where}. Which letter is it?`, answer:it.k,
+    html:`<div class="arbig ar">${formOf(it,f)}</div>`+arBtns(opts.map(L=>({v:L.k, t:L.c, label:L.n}))),
+    why:(st,c)=>({say:arWrong(sndL(AL(c)), sndL(it))}),
+    async after(){ await say(['Yes! It is', sndL(it)]); }};
+}
+function aJoin(lv){
+  const n=lv<=6?2:3, letters=[];
+  for(let g=0; letters.length<n && g<40; g++){ const L=pick(AR_LETTERS); if(letters.length<n-1 ? L.joins : true) letters.push(L); }
+  const key=ls=>ls.map(L=>L.k).join('-'), show=ls=>ls.map(L=>L.c).join(' ');
+  const wrongs=[];
+  const rev=letters.slice().reverse(); if(key(rev)!==key(letters)) wrongs.push(rev);
+  for(let i=0;i<letters.length && wrongs.length<4;i++){ for(const x of similarOf(letters[i])){ if(x!==letters[i]){ const w=letters.slice(); w[i]=x; wrongs.push(w); break; } } }
+  for(let g=0; wrongs.length<3 && g<20; g++){ const w=letters.slice(); w[R(0,n-1)]=pick(AR_LETTERS); if(key(w)!==key(letters)) wrongs.push(w); }
+  const uniq=[...new Map([letters,...wrongs].map(w=>[key(w),w])).values()];
+  const opts=shuffle([letters, ...shuffle(uniq.slice(1)).slice(0, T(lv,[2,2,2,3,3,3,2,3,3,3]))]);
+  return {text:'Which letters make this?', speak:'These letters are joined. Which letters make it?', answer:key(letters),
+    html:`<div class="arbig ar">${letters.map(L=>L.c).join('')}</div>`+arBtns(opts.map(w=>({v:key(w), t:show(w), label:w.map(L=>L.n).join(' ')})),'long'),
+    why:()=>({say:['Look again. Start from the right.']}),
+    async after(){ await say(['Yes!', ...letters.map(sndL)]); }};
+}
+
+/* ---------- Step 3 · Vowel marks: fatha, kasra, damma · tanween · long vowels (madd) ---------- */
+const AR_MARKS = {
+  a:{m:'َ', n:'فَتْحَة', id:'fatha', en:'fatha'}, i:{m:'ِ', n:'كَسْرَة', id:'kasra', en:'kasra'}, u:{m:'ُ', n:'ضَمَّة', id:'damma', en:'damma'},
+  an:{m:'ً', n:'فَتْحَتَان', id:'tanfath', en:'two fathas'}, in:{m:'ٍ', n:'كَسْرَتَان', id:'tankasr', en:'two kasras'}, un:{m:'ٌ', n:'ضَمَّتَان', id:'tandamm', en:'two dammas'},
+  aa:{id:'madda', en:'fatha and alif'}, ii:{id:'maddi', en:'kasra and ya'}, uu:{id:'maddu', en:'damma and waw'}
+};
+const SYL_LETTERS = [AR_HAMZA, ...AR_LETTERS.slice(1)];   // hamza takes the place of alif when it carries a mark
+function sylText(L, v){
+  if(L.k==='hm'){ return {a:'أَ', i:'إِ', u:'أُ', an:'ءً', in:'ءٍ', un:'ءٌ', aa:'آ', ii:'إِي', uu:'أُو'}[v]; }
+  const M=AR_MARKS[v];
+  if(v==='an') return L.c+M.m+(L.c==='ا'?'':'ا');
+  if(v==='aa') return L.c+'َا'; if(v==='ii') return L.c+'ِي'; if(v==='uu') return L.c+'ُو';
+  return L.c+M.m;
+}
+const sylKey = (L,v) => `${AR_MARKS[v].id}-${L.k}`;
+const sndSyl = (L,v) => arSnd(sylText(L,v), sylKey(L,v));
+const sndMark = v => arSnd(AR_MARKS[v].n, 'name-'+AR_MARKS[v].id);
+const sylPool = lv => { const set=T(lv, AR_LEVEL_SETS)||AR_LETTERS; return set.map(L=>L.k==='a'?AR_HAMZA:L); };
+/* one letter with several marks (easy), then several letters (harder); Qaida spelling ("baa, fatha: ba") on the first levels */
+function markGame(lv, marks, mix, title){
+  const pool=sylPool(lv), L=pick(pool);
+  let items;
+  if(lv<=5) items=marks.map(v=>({L,v}));
+  else { const vs=[...new Set(lv<=8?mix:mix.concat(marks))], letters=shuffle(pool.filter(x=>x!==L)).slice(0, lv<=8?1:2);
+    items=[L,...letters].flatMap(x=>vs.map(v=>({L:x,v}))); }
+  const it=lv<=5 ? pick(items) : pick(items.filter(o=>o.L===L));
+  const n=Math.min(items.length, T(lv,[3,3,3,3,3,4,4,4,6,6]));
+  const opts=sameAs(items, it, n), spell=lv<=3 && AR_MARKS[it.v].n;
+  return {text:title, answer:sylKey(it.L,it.v),
+    parts: spell ? [sndL(it.L), sndMark(it.v), sndSyl(it.L,it.v)] : ['Listen.', sndSyl(it.L,it.v), sndSyl(it.L,it.v)],
+    html:arBtns(opts.map(o=>({v:sylKey(o.L,o.v), t:sylText(o.L,o.v), label:`${o.L.n} ${AR_MARKS[o.v].en}`})), opts.some(o=>sylText(o.L,o.v).length>2)?'long':''),
+    why:(st,c)=>{ const o=items.find(x=>sylKey(x.L,x.v)===c); return {say:o?['That one is', sndSyl(o.L,o.v), 'Listen.', sndSyl(it.L,it.v)]:['Listen again.', sndSyl(it.L,it.v)]}; },
+    async after(){ await say(['Yes!', sndSyl(it.L,it.v)]); }};
+}
+const aHaraka  = lv => markGame(lv, ['a','i','u'], ['a','i','u'], 'Tap the sound you hear');
+const aTanween = lv => markGame(lv, ['an','in','un'], ['a','an','i','in','u','un'].slice(0, lv<=8?4:6), 'Tap the sound you hear');
+const aMadd    = lv => markGame(lv, ['aa','ii','uu'], ['a','aa','i','ii','u','uu'], 'Short or long? Tap the sound you hear');
+
+/* ---------- Step 4 · Sukoon and shaddah ---------- */
+const SUK = {sa:'َ', si:'ِ', su:'ُ'};
+const SK_LETTERS = AR_LETTERS.filter(L=>!['a','w','y'].includes(L.k));
+const hamzaWith = v => ({a:'أَ', i:'إِ', u:'أُ'}[v]);
+const sukText = (L,v) => hamzaWith(v)+L.c+'ْ';                      // أَبْ  إِبْ  أُبْ
+const shdText = (L,v) => 'أَ'+L.c+'ّ'+AR_MARKS[v].m;               // أَبَّ  أَبِّ  أَبُّ
+const sukKey = (L,v,kind) => `${kind}${v}-${L.k}`;
+function sukGame(lv, kind){
+  const set=(T(lv, AR_LEVEL_SETS)||AR_LETTERS).filter(L=>SK_LETTERS.includes(L)), pool=set.length?set:SK_LETTERS, L=pick(pool);
+  const txt = (o) => o.kind==='sukoon' ? sukText(o.L,o.v) : shdText(o.L,o.v);
+  let items;
+  if(lv<=5) items=['a','i','u'].map(v=>({L,v,kind}));
+  else if(lv<=8) items = kind==='shadda' ? ['a','i','u'].flatMap(v=>[{L,v,kind:'shadda'},{L,v,kind:'sukoon'}])
+                                         : [L,...shuffle(pool.filter(x=>x!==L)).slice(0,2)].map(x=>({L:x,v:'a',kind}));
+  else items=[L,...shuffle(pool.filter(x=>x!==L)).slice(0,1)].flatMap(x=>['a','i','u'].flatMap(v=>[{L:x,v,kind:'sukoon'},{L:x,v,kind:'shadda'}]));
+  const it=pick(items.filter(o=>o.L===L && o.kind===kind)), n=Math.min(items.length, T(lv,[3,3,3,3,3,4,4,4,6,6]));
+  const opts=sameAs(items, it, n), snd=o=>arSnd(txt(o), sukKey(o.L,o.v,o.kind));
+  return {text:'Tap the sound you hear', answer:sukKey(it.L,it.v,it.kind), parts:['Listen.', snd(it), snd(it)],
+    html:arBtns(opts.map(o=>({v:sukKey(o.L,o.v,o.kind), t:txt(o), label:`${o.L.n} ${o.kind}`}))),
+    why:(st,c)=>{ const o=items.find(x=>sukKey(x.L,x.v,x.kind)===c); return {say:o?['That one is', snd(o), 'Listen.', snd(it)]:['Listen again.', snd(it)]}; },
+    async after(){ await say(['Yes!', snd(it)]); }};
+}
+const aSukoon = lv => sukGame(lv, 'sukoon');
+const aShadda = lv => sukGame(lv, 'shadda');
+
+/* ---------- Arabic words: the same picture words as English, plus colours and numbers ---------- */
+const AR_DICT = {
+  cat:'قِطَّة', dog:'كَلْب', cow:'بَقَرَة', goat:'مَاعِز', sheep:'خَرُوف', camel:'جَمَل', hen:'دَجَاجَة', fish:'سَمَكَة', bird:'طَائِر', horse:'حِصَان',
+  lion:'أَسَد', elephant:'فِيل', duck:'بَطَّة', rabbit:'أَرْنَب', monkey:'قِرْد', frog:'ضِفْدَع',
+  mango:'مَانْجُو', banana:'مَوْز', apple:'تُفَّاحَة', orange:'بُرْتُقَالَة', milk:'حَلِيب', bread:'خُبْز', egg:'بَيْضَة', rice:'أَرُزّ', water:'مَاء', tea:'شَاي',
+  cake:'كَعْكَة', watermelon:'بَطِّيخ', carrot:'جَزَر', tomato:'طَمَاطِم', meat:'لَحْم', lemon:'لَيْمُون',
+  bed:'سَرِير', door:'بَاب', chair:'كُرْسِيّ', cup:'كُوب', spoon:'مِلْعَقَة', plate:'صَحْن', house:'بَيْت', key:'مِفْتَاح', clock:'سَاعَة', phone:'هَاتِف',
+  book:'كِتَاب', ball:'كُرَة', bag:'حَقِيبَة', broom:'مِكْنَسَة', soap:'صَابُون', television:'تِلْفَاز',
+  eye:'عَيْن', ear:'أُذُن', nose:'أَنْف', mouth:'فَم', hand:'يَد', foot:'قَدَم', tooth:'سِنّ', leg:'رِجْل', arm:'ذِرَاع', tongue:'لِسَان', heart:'قَلْب', finger:'إِصْبَع',
+  mother:'أُمّ', father:'أَب', baby:'طِفْل', girl:'بِنْت', boy:'وَلَد', grandmother:'جَدَّة', grandfather:'جَدّ', teacher:'مُعَلِّمَة', doctor:'طَبِيب', 'police officer':'شُرْطِيّ',
+  shirt:'قَمِيص', dress:'فُسْتَان', shoe:'حِذَاء', cap:'قُبَّعَة', sock:'جَوْرَب', coat:'مِعْطَف', trousers:'سِرْوَال', scarf:'وِشَاح', glasses:'نَظَّارَة',
+  gloves:'قُفَّاز', ring:'خَاتَم', umbrella:'مِظَلَّة',
+  sun:'شَمْس', moon:'قَمَر', star:'نَجْمَة', tree:'شَجَرَة', flower:'وَرْدَة', rain:'مَطَر', car:'سَيَّارَة', bus:'حَافِلَة', boat:'قَارِب', plane:'طَائِرَة',
+  bike:'دَرَّاجَة', train:'قِطَار', sea:'بَحْر', mountain:'جَبَل', school:'مَدْرَسَة'
+};
+const AR_EXTRA = {
+  colours:{name:'Colours', words:[['red','🔴','أَحْمَر'],['blue','🔵','أَزْرَق'],['green','🟢','أَخْضَر'],['yellow','🟡','أَصْفَر'],['black','⚫','أَسْوَد'],['white','⚪','أَبْيَض'],['purple','🟣','بَنَفْسَجِيّ'],['brown','🟤','بُنِّيّ']]},
+  numbers:{name:'Numbers', words:[['one','1️⃣','وَاحِد'],['two','2️⃣','اِثْنَان'],['three','3️⃣','ثَلَاثَة'],['four','4️⃣','أَرْبَعَة'],['five','5️⃣','خَمْسَة'],['six','6️⃣','سِتَّة'],['seven','7️⃣','سَبْعَة'],['eight','8️⃣','ثَمَانِيَة'],['nine','9️⃣','تِسْعَة'],['ten','🔟','عَشَرَة']]}
+};
+const AR_WORLDS = Object.assign(
+  Object.fromEntries(NOUN_WORLDS.map(k=>[k, {name:WORLDS[k].name, words:WORLDS[k].words.filter(([w])=>AR_DICT[w]).map(([w,e])=>[w,e,AR_DICT[w]])}])),
+  AR_EXTRA);
+const AR_WORLD_ORDER = ['animals','food','colours','numbers','home','body','people','clothes','outside'];
+const arWordsOf = keys => keys.flatMap(k=>AR_WORLDS[k].words.map(([w,e,a])=>({w,e,a,world:k})));
+const AR_ALL = arWordsOf(AR_WORLD_ORDER);
+const AR_VOCAB_LEVELS = [['animals'],['food'],['colours'],['numbers'],['home'],['body'],['people'],['clothes'],['outside'],AR_WORLD_ORDER];
+const wordRec = w => 'word-'+w.replace(/\s+/g,'-');
+const sndW = it => arSnd(it.a, wordRec(it.w));
+const arWordOf = w => AR_ALL.find(x=>x.w===w);
+function learnArWord(w){ if(!me||!arWordOf(w)) return; me.arWords=me.arWords||{}; if(!me.arWords[w]) me.arWords[w]=Date.now(); }
+const arPicBtns = (list, tags) => choices(list.map(it=>`<button class="opt pic${tags?' named':''}" data-choice="${esc(it.w)}" aria-label="${esc(it.a)}">${it.e}${tags==='ar'?`<span class="tagname ar">${esc(it.a)}</span>`:tags==='en'?`<span class="tagname">${esc(it.w)}</span>`:''}</button>`));
+
+function aWords(lv){
+  const pool=arWordsOf(T(lv,AR_VOCAB_LEVELS)), k=T(lv,[2,3,3,3,4,4,4,4,4,6]), it=pick(pool), opts=sameAs(pool, it, k);
+  return {text:'Tap the picture you hear', parts:['Listen.', sndW(it), sndW(it)], answer:it.w, arWord:it.w,
+    html:arPicBtns(opts),
+    why:(st,c,btn)=>{ const o=arWordOf(c); arTag(btn,o.a); return {say:[sndW(o), `is ${o.w}.`, 'Find', sndW(it)]}; },
+    async after(st){ arTag(choiceBtn(st,it.w), it.a); await say(['Yes!', sndW(it), `${it.w}!`]); }};
+}
+function aEn2Ar(lv){
+  const pool=arWordsOf(T(lv,AR_VOCAB_LEVELS)), k=T(lv,[2,3,3,3,3,4,4,4,4,4]), it=pick(pool), opts=sameAs(pool, it, k), pics=lv<=4;
+  return {text:`How do you say “${it.w}” in Arabic?`, parts:[`How do you say ${it.w} in Arabic?`], answer:it.w, arWord:it.w,
+    html:`<div class="target"><span class="tw">${esc(it.w)}</span></div>`+(pics ? arPicBtns(opts,'ar')
+      : choices(opts.map(o=>`<button class="opt arw ar" data-choice="${esc(o.w)}" aria-label="${esc(o.a)}">${esc(o.a)}</button>`))),
+    why:(st,c)=>{ const o=arWordOf(c); return {say:[sndW(o), `means ${o.w}.`, `Find ${it.w}.`]}; },
+    async after(){ await say(['Yes!', `${it.w} is`, sndW(it)]); }};
+}
+function aAr2En(lv){
+  const pool=arWordsOf(T(lv,AR_VOCAB_LEVELS)), k=T(lv,[2,3,3,3,3,4,4,4,4,4]), it=pick(pool), opts=sameAs(pool, it, k), pics=lv<=4;
+  return {text:'What does this word mean?', parts:['What does this mean?', sndW(it), sndW(it)], answer:it.w, arWord:it.w,
+    html:`<div class="target"><span class="tw ar">${esc(it.a)}</span></div>`+(pics ? arPicBtns(opts,'en')
+      : choices(opts.map(o=>`<button class="opt enw" data-choice="${esc(o.w)}">${esc(o.w)}</button>`))),
+    why:(st,c)=>({say:[`That is ${c}.`, 'Listen again.', sndW(it)]}),
+    async after(){ await say(['Yes!', sndW(it), `means ${it.w}.`]); }};
+}
+
+/* ---------- speaking: Say It Back (never marked) and Say It in Arabic (checked by voice or a grown-up) ---------- */
+const AR_PHRASES = [['السَّلَامُ عَلَيْكُمْ','👋','phrase-salam'],['صَبَاحُ الْخَيْرِ','🌅','phrase-morning'],['شُكْرًا','🙏','phrase-thanks'],
+  ['مَا اسْمُكَ؟','❓','phrase-name'],['أَنَا بِخَيْرٍ','😊','phrase-fine'],['مَعَ السَّلَامَةِ','👋','phrase-bye'],['أَهْلًا وَسَهْلًا','🤗','phrase-welcome']];
+function echoItem(lv){
+  const pool=sylPool(Math.min(lv,8));
+  if(lv<=2){ const L=pick(AR_LETTERS); return {t:L.c, e:'', snd:sndL(L)}; }
+  if(lv<=5){ const L=pick(pool), v=lv===3?pick(['a','i','u']):lv===4?pick(['an','in','un']):pick(['aa','ii','uu']); return {t:sylText(L,v), e:'', snd:sndSyl(L,v)}; }
+  if(lv<=7){ const L=pick(SK_LETTERS), v=pick(['a','i','u']), kind=lv===6?'sukoon':'shadda', t=kind==='sukoon'?sukText(L,v):shdText(L,v); return {t, e:'', snd:arSnd(t, sukKey(L,v,kind))}; }
+  if(lv<=9){ const it=pick(arWordsOf(lv===8?['animals','food','colours','numbers']:AR_WORLD_ORDER)); return {t:it.a, e:it.e, snd:sndW(it)}; }
+  const [t,e,rec]=pick(AR_PHRASES); return {t, e, snd:arSnd(t,rec)};
+}
+function aEcho(lv){
+  const it=echoItem(lv), ms=lv>=10?3600:lv>=8?3000:2400;
+  let myQ;
+  myQ = {text:'Say it back to the parrot', parts:['Say it after me.', it.snd, it.snd], answer:it.t, noReview:true,
+    html:`<div class="parrot"><span class="pbird" id="pBird">🦜</span>${it.e?`<span class="ppic">${it.e}</span>`:''}</div><div class="pword ar">${esc(it.t)}</div>
+      <button class="micbtn" id="pRec"><span class="mi">🎤</span><span class="ml">${micOK()?'Tap, then say it':'Say it out loud'}</span></button>
+      <div class="btns pafter" id="pAfter" hidden><button class="btn" id="pAgain">↻ Again</button><button class="btn primary" id="pNext">Next ▶</button></div>`,
+    mount(){
+      const rec=$('pRec'), after=$('pAfter'), bird=$('pBird'); let busy=false;
+      const alive=()=>current==='sPlay' && q===myQ;
+      const fallback=async()=>{ rec.hidden=true; bird.classList.add('talk'); await say(['Say it with the parrot!', it.snd]); bird.classList.remove('talk'); if(alive()) after.hidden=false; };
+      const go=async()=>{
+        if(busy) return; busy=true; audio();
+        if(!micOK()){ busy=false; return fallback(); }
+        hush(); rec.classList.add('on'); rec.querySelector('.ml').textContent='Listening… say it now';
+        try{
+          const blob=await recordClip(ms); if(!alive()) return;
+          rec.classList.remove('on'); rec.querySelector('.ml').textContent='The parrot says…'; bird.classList.add('talk'); squawk(); await wait(250);
+          await playParrot(blob); bird.classList.remove('talk'); if(!alive()) return;
+          rec.hidden=true; after.hidden=false; say(pick(['Ha ha! Good talking!','Squawk! Well said!','The parrot loves it!']));
+        }catch(e){ rec.classList.remove('on'); toast('The microphone is off. Say it out loud instead.'); fallback(); }
+        busy=false;
+      };
+      rec.addEventListener('click',go);
+      $('pAgain').addEventListener('click',()=>{ after.hidden=true; rec.hidden=false; rec.querySelector('.ml').textContent='Tap, then say it'; say(it.snd).then(()=>{ if(alive()) go(); }); });
+      $('pNext').addEventListener('click',()=>customDone(true, ()=>say(pick(['Well done!','Super speaking!','Great!']))));
+    }};
+  return myQ;
+}
+/* Arabic voice check: compare without vowel marks; common spoken words are accepted too */
+const arNorm = s => String(s||'').replace(/[ً-ٰٟـ]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[^ء-ي\s]/g,' ').trim();
+const AR_SYN = {cat:['بسه','بس','هره','قط','بسيس'], banana:['موزه'], orange:['برتقال'], hen:['فرخه','دجاج'], mango:['منجا','منقا','عمبه','مانجا'], tomato:['بندوره','طماطيس','طماطه'],
+  car:['عربيه','موتر'], trousers:['بنطلون','بنطال'], television:['تلفزيون','تلفاز','تليفزيون'], phone:['تلفون','تليفون','جوال','موبايل'], bag:['شنطه'], shoe:['جزمه','كندره','نعل'],
+  cup:['كاس','كاسه','فنجان'], ball:['طابه'], bike:['عجله','بسكليت','سيكل'], bus:['باص'], plane:['طياره'], baby:['بيبي','رضيع'], grandmother:['تيته','حبوبه','ستي'], grandfather:['جدو','سيدي'],
+  bird:['عصفور','طير'], goat:['عنز','عنزه','تيس'], sheep:['خروف','غنم','نعجه'], cake:['كيك','كيكه'], teacher:['معلم','استاذ','استاذه','مدرس','مدرسه'], 'police officer':['شرطي','شرطه','بوليس'],
+  rice:['رز'], water:['مويه','ميه'], plate:['صحن','طبق'], house:['بيت','منزل','دار'], egg:['بيض'], tooth:['سن','ضرس'], finger:['صبع','اصبع'], two:['اثنين','ثنين']};
+function arSaidRight(alts, it){
+  const targets=[it.a, ...(AR_SYN[it.w]||[])].map(arNorm).map(t=>t.replace(/^ال/,''));
+  return alts.some(alt=>{ const toks=arNorm(alt).split(/\s+/).filter(Boolean).map(x=>x.replace(/^ال/,''));
+    return targets.some(t=>toks.some(x=> x===t || (t.length>=3 && lev(x,t)<=1))); });
+}
+function aName(lv){
+  const it=pick(arWordsOf(T(lv,AR_VOCAB_LEVELS)));
+  let myQ;
+  myQ = {text:'Say it in Arabic', parts:[`This is ${it.w}. Say it in Arabic.`], answer:it.w, arWord:it.w,
+    html:`<div class="bigemoji nbig">${it.e}</div><div class="pword ar" id="nWord" hidden>${esc(it.a)}</div>
+      <button class="micbtn" id="nRec"${SR?'':' hidden'}><span class="mi">🎤</span><span class="ml">Tap, then say it</span></button>
+      <p class="heard" id="nHeard">${SR?'':'Say the word out loud in Arabic. A grown-up taps 👍 when it is right.'}</p>
+      <div class="btns"><button class="btn small" id="nHear">🔊 Hear it</button><button class="btn small${SR?'':' primary'}" id="nYes">👍 Grown-up: it was right</button></div>`,
+    mount(){
+      const rec=$('nRec'), heard=$('nHeard'); let hint=false, misses=0, busy=false;
+      const alive=()=>current==='sPlay' && q===myQ;
+      const win=()=>{ $('nWord').hidden=false; rec.hidden=true; customDone(misses===0 && !hint, ()=>say(['Yes!', sndW(it)])); };
+      const grownUp=msg=>{ rec.hidden=true; heard.textContent=msg; $('nYes').classList.add('primary'); };
+      rec.addEventListener('click', async()=>{
+        if(busy||locked) return; busy=true; audio(); hush();
+        rec.classList.add('on'); rec.querySelector('.ml').textContent='Listening…'; heard.textContent='';
+        const r=await listenOnce('ar-SA'); busy=false; if(!alive()) return;
+        rec.classList.remove('on'); rec.querySelector('.ml').textContent='Tap, then say it';
+        if(!Array.isArray(r)){
+          if(r.err==='not-allowed'||r.err==='service-not-allowed'){ grownUp('The microphone is off. Say it out loud, and a grown-up taps 👍.'); return; }
+          if(r.err==='network'||r.err==='language-not-supported'){ grownUp('Voice check is not available here. Say it out loud, and a grown-up taps 👍.'); return; }
+          heard.textContent="I didn't hear anything. Tap and try again, a bit louder."; say("I didn't hear you. Try again, a bit louder."); return;
+        }
+        if(arSaidRight(r,it)){ heard.innerHTML=`I heard “<span class="ar">${esc(r[0])}</span>” ✓`; win(); return; }
+        misses++; tries++; heard.innerHTML=`I heard “<span class="ar">${esc(r[0])}</span>”. Try again!`; boop();
+        if(misses>=2){ hint=true; $('nWord').hidden=false; say(['It is', sndW(it), sndW(it), 'Now you say it.']); }
+        else say('Not quite. Try again.');
+      });
+      $('nHear').addEventListener('click',()=>{ audio(); hint=true; $('nWord').hidden=false; say([sndW(it), sndW(it)]); });
+      $('nYes').addEventListener('click',()=>{ if(!locked) win(); });
+    }};
+  return myQ;
+}
+
+/* ---------- Arabic Word Garden ---------- */
+function openArGarden(){
+  show('sGarden');
+  const got=me.arWords||{}, n=Object.keys(got).length;
+  $('gardenBody').innerHTML=`<div class="head"><h1>${esc(me.name)}'s Arabic Word Garden</h1><p>${n} of ${AR_ALL.length} words grown. Tap a flower to hear its word. New flowers grow when you get an Arabic word right first time.</p></div>`
+    + AR_WORLD_ORDER.map(k=>{ const ws=AR_WORLDS[k].words, have=ws.filter(([w])=>got[w]).length;
+      return `<div class="card bed"><h3>${AR_WORLDS[k].name} <span>${have}/${ws.length}</span></h3><div class="plots">${ws.map(([w,e,a])=>got[w]
+        ? `<button class="plot grown tap" data-gword="${esc(w)}" data-ar="${esc(a)}" data-rec="${esc(wordRec(w))}" aria-label="${esc(a)}"><span class="pe">${e}</span><span class="pw ar">${esc(a)}</span></button>`
+        : `<span class="plot seed" aria-label="not grown yet"><span class="pe">🌱</span></span>`).join('')}</div></div>`; }).join('');
+  say(n?[`Welcome to your Arabic garden, ${me.name}! You have ${n} words.`]:[`This is your Arabic word garden, ${me.name}. Learn Arabic words to grow flowers!`]);
+}
+
+const ARABIC = {
+  steps:[{n:1, name:'Letters', ar:'الْحُرُوف', games:['aletter','amatch','aorder']},
+         {n:2, name:'Letter shapes', ar:'أَشْكَالُ الْحُرُوف', games:['aforms','ajoin']},
+         {n:3, name:'Vowel marks', ar:'الْحَرَكَات', games:['aharaka','atanween','amadd']},
+         {n:4, name:'Sukoon and shaddah', ar:'السُّكُونُ وَالشَّدَّة', games:['asukoon','ashadda','aecho']},
+         {n:5, name:'Arabic words', ar:'كَلِمَات', games:['awords','aname']},
+         {n:6, name:'Arabic and English', games:['aen2ar','aar2en']}],
+  order:{little:[1,5,2,3,6,4], middle:[1,2,3,4,5,6], older:[1,2,3,4,5,6]},
+  practice:{little:[1,5], middle:[1,2,3,5], older:[2,3,4,6]},
+  stepsFor(band){ return this.order[band].map(n=>this.steps.find(s=>s.n===n)); },
+  gamesFor(band){ return this.stepsFor(band).flatMap(s=>s.games); },
+  practiceFor(band){ return this.practice[band].flatMap(n=>this.steps.find(s=>s.n===n).games); },
+  get games(){ return this.steps.flatMap(s=>s.games); }
+};
+
 const GAMES = {
   count:{name:'Counting', icon:'🍎', acc:'#E0567A', learn:'Count objects up to 10', make:gCount},
   findnum:{name:'Find the Number', icon:'🔢', acc:'#3657E0', learn:'Know the numbers 1 to 10', make:gFind},
@@ -2192,6 +2588,21 @@ const GAMES = {
   esentence:{name:'Sentence Builder', icon:'🧱', acc:'#C2410C', learn:'Words in order, capitals and full stops', skill:'Writing', make:eSentence},
   efix:{name:'Fix-It Doctor', icon:'🩺', acc:'#E0567A', learn:'Find the sentence written correctly', skill:'Writing', make:eFix},
 
+  aletter:{name:'Letter Sounds', icon:'ب', acc:'#0F9BB5', learn:'Hear a letter, find it', skill:'Arabic letters', subj:'arabic', make:aLetter},
+  amatch:{name:'Twin Letters', icon:'🪞', acc:'#8B5CF6', learn:'Spot the same letter', skill:'Arabic letters', subj:'arabic', make:aMatch},
+  aorder:{name:'Letter Train', icon:'🚂', acc:'#22955A', learn:'Letters in order, ا to ي', skill:'Arabic letters', subj:'arabic', make:aOrder},
+  aforms:{name:'Letter Shapes', icon:'🔀', acc:'#C2410C', learn:'Letters at the start, middle and end', skill:'Letter shapes', subj:'arabic', make:aForms},
+  ajoin:{name:'Joined Letters', icon:'🔗', acc:'#3657E0', learn:'Which letters are joined?', skill:'Letter shapes', subj:'arabic', make:aJoin},
+  aharaka:{name:'Short Vowels', icon:'بَ', acc:'#E0567A', learn:'Fatha, kasra and damma', skill:'Vowel marks', subj:'arabic', make:aHaraka},
+  atanween:{name:'Tanween', icon:'بٌ', acc:'#D19A06', learn:'Two fathas, two kasras, two dammas', skill:'Vowel marks', subj:'arabic', make:aTanween},
+  amadd:{name:'Long Vowels', icon:'بَا', acc:'#0F9BB5', learn:'Short or long sounds (madd)', skill:'Vowel marks', subj:'arabic', make:aMadd},
+  asukoon:{name:'Sukoon', icon:'بْ', acc:'#4D7C0F', learn:'Stopping sounds: ab, ib, ub', skill:'Sukoon and shaddah', subj:'arabic', make:aSukoon},
+  ashadda:{name:'Shaddah', icon:'بّ', acc:'#BE185D', learn:'Double sounds: abba, abbi, abbu', skill:'Sukoon and shaddah', subj:'arabic', make:aShadda},
+  aecho:{name:'Say It Back', icon:'🦜', acc:'#22955A', learn:'Say Arabic sounds after the parrot', skill:'Arabic speaking', subj:'arabic', make:aEcho},
+  awords:{name:'Arabic Words', icon:'👂', acc:'#3657E0', learn:'Hear an Arabic word, find the picture', skill:'Arabic words', subj:'arabic', make:aWords},
+  aname:{name:'Say It in Arabic', icon:'🗣️', acc:'#8B5CF6', learn:'Name the picture in Arabic', skill:'Arabic speaking', subj:'arabic', make:aName},
+  aen2ar:{name:'English to Arabic', icon:'🌉', acc:'#E8862A', learn:'Find the Arabic word', skill:'Arabic and English', subj:'arabic', make:aEn2Ar},
+  aar2en:{name:'Arabic to English', icon:'🔁', acc:'#1D4ED8', learn:'What does the Arabic word mean?', skill:'Arabic and English', subj:'arabic', make:aAr2En},
   placement:{name:'Quick check', icon:'🧭', acc:'#0F9BB5', learn:'Find the right games', isPlacement:true},
   review:{name:'Review', icon:'🔁', acc:'#D19A06', learn:'Questions to try again', isReview:true},
   sprint:{name:'60-Second Challenge', icon:'⏱️', acc:'#D63E55', learn:'Quick-fire mixed questions', isSprint:true}
@@ -2204,6 +2615,8 @@ const GROUPS = {
 const groupOf = age => age<=5?'little':age<=8?'middle':'older';
 const bandOf = p => (p && GROUPS[p.band] ? p.band : groupOf(p.age));   // set by the quick check or the parent; age otherwise
 const G = () => { const g=GROUPS[bandOf(me)]; const band=bandOf(me);
+  if(subject==='arabic'){ const ids=SCH.cls ? ARABIC.gamesFor(classCfg(SCH.cls.name).band) : ARABIC.gamesFor(band);   // Arabic: Qaida steps, then words
+    return Object.assign({}, g, {label:SCH.cls?SCH.cls.name:'Arabic', games:ids, practiceGames:SCH.cls?ids:ARABIC.practiceFor(band), perLevel:g===GROUPS.little?5:6, voice:true}); }
   if(SCH.cls){ const c=classCfg(SCH.cls.name), ids=subject==='english'?c.english:c.maths;     // school: the class decides the games
     return Object.assign({}, g, {label:SCH.cls.name, games:ids, practiceGames:ids, perLevel:subject==='english'?(g===GROUPS.little?5:6):g.perLevel, voice:true}); }
   return subject==='english' ? Object.assign({}, g, {label:'English', games:ENGLISH.gamesFor(band), practiceGames:ENGLISH.practiceFor(band), perLevel:g===GROUPS.little?5:6, voice:true}) : g; };
@@ -2242,6 +2655,7 @@ function load(){
   store.profiles.forEach((p,i)=>{ if(!p.games) p.games={}; if(!p.best) p.best={}; if(!p.color) p.color=AVCOL[i%AVCOL.length]; });
   if(!store.device) store.device='tab-'+Math.random().toString(36).slice(2,7);
   try{ const to=new URLSearchParams(location.search).get('to'); if(validEmail(to)) store.sendTo=to; }catch(e){}
+  try{ const ar=new URLSearchParams(location.search).get('arabic'); if(ar==='1') store.arabicTest=true; else if(ar==='0') delete store.arabicTest; }catch(e){}
   if(store.version!==3){ store.version=3; }
   if(store.school && !Array.isArray(store.school.outbox)) store.school.outbox=[];
   // Families now need a free account (agreed 25 Oct 2026). A family phone without one starts fresh, like a new phone.
@@ -2371,7 +2785,7 @@ function schoolRound(rec){
   saveChildProgress();
   if(rec.game_id==='placement' || !SCH.session) return;
   const first=(rec.items[0]||{}).game || rec.game_id, gg=GAMES[first]||{};
-  obPush('record_round', {p_round_id:uuid(), p_session_id:SCH.session.id, p_subject:gg.skill?'english':'maths', p_game:rec.game_id,
+  obPush('record_round', {p_round_id:uuid(), p_session_id:SCH.session.id, p_subject:gg.subj||(gg.skill?'english':'maths'), p_game:rec.game_id,
     p_skill:rec.game_id==='review'?'Review':(gg.skill||gg.name||rec.game), p_level:rec.level||0, p_questions:rec.questions,
     p_right_first_time:rec.right_first_try, p_stars:Math.max(0,Math.min(3,rec.stars||0)),
     p_missed:rec.items.filter(i=>!i.ok).map(i=>({game:i.game, answer:String(i.answer)})).slice(0,20),
@@ -2394,7 +2808,7 @@ function famRound(rec){
     if(!famSes || famSes.child!==me.id){ famEnd(); famSes={id:uuid(), child:me.id, started:Date.now()};
       obPush('open_session', {p_session_id:famSes.id, p_child_id:me.id, p_task_type:'family', p_started_at:new Date(Date.now()-rec.seconds*1000).toISOString()}); }
     const first=(rec.items[0]||{}).game || rec.game_id, gg=GAMES[first]||{};
-    obPush('record_round', {p_round_id:uuid(), p_session_id:famSes.id, p_subject:gg.skill?'english':'maths', p_game:rec.game_id,
+    obPush('record_round', {p_round_id:uuid(), p_session_id:famSes.id, p_subject:gg.subj||(gg.skill?'english':'maths'), p_game:rec.game_id,
       p_skill:rec.game_id==='review'?'Review':(gg.skill||gg.name||rec.game), p_level:rec.level||0, p_questions:rec.questions,
       p_right_first_time:rec.right_first_try, p_stars:Math.max(0,Math.min(3,rec.stars||0)),
       p_missed:rec.items.filter(i=>!i.ok).map(i=>({game:i.game, answer:String(i.answer)})).slice(0,20),
@@ -2447,7 +2861,7 @@ async function openChild(id, btn){
   SCH.cls={id:c.class_id, name:c.class_name||(SCH.klass&&SCH.klass.name)||'Standard 2'};
   SCH.preview=false;
   me=profileFromChild(Object.assign({}, c, {class_name:SCH.cls.name}), pr);
-  subject=me.subject==='english'?'english':'maths';
+  subject=subjOf(me);
   startChildSession();
   if(SCH.assess) return startStarting(SCH.assess);
   SCH.child.start_done ? openGames() : startStarting('baseline');
@@ -3211,6 +3625,10 @@ function admFamiliesHTML(d){
       <div class="inline"><input class="input" id="setGroup" maxlength="200" placeholder="https://chat.whatsapp.com/…" value="${esc(st.parents_group_link||'')}"><button class="btn small" data-a="setgroup">Save</button></div>
       <label class="label" for="setAdminWa">Admin WhatsApp number (with country code)</label>
       <div class="inline"><input class="input" id="setAdminWa" type="tel" maxlength="20" placeholder="252 61 234 5678" value="${esc(st.admin_whatsapp||'')}"><button class="btn small" data-a="setadminwa">Save</button></div>
+    </div>
+    <div class="card panel adm"><h3>Arabic games</h3>
+      <p>Families always see the Arabic tab. Schools see it only when this is switched on. ${(store.settings||{}).arabic_schools==='on'?'<b>Now: on for schools.</b>':'<b>Now: off for schools.</b>'}</p>
+      <div class="btns"><button class="btn small" data-a="arabicschools" data-v="${(store.settings||{}).arabic_schools==='on'?'':'on'}">${(store.settings||{}).arabic_schools==='on'?'Switch off for schools':'Switch on for schools'}</button></div>
     </div>`;
 }
 async function adminAction(a, el){
@@ -3237,6 +3655,7 @@ async function adminAction(a, el){
   if(a==='fblock'){ const block=el.dataset.block==='1', k='fblock'+el.dataset.fid; if(block && ADM.arm!==k){ ADM.arm=k; return renderAdmin(); } ADM.arm='';
     return busy(el, ()=>call('admin_block_family', {p_family_id:el.dataset.fid, p_blocked:block}, block?'Family blocked and signed out.':'Family unblocked.')); }
   if(a==='setgroup'){ const v=($('setGroup').value||'').trim(); return busy(el, ()=>call('admin_set_setting', {p_key:'parents_group_link', p_value:v}, v?'Group link saved.':'Group link removed.')); }
+  if(a==='arabicschools'){ const v=el.dataset.v||''; return busy(el, async()=>{ if(await call('admin_set_setting', {p_key:'arabic_schools', p_value:v}, v?'Arabic is on for schools.':'Arabic is off for schools.')){ await loadSettings(); renderAdmin(); } }); }
   if(a==='setadminwa'){ const v=($('setAdminWa').value||'').trim(); return busy(el, async()=>{ if(await call('admin_set_setting', {p_key:'admin_whatsapp', p_value:v}, v?'Admin number saved.':'Admin number removed.')) loadSettings(); }); }
   if(a==='copygroup'){ const fams=(ADM.data.families||[]).filter(f=>f.wants_group && !f.blocked && f.whatsapp && (!ADM.fc||f.country===ADM.fc) && (!ADM.fr||f.region===ADM.fr));
     const list=fams.map(f=>`${f.name}: ${f.whatsapp}`).join('\n');
@@ -3365,7 +3784,7 @@ function resultsMessage(){
   const d=new Date(), today=`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
   const lines=[`Garaad results — ${today} — device ${store.device}`,''];
   store.profiles.forEach(p=>{ const t=totals(p), acc=t.answers?Math.round(100*t.right/t.answers):0;
-    const lv=GROUPS[bandOf(p)].games.concat(ENGLISH.games).filter(id=>!GAMES[id].isSprint&&p.games[id]&&levelsDone(p.games[id])).map(id=>`${GAMES[id].name} ${levelsDone(p.games[id])}/10`).join(', ');
+    const lv=GROUPS[bandOf(p)].games.concat(ENGLISH.games, ARABIC.games).filter(id=>!GAMES[id].isSprint&&p.games[id]&&levelsDone(p.games[id])).map(id=>`${GAMES[id].name} ${levelsDone(p.games[id])}/10`).join(', ');
     lines.push(`${p.name} (age ${p.age}): ${t.rounds} rounds played, ${t.answers} answers, ${t.right} right first time (${acc}%), ${t.wrong} wrong tries.${lv?` Levels completed: ${lv}.`:''}`); });
   lines.push('','--- Spreadsheet data (paste into Excel; each round has a unique id) ---',toCSV());
   return lines.join('\n');
@@ -3510,16 +3929,17 @@ function saveChild(){
 /* ---------- games ---------- */
 function openGames(){
   logRound(false); stopSprint(); show('sGames');
-  const grp=G(), eng=subject==='english';
+  const grp=G(), eng=subject==='english', arb=subject==='arabic', lang=subject!=='maths';
+  if(arb){ loadArRecordings(); setTimeout(prefetchArRecordings, 3000); }
   $('gamesTitle').textContent=`Hi ${me.name}!`;
   practice=null;
-  $('subjTabs').innerHTML=`<button class="tap${eng?'':' on'}" data-subject="maths" aria-pressed="${!eng}"><svg viewBox="0 0 24 24"><path d="M7 4v7M3.5 7.5h7M14 17.5h7M4 16l6 6M10 16l-6 6M17.5 3.5v0M17.5 11v0M14 7.5h7"/></svg>Maths</button><button class="tap${eng?' on':''}" data-subject="english" aria-pressed="${eng}"><svg viewBox="0 0 24 24"><path d="M4 19l5-14 5 14M6 14h6M15 9h5v10M15 14h5"/></svg>English</button>`;
-  $('gamesSub').innerHTML=`<span class="tag">${grp.label}</span>&nbsp; ${eng?'Listen, speak, read and write.':'Start today\'s practice, or pick a game.'}`;
+  $('subjTabs').innerHTML=`<button class="tap${lang?'':' on'}" data-subject="maths" aria-pressed="${!lang}"><svg viewBox="0 0 24 24"><path d="M7 4v7M3.5 7.5h7M14 17.5h7M4 16l6 6M10 16l-6 6M17.5 3.5v0M17.5 11v0M14 7.5h7"/></svg>Maths</button><button class="tap${eng?' on':''}" data-subject="english" aria-pressed="${eng}"><svg viewBox="0 0 24 24"><path d="M4 19l5-14 5 14M6 14h6M15 9h5v10M15 14h5"/></svg>English</button>${arabicOn()?`<button class="tap${arb?' on':''}" data-subject="arabic" aria-pressed="${arb}"><span class="ar" style="font-size:19px;line-height:1;margin-inline-end:6px" aria-hidden="true">ع</span>Arabic</button>`:''}`;
+  $('gamesSub').innerHTML=`<span class="tag">${grp.label}</span>&nbsp; ${arb?'Letters, vowel marks and words, step by step.':eng?'Listen, speak, read and write.':'Start today\'s practice, or pick a game.'}`;
   const due=dueReviews().length, days=practiceDays(me), doneToday=(me.practiceDays||[]).includes(todayStr());
-  const card=`<button class="card practice tap" id="practiceBtn"><span class="pi">${doneToday?'✅':'🌟'}</span><span class="pt"><b>Today's ${eng?'English ':''}practice</b><small>${doneToday?'Done today. You can play it again.':'About 10 minutes · games picked for you'}</small>${days?`<small class="streak">⭐ ${days} day${days>1?'s':''} in a row</small>`:''}</span><span class="btn primary small go">${doneToday?'Again':'Start'}</span></button>`;
-  const check = !eng && !me.placement && !SCH.cls ? `<button class="card checkcard tap" id="checkBtn"><span class="pi">🧭</span><span class="pt"><b>Quick check</b><small>8 warm-up questions to find the best games for ${esc(me.name)}</small></span><span class="btn primary small go">Start</span></button>` : '';
-  const nw=Object.keys(me.words||{}).length;
-  const garden = eng ? `<button class="card practice garden tap" id="gardenBtn"><span class="pi">🌼</span><span class="pt"><b>Word Garden</b><small>${nw?`${nw} word${nw>1?'s':''} grown so far. Tap to visit.`:'Every new word you learn grows a flower.'}</small></span><span class="btn small go">Visit</span></button>` : '';
+  const card=`<button class="card practice tap" id="practiceBtn"><span class="pi">${doneToday?'✅':'🌟'}</span><span class="pt"><b>Today's ${eng?'English ':arb?'Arabic ':''}practice</b><small>${doneToday?'Done today. You can play it again.':'About 10 minutes · games picked for you'}</small>${days?`<small class="streak">⭐ ${days} day${days>1?'s':''} in a row</small>`:''}</span><span class="btn primary small go">${doneToday?'Again':'Start'}</span></button>`;
+  const check = !lang && !me.placement && !SCH.cls ? `<button class="card checkcard tap" id="checkBtn"><span class="pi">🧭</span><span class="pt"><b>Quick check</b><small>8 warm-up questions to find the best games for ${esc(me.name)}</small></span><span class="btn primary small go">Start</span></button>` : '';
+  const nw=Object.keys((arb?me.arWords:me.words)||{}).length;
+  const garden = lang ? `<button class="card practice garden tap" id="gardenBtn"><span class="pi">🌼</span><span class="pt"><b>${arb?'Arabic Word Garden':'Word Garden'}</b><small>${nw?`${nw} word${nw>1?'s':''} grown so far. Tap to visit.`:'Every new word you learn grows a flower.'}</small></span><span class="btn small go">Visit</span></button>` : '';
   const rev = due ? `<button class="card game tap" id="reviewBtn" style="--acc:#D19A06"><span class="gicon">🔁</span><b>Review</b><small>${due} question${due>1?'s':''} to try again</small></button>` : '';
   const gameCard = id => {
     const g=GAMES[id];
@@ -3527,15 +3947,17 @@ function openGames(){
     const s=gp(me,id), cap=capOf(id), done=Math.min(levelsDone(s),cap);
     return `<button class="card game tap" data-game="${id}" style="--acc:${g.acc}"><span class="gicon">${g.icon}</span><b>${g.name}</b><small>${g.skill?`<span class="skill">${g.skill}</span> `:''}${g.learn}</small><div class="gprog"><span class="bar"><i style="width:${Math.round(done*100/cap)}%"></i></span>${done}/${cap}</div></button>`;
   };
-  const steps = SCH.cls ? ENGLISH.steps.map(st=>({n:st.n, name:st.name, games:st.games.filter(id=>grp.games.includes(id))})).filter(st=>st.games.length) : ENGLISH.stepsFor(bandOf(me));
-  const list = eng ? steps.map(st=>`<h2 class="stephead">Step ${st.n} · ${st.name}</h2>`+st.games.map(gameCard).join('')).join('') : grp.games.map(gameCard).join('');
+  const TRACK=arb?ARABIC:ENGLISH, steps = SCH.cls ? TRACK.steps.map(st=>({n:st.n, name:st.name, ar:st.ar, games:st.games.filter(id=>grp.games.includes(id))})).filter(st=>st.games.length) : TRACK.stepsFor(bandOf(me));
+  const list = lang ? steps.map(st=>`<h2 class="stephead">Step ${st.n} · ${st.name}${st.ar?` <span class="ar" style="font-weight:700;margin-inline-start:6px">${st.ar}</span>`:''}</h2>`+st.games.map(gameCard).join('')).join('') : grp.games.map(gameCard).join('');
   const banner = SCH.preview ? `<div class="banner" style="grid-column:1/-1">Preview: try any game to check the questions. Nothing is saved.</div>` : '';
-  $('games').innerHTML=banner+(eng||me.placement||SCH.cls?card:check+card)+garden+rev+list;
-  if(grp.voice) say(eng?`Hi ${me.name}! Let's learn English. Pick a game.`:`Hi ${me.name}! Tap today's practice, or pick a game.`);
+  const arNote = arb && !hasArVoice() && !AR_REC.size ? `<p class="arnote">This phone has no Arabic voice yet, so Arabic sounds may be silent. Add Arabic in the phone's text-to-speech settings (Settings › Language › Text-to-speech), or wait for the teacher's recordings.</p>` : '';
+  $('games').innerHTML=banner+arNote+(lang||me.placement||SCH.cls?card:check+card)+garden+rev+list;
+  if(grp.voice) say(arb?[`Hi ${me.name}! Let's learn Arabic.`, {ar:'أَهْلًا وَسَهْلًا', rec:'phrase-welcome'}, 'Pick a game.']:eng?`Hi ${me.name}! Let's learn English. Pick a game.`:`Hi ${me.name}! Tap today's practice, or pick a game.`);
 }
 
 /* ---------- Word Garden: every word learned grows a flower ---------- */
 function openGarden(){
+  if(subject==='arabic') return openArGarden();
   show('sGarden');
   const got=me.words||{}, n=Object.keys(got).length;
   const total=ALL_WORDS.length;
@@ -3738,14 +4160,14 @@ function onChoice(btn){
     const w = q.why ? q.why($('stage'), btn.dataset.choice, btn) : null;
     if(w && w.html) showWhy(w.html);
     if(tries>=2){ const c=[...$('stage').querySelectorAll('[data-choice]')].find(b=>b.dataset.choice===q.answer); if(c) c.classList.add('pulse'); }
-    if(G().voice){ const first=(w&&w.say)||pick(['Try again.','Not that one. Try again.','Almost! Try again.']); say(tries>=2?[first,'Tap the one that is shining.']:first); }
+    if(G().voice){ const first=(w&&w.say)||pick(['Try again.','Not that one. Try again.','Almost! Try again.']); say(tries>=2?[].concat(first,'Tap the one that is shining.'):first); }
   }
 }
 function customDone(firstTry, celebrate){ if(locked||!q) return; locked=true; if(firstTry){ ding(); celebrateCorrect(); } else tick(); completeQ(firstTry, false, celebrate||null); }
 async function completeQ(firstTry, shown, celebrate){
   if(celebrate) await celebrate();
   const s=gp(me,q.gid); s.tries++; if(firstTry) s.right++; s.last=Date.now();
-  if(firstTry){ if(q.isReview) clearReview(q); if(q.word) learnWord(q.word); } else if(!q.noReview) addReview(q);
+  if(firstTry){ if(q.isReview) clearReview(q); if(q.word) learnWord(q.word); if(q.arWord) learnArWord(q.arWord); } else if(!q.noReview) addReview(q);
   if(round) round.items.push({game:q.gid, answer:q.answer, ok:!!firstTry, wrong:tries, shown:!!shown, review:!!q.isReview, hint:!!q.hinted});
   save(); qi++; setBar(); await wait(350); nextQ();
 }
@@ -3908,7 +4330,7 @@ function renderParent(){
     : `<span class="status"><i></i>Saved on this device only</span>`;
   const kids = store.profiles.map(p=>{
     const t=totals(p), acc=t.answers?Math.round(100*t.right/t.answers):null;
-    const ids=GROUPS[bandOf(p)].games.filter(id=>!GAMES[id].isSprint).concat(ENGLISH.games.filter(id=>p.games[id]&&p.games[id].tries));
+    const ids=GROUPS[bandOf(p)].games.filter(id=>!GAMES[id].isSprint).concat(ENGLISH.games.concat(ARABIC.games).filter(id=>p.games[id]&&p.games[id].tries));
     let weak=null; ids.forEach(id=>{ const s=p.games[id]; if(s&&s.tries>=6){ const a=s.right/s.tries; if(a<.6&&(!weak||a<weak.a)) weak={id,a}; } });
     const rv=(p.review||[]).length, pd=practiceDays(p);
     const flag = (!t.rounds ? '' : weak ? `<span class="flag">Needs practice: ${GAMES[weak.id].name}</span>` : `<span class="flag ok">On track</span>`)
@@ -3962,7 +4384,7 @@ document.addEventListener('click', async e=>{
   const ow=t.closest('[data-owl]'); if(ow){ edOwl=ow.dataset.owl; renderOwls(); const b=$('owlPick').querySelector(`[data-owl="${edOwl}"]`); if(b) b.focus(); return; }
   if(t.closest('#hintBtn')){ audio(); useHint(); return; }
   if(t.closest('#addKid')||t.closest('#pAdd')){ openEditor(null, current==='sParent'?'sParent':'sHome'); return; }
-  const kid=t.closest('[data-kid]'); if(kid){ audio(); me=store.profiles.find(p=>p.id===kid.dataset.kid); subject=me.subject==='english'?'english':'maths';
+  const kid=t.closest('[data-kid]'); if(kid){ audio(); me=store.profiles.find(p=>p.id===kid.dataset.kid); subject=subjOf(me);
     const fresh=!me.placement && !me.placementSkipped && !Object.values(me.games||{}).some(g=>g.tries>0);
     fresh ? startPlacement(me) : openGames(); return; }
   if(t.closest('#placedGo')){ openGames(); return; }
@@ -3971,7 +4393,7 @@ document.addEventListener('click', async e=>{
   const ag=t.closest('[data-age]'); if(ag){ edAge=+ag.dataset.age; renderAges(); return; }
   const sj=t.closest('[data-subject]'); if(sj){ audio(); subject=sj.dataset.subject; me.subject=subject; save(); openGames(); return; }
   if(t.closest('#gardenBtn')){ audio(); openGarden(); return; }
-  const gw=t.closest('[data-gword]'); if(gw){ audio(); say(gw.dataset.gword); gw.classList.remove('pop'); void gw.offsetWidth; gw.classList.add('pop'); return; }
+  const gw=t.closest('[data-gword]'); if(gw){ audio(); say(gw.dataset.ar?{ar:gw.dataset.ar, rec:gw.dataset.rec}:gw.dataset.gword); gw.classList.remove('pop'); void gw.offsetWidth; gw.classList.add('pop'); return; }
   const gm=t.closest('[data-game]'); if(gm){ audio(); game=gm.dataset.game; GAMES[game].isSprint?startLevel(1):openLevels(game); return; }
   const lv=t.closest('[data-level]'); if(lv){ audio(); startLevel(+lv.dataset.level); return; }
   const key=t.closest('[data-key]'); if(key){ onKey(key.dataset.key); return; }
