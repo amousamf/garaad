@@ -1,5 +1,5 @@
-// Garaad offline cache — version g5-light-3
-const CACHE = 'garaad-g5-light-3';
+// Garaad offline cache — version g5-light-1
+const CACHE = 'garaad-g5-light-1';
 const CORE = ['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','favicon-64.png',
   'fonts/baloo2-800.woff2','fonts/lexend-400.woff2','fonts/lexend-500.woff2','fonts/lexend-600.woff2','fonts/lexend-700.woff2'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
