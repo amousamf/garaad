@@ -1,0 +1,5 @@
+Baloo 2 (Ek Type) and Lexend (Bonnie Shaver-Troup, Thomas Jockin and others) are licensed under the SIL Open Font License 1.1: https://openfontlicense.org
+Files from the Fontsource packages @fontsource/baloo-2 and @fontsource/lexend (latin subset).
+
+Noto Naskh Arabic (The Noto Project Authors) is licensed under the SIL Open Font License 1.1: https://openfontlicense.org
+Files naskh-400.woff2 and naskh-700.woff2 are from the Fontsource package @fontsource/noto-naskh-arabic (arabic subset).
