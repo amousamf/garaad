@@ -2962,7 +2962,7 @@ function famRegionField(){
 }
 function famPhoneField(){
   return `<div class="fld"><label class="label" for="famPhone">WhatsApp number</label>
-    <div class="phone"><span class="cc">${esc(famDial()||'+')}</span><input class="input" id="famPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="16" placeholder="${FAM.country==='SO'?'61 234 5678':'Your number'}" value="${esc(FAM.phone)}"></div></div>`;
+    <div class="phone"><span class="cc">${esc(famDial()||'+')}</span><input class="input" id="famPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="16" placeholder="${FAM.country==='SO'?'61 234 5678':FAM.country==='XS'?'63 412 3456':'Your number'}" value="${esc(FAM.phone)}"></div></div>`;
 }
 function famPinField(label, note){
   return `<div class="fld"><label class="label" for="famPin">${label}</label>
