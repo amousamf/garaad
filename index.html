@@ -691,6 +691,10 @@ body[data-theme="night"] .readq{color:var(--cta)}
    do not repaint it, but it keeps the same colours. Form controls stay light. */
 @media (prefers-color-scheme: dark){ :root{ color-scheme:light dark; } }
 @media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation:none!important;transition:none!important} }
+
+/* example before level 1, and an answer shown after two wrong tries */
+.demotag{display:flex;align-items:center;justify-content:space-between;gap:12px;width:min(560px,100%);box-sizing:border-box;background:var(--primary-soft);color:var(--primary-ink);border-radius:14px;padding:6px 8px 6px 14px;font-weight:700}
+.opt.shown{border-color:var(--gold)!important;background:#FFF6DB!important}
 </style>
 
 <div class="app">
@@ -896,8 +900,11 @@ function speakOne(text,rate,token){
   });
 }
 /* say(text) or say([part, part, …]) — parts are spoken one by one with a short pause between them */
+let revealing=false;   // true while showing an answer the child did not get: no "Yes!" or "Well done!"
+const PRAISE_START=/^\s*(yes|well done|great|correct|brilliant|good job|you did it)[^.!?]*[.!?]\s*/i;
 async function say(parts,opts){
   opts=opts||{}; parts=Array.isArray(parts)?parts:[parts];
+  if(revealing) parts=parts.map(p=>typeof p==='string'?p.replace(PRAISE_START,''):p).filter(p=>p!=='');
   const token=++sayToken;
   if(muted||!('speechSynthesis' in window)){ await wait(opts.silentMs||500); return; }
   try{ speechSynthesis.cancel(); }catch(e){}
@@ -3608,6 +3615,76 @@ function buildPractice(){
   for(const x of st.slice().sort(()=>Math.random()-.5)){ if(steps.filter(z=>z.g!=='review').length>=3) break; take(x); }
   return steps;
 }
+
+/* ---------- after 2 wrong tries: show and say the right answer with a short why, then move on ----------
+   The question is saved for Review, so it comes back a few minutes later. */
+const labelOf = b => (b && (b.getAttribute('aria-label') || b.textContent || '').trim()) || '';
+async function showAnswer(qq, st){
+  revealing=true;
+  try{
+    if(qq.seq && qq.seqDone) await qq.seqDone();
+    else if(qq.after) await qq.after(st);
+    else { const b=choiceBtn(st,qq.answer); await say(qq.praise ? [qq.praise] : [`It is ${labelOf(b)}.`]); }
+  } finally { revealing=false; }
+}
+async function revealChoice(){
+  locked=true; const myQ=q, st=$('stage'), b=choiceBtn(st,q.answer);
+  setOwl('happy'); $('hintRow').innerHTML='';
+  if(b){ b.classList.add('right','shown'); if(!b.textContent.trim() || b.classList.contains('pic')) tagBtn(b, labelOf(b)); }
+  $('pText').textContent='Here is the right answer';
+  await say('Here is the right answer.', {silentMs:300});
+  if(q!==myQ) return;
+  await showAnswer(q, st);
+  if(q!==myQ) return;
+  await wait(700); completeQ(false, true);
+}
+async function revealSeq(){
+  locked=true; const myQ=q, st=$('stage'); $('hintRow').innerHTML='';
+  st.querySelectorAll('.opt.right').forEach(b=>{ b.classList.remove('right'); const n=b.querySelector('.stepno'); if(n) n.remove(); });
+  $('pText').textContent='Here is the right order';
+  await say('Here is the right order.', {silentMs:300});
+  for(let i=0;i<q.seq.length;i++){
+    if(q!==myQ) return;
+    const b=[...st.querySelectorAll('[data-choice]')].find(x=>x.dataset.choice===q.seq[i] && !x.classList.contains('right'));
+    if(b){ b.classList.add('right','shown'); b.insertAdjacentHTML('beforeend',`<span class="stepno">${i+1}</span>`); tick(); }
+    await wait(550);
+  }
+  if(q!==myQ) return;
+  if(q.seqDone) await showAnswer(q, st); else if(q.seqSay) await say([q.seqSay]);
+  await wait(700); if(q===myQ) completeQ(false, true);
+}
+
+/* ---------- level 1 of every game starts with a short example: the owl answers one question, then "Your turn!" ----------
+   The child can skip it. Speaking and tracing games (their own answer screens) have no example. */
+let demoRun=0;
+function demoable(qq){ return qq && (qq.seq || qq.pad || (!qq.mount && /data-choice=/.test(qq.html))); }
+async function runDemo(){
+  const my=++demoRun; let ex;
+  try{ ex=makeQ(game,1); }catch(e){ ex=null; }
+  if(!demoable(ex)){ nextQ(); return; }
+  q=ex; q.isDemo=true; renderQ(); locked=true;
+  const st=$('stage'), alive=()=>my===demoRun && q===ex && current==='sPlay';
+  $('hintRow').innerHTML=''; $('pText').textContent='Watch me first'; setOwl('happy');
+  st.insertAdjacentHTML('afterbegin', `<div class="demotag"><span>👀 Example</span><button class="btn small" id="demoSkip">Skip ▶</button></div>`);
+  $('demoSkip').addEventListener('click', ()=>{ if(my!==demoRun) return; demoRun++; audio(); hush(); revealing=false; nextQ(); });
+  await wait(300); if(!alive()) return;
+  if(G().voice) await say(['Watch me.', ...(ex.parts || [ex.speak || ex.text])]); else await wait(1200);
+  if(!alive()) return;
+  if(ex.seq){
+    for(let i=0;i<ex.seq.length;i++){ if(!alive()) return;
+      const b=[...st.querySelectorAll('[data-choice]')].find(x=>x.dataset.choice===ex.seq[i] && !x.classList.contains('right'));
+      if(b){ b.classList.add('right'); b.insertAdjacentHTML('beforeend',`<span class="stepno">${i+1}</span>`); tick(); }
+      await wait(500); }
+  } else if(ex.pad){ const s=$('slot'); if(s){ s.textContent=ex.answer; s.classList.remove('empty'); s.classList.add('ok'); } tick(); }
+  else { const b=choiceBtn(st,ex.answer); if(b){ b.classList.add('right'); if(b.classList.contains('pic')) tagBtn(b,labelOf(b)); } tick(); }
+  await wait(250); if(!alive()) return;
+  if(G().voice){ if(ex.pad) await say(speakify(ex.explain||ex.answer)+'.'); else await showAnswer(ex, st); }
+  if(!alive()) return;
+  if(G().voice) await say('Your turn!'); else await wait(900);
+  if(!alive()) return;
+  demoRun++; nextQ();
+}
+
 function startPractice(){ practice={steps:buildPractice(), i:0}; runPracticeStep(); }
 function runPracticeStep(){ const stp=practice.steps[practice.i]; game=stp.g; startLevel(stp.lv); }
 
@@ -3623,7 +3700,8 @@ function startLevel(n){
   if(g0.isSprint){ startSprint(); return; }
   plan=buildPlan(game,n);
   if(!plan.length){ practice ? nextPracticeOrEnd() : openGames(); return; }
-  setBar(); nextQ();
+  setBar();
+  if(n===1 && !g0.isReview && me) runDemo(); else nextQ();
 }
 function setBar(){ $('qbar').style.width = `${100*qi/Math.max(1,plan.length)}%`; }
 function nextQ(){
@@ -3727,8 +3805,8 @@ function onChoice(btn){
     }
     tries++; boop(); btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
     q.pos=0; $('stage').querySelectorAll('.opt.right').forEach(b=>{ b.classList.remove('right'); const n=b.querySelector('.stepno'); if(n) n.remove(); });
-    if(tries>=2){ const first=choiceBtn($('stage'),q.seq[0]); if(first) first.classList.add('pulse'); }
-    say(q.seqRetry ? (tries>=2?[q.seqRetry,'Start with the one that is shining.']:q.seqRetry) : tries>=2?['Start again. Listen.', q.seqSay, 'Start with the one that is shining.']:['Oops! Start again. Listen.', q.seqSay]);
+    if(tries>=2){ revealSeq(); return; }
+    say(q.seqRetry ? q.seqRetry : ['Oops! Start again. Listen.', q.seqSay]);
     return;
   }
   if(btn.dataset.choice===q.answer){ locked=true; btn.classList.add('right'); ding(); burst(btn); celebrateCorrect();
@@ -3737,8 +3815,8 @@ function onChoice(btn){
     tries++; btn.classList.add('wrong'); boop(); setOwl('oops', 1600);
     const w = q.why ? q.why($('stage'), btn.dataset.choice, btn) : null;
     if(w && w.html) showWhy(w.html);
-    if(tries>=2){ const c=[...$('stage').querySelectorAll('[data-choice]')].find(b=>b.dataset.choice===q.answer); if(c) c.classList.add('pulse'); }
-    if(G().voice){ const first=(w&&w.say)||pick(['Try again.','Not that one. Try again.','Almost! Try again.']); say(tries>=2?[first,'Tap the one that is shining.']:first); }
+    if(tries>=2){ revealChoice(); return; }
+    if(G().voice){ say((w&&w.say)||pick(['Try again.','Not that one. Try again.','Almost! Try again.'])); }
   }
 }
 function customDone(firstTry, celebrate){ if(locked||!q) return; locked=true; if(firstTry){ ding(); celebrateCorrect(); } else tick(); completeQ(firstTry, false, celebrate||null); }
