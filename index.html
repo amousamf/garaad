@@ -702,6 +702,116 @@ body[data-theme="night"] .readq{color:var(--cta)}
 /* example before level 1, and an answer shown after two wrong tries */
 .demotag{display:flex;align-items:center;justify-content:space-between;gap:12px;width:min(560px,100%);box-sizing:border-box;background:var(--primary-soft);color:var(--primary-ink);border-radius:14px;padding:6px 8px 6px 14px;font-weight:700}
 .opt.shown{border-color:var(--gold)!important;background:#FFF6DB!important}
+
+/* ---------- update 8: play styles ---------- */
+.sortit{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:620px}
+.sortcard{min-width:clamp(150px,44vw,220px);min-height:clamp(110px,26vw,140px);padding:12px 18px;border-radius:22px;background:var(--surface);border:2px dashed var(--acc,var(--primary));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}
+.sortcard.wide{max-width:560px}
+.sortcard .bigemoji{font-size:clamp(64px,18vw,92px);line-height:1}
+.sortcard .pot{width:clamp(90px,24vw,120px);height:auto}
+.sortcard{position:relative}
+.halfline{position:absolute;left:18%;right:18%;top:50%;border-top:2px dashed #9AA3B8}
+.gword{font-size:clamp(34px,9vw,48px);font-weight:700;color:var(--ink)}
+.gsent{font-size:clamp(20px,5.4vw,28px);font-weight:600;color:var(--ink);line-height:1.35}
+.gsent u{text-decoration:none;display:inline-block;min-width:2.2em;border-bottom:3px solid var(--acc,var(--primary));color:var(--muted)}
+.gpic{font-size:clamp(36px,10vw,52px);line-height:1}
+.bins{display:grid;gap:10px;width:100%}
+.bins.b2{grid-template-columns:1fr 1fr}.bins.b3{grid-template-columns:1fr 1fr 1fr}
+.opt.bin{min-height:clamp(110px,28vw,140px);padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;font:inherit;color:var(--ink);border-radius:22px 22px 26px 26px;border-bottom-width:5px}
+.opt.bin b{font-size:clamp(18px,4.8vw,24px)}
+.opt.bin .bico{font-size:28px;line-height:1}
+.binin{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;min-height:26px;font-size:22px}
+.binin i{font-style:normal}.binin i.new{animation:yay .5s}
+.cmpbars{display:flex;flex-direction:column;gap:12px;width:clamp(180px,60vw,300px)}
+.cmpbars .lbar{display:block;height:16px;border-radius:8px}
+.cmpbars.tall{flex-direction:row;align-items:flex-end;justify-content:center;gap:28px}
+.cmpbars .tower i{background:var(--tc)}
+.tmap{position:relative;width:100%;max-width:620px;padding:34px 12px 40px;border-radius:24px;background:linear-gradient(160deg,#FCE9C3,#F6D89A);border:2px solid #E3C07A}
+.tmap .tstart{position:absolute;left:10px;top:6px;font-size:30px}.tmap .tchest{position:absolute;right:12px;bottom:6px;font-size:34px}
+.stones{gap:14px}
+.opt.stone{min-width:clamp(78px,21vw,104px);height:clamp(70px,18vw,90px);padding:6px 10px;border-radius:46% 54% 50% 50%/55% 50% 50% 45%;background:#FFFDF6;border-color:#C9A15A;box-shadow:0 4px 0 #C9A15A;font:inherit;color:var(--ink);position:relative}
+.opt.stone .snum{font-size:clamp(28px,8vw,40px);font-weight:700}
+.opt.stone.wordst{min-width:clamp(120px,34vw,160px);border-radius:18px}
+.opt.stone .sword{font-size:clamp(17px,4.6vw,22px);font-weight:700}
+.opt.stone.pic2{flex-direction:column;height:auto;min-height:96px;display:flex;align-items:center;justify-content:center;gap:2px}
+.opt.stone .se{font-size:clamp(32px,9vw,44px);line-height:1}.opt.stone .sl{font-size:13px;font-weight:600}
+.buildit{display:flex;flex-direction:column;align-items:center;gap:10px}
+.frames{display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:18px;background:var(--surface);border:1px solid var(--line)}
+.frame{display:grid;gap:5px;width:clamp(220px,74vw,420px)}
+.frame span{aspect-ratio:1/1;border-radius:50%;border:2px solid #23306B;background:#F08A3C}
+.frame span.gap{background:transparent;border:2px dashed var(--muted)}
+.frame span.add,.rods10 span.add{background:#2FA866;border-color:#1D6B44;animation:yay .5s}
+.rods10{display:flex;gap:5px;padding:10px;border-radius:18px;background:var(--surface);border:1px solid var(--line)}
+.rods10 span{display:grid;grid-template-rows:repeat(10,1fr);width:16px;height:130px;border:2px solid #23306B;border-radius:4px;background:#4C6EF5;overflow:hidden}
+.rods10 span.gap{background:transparent;border-style:dashed;border-color:var(--muted)}
+.rods10 span i{border-bottom:1.5px solid rgba(255,255,255,.45)}
+.opt.piece{min-width:clamp(80px,22vw,110px);min-height:clamp(80px,22vw,110px);padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font:inherit;color:var(--ink)}
+.opt.piece .tower i{width:22px;height:12px}
+.opt.piece .blocks{padding:6px;border:0;background:none;transform:scale(.62);transform-origin:center;margin:-26px -20px}
+.pnum{font-size:clamp(26px,7vw,36px);font-weight:700}.pnum.big{font-size:clamp(34px,9vw,46px)}
+.pdots{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;max-width:70px}.pdots i{width:9px;height:9px;border-radius:50%;background:#2FA866}
+.prods{display:flex;gap:3px}.prods i{width:7px;height:34px;border-radius:2px;background:#4C6EF5}
+.bignum{font-size:clamp(64px,18vw,100px);font-weight:800;color:var(--ink);line-height:1}
+.stall{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;padding:12px 16px;border-radius:22px;background:linear-gradient(#FFF4DC,#FFE7B8);border:2px solid #E3C07A;max-width:600px}
+.stall .seller{font-size:40px}
+.ware{display:inline-flex;flex-direction:column;align-items:center;gap:2px}
+.ware .we{font-size:clamp(40px,11vw,56px);line-height:1}
+.price{font-size:15px;font-weight:700;background:#fff;border:1.5px solid #C9A15A;border-radius:8px;padding:1px 8px;color:#172041}
+.paid{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+svg.note{width:120px;height:60px}
+.opt.moneybtn{min-width:96px;min-height:90px;padding:8px}
+.opt.word.money{min-width:clamp(110px,30vw,150px)}
+.opt.ware.big{min-width:104px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit}
+.paygrid{display:flex;flex-direction:column;gap:10px;width:100%;max-width:560px}
+.opt.wide.pay{min-height:86px}
+/* ---------- update 8: the teacher's class page and competition ---------- */
+.ctools{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:0 0 14px}
+.ctool{display:flex;align-items:center;gap:12px;padding:12px 14px;text-align:left;font:inherit;color:var(--ink)}
+.ctool .ci{font-size:26px}.ctool b{display:block;font-size:16px}.ctool small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.ctiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.ctile{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center}
+.ctile b{display:block;font-size:24px;font-variant-numeric:tabular-nums}.ctile small{color:var(--muted);font-size:12px}
+@media (max-width:520px){ .ctiles{grid-template-columns:repeat(2,1fr)} }
+.cpanel .trow{flex-direction:row;align-items:center;justify-content:space-between}
+.cpanel button.trow{background:none;border-left:0;border-right:0;border-bottom:0;font:inherit;color:inherit;text-align:left;width:100%;cursor:pointer}
+.cpanel.ready h3{color:var(--success)}
+.key{display:inline-block;font-size:12px;font-weight:600;border-radius:6px;padding:1px 6px;margin-left:4px}
+.key.g,.sgrid td.g{background:#DFF5E9}.key.y,.sgrid td.y{background:#FFF1C7}.key.r,.sgrid td.r{background:#FCE6EA}
+.advice{margin:0;padding-left:18px;font-size:14px;line-height:1.5}
+.gridwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;max-width:min(100%,calc(100vw - 72px))}
+.cpanel{min-width:0;max-width:100%}
+.sgrid{border-collapse:collapse;font-size:13px;min-width:100%}
+.sgrid th,.sgrid td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:center;white-space:nowrap}
+.sgrid thead th{vertical-align:bottom;background:var(--bg)}.sgrid thead th span{display:block;font-weight:700}.sgrid thead th small{display:block;max-width:110px;white-space:normal;font-weight:400;color:var(--muted);font-size:11px;line-height:1.2}
+.sgrid tbody th{text-align:left;position:sticky;left:0;background:var(--surface)}
+.trend .up{color:var(--success)}.trend .down{color:var(--danger)}.trend .same{color:var(--muted)}
+.ctsubj{margin-bottom:6px}
+.topic{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;margin:8px 0;text-align:left;font:inherit;color:var(--ink);width:100%}
+.topic .tick{width:26px;height:26px;flex:0 0 26px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center;font-weight:700;color:#fff}
+.topic[aria-pressed="true"]{border-color:var(--primary);background:var(--primary-soft)}.topic[aria-pressed="true"] .tick{background:var(--primary);border-color:var(--primary)}
+.topic b{display:block;font-size:16px}.topic small{display:block;color:var(--muted);font-size:13px;margin-top:4px;line-height:1.6}
+.chip.code{font-size:11px;padding:2px 7px}
+.strandh{font-size:15px;margin:14px 2px 0;color:var(--muted)}
+details.more{margin-top:12px}details.more summary{cursor:pointer;font-weight:600;padding:8px 2px}
+.stickybar{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;background:var(--bg);border-top:1px solid var(--line);margin-top:12px}
+.goal{flex-direction:row;align-items:center;flex-wrap:wrap}.goal>div{flex:1;min-width:200px;display:flex;flex-direction:column;gap:8px}
+.ctree{width:150px;height:auto}.ctree.big{width:min(420px,80vw)}
+.team{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-top:1px solid var(--line)}
+.tbar{display:flex;align-items:center;gap:10px}.tbar .tname{min-width:80px;font-weight:700}.tbar .bar,.steam .bar{flex:1;height:14px;border-radius:7px;background:var(--bg);overflow:hidden}
+.tbar .bar i,.steam .bar i{display:block;height:100%;border-radius:7px}
+.team .chips{display:flex;flex-wrap:wrap;gap:6px}.team .chip.tap,.note .chip.tap{cursor:pointer;font:inherit;font-size:13px;font-weight:600}
+.badges{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.badge{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px;border-radius:14px;background:var(--bg);text-align:center}.badge .bi{font-size:28px}.badge span:last-child{color:var(--muted);font-size:14px}
+.cscreen{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;justify-content:center;padding:8px}
+.cscreen .sleft{display:flex;flex-direction:column;align-items:center;gap:6px}.cscreen h1{font-size:clamp(30px,5vw,52px)}
+.cscreen .sgoal{font-size:clamp(26px,4vw,40px);margin:0}.cscreen .sright{flex:1;min-width:280px;max-width:620px}
+.cscreen h2{font-size:clamp(22px,3.4vw,32px);margin:10px 0}
+.steam{display:flex;align-items:center;gap:12px;margin:10px 0;font-size:clamp(20px,3vw,30px)}.steam .tname{min-width:130px;font-weight:700}.steam .bar{height:28px;border-radius:14px}
+.sbadges{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.sbadges div{display:flex;flex-direction:column;align-items:center;padding:12px;border-radius:18px;background:var(--surface);border:1px solid var(--line);font-size:clamp(16px,2.4vw,22px)}
+.sbadges span{font-size:clamp(34px,5vw,48px)}.sbadges em{font-style:normal;color:var(--muted)}
+.featrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.featrow .chip.tap{cursor:pointer;font:inherit;font-size:13px;font-weight:600}
+.featrow .chip[aria-pressed="true"],.currseg button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
+.currseg button{height:auto;min-height:46px;padding:8px 12px}
 </style>
 
 <div class="app">
@@ -2135,10 +2245,285 @@ function eFix(lv){
     async after(){ await say(['Yes! Well spotted.', rule]); }};
 }
 
+/* ================= PLAY STYLES (database update 8) =================
+   One question ladder per skill, shown in a play style: Build It, Sort It, Treasure Map and Owl's Market.
+   Each style turns a plain question (what to show, the choices, the answer) into a picture the child plays with,
+   so the same ladder can later be shown in another style. All four use the normal tap answers, so the
+   example at level 1, hints, "show the answer after two tries" and Review work as in every other game. */
+
+/* --- Sort It: one card at a time goes into the right box. The boxes keep what was sorted this level. --- */
+let STY = {round:null, sorted:{}};
+function styleState(){ if(STY.round!==round){ STY={round, sorted:{}}; } return STY; }
+function sortQ(o){
+  const st=styleState();
+  const bins=o.bins.map(b=>`<button class="opt bin" data-choice="${esc(b.key)}" aria-label="${esc(b.label)}"><span class="bico">${b.icon||''}</span><b>${esc(b.label)}</b><span class="binin">${(st.sorted[b.key]||[]).slice(-6).map(x=>`<i>${x}</i>`).join('')}</span></button>`).join('');
+  return {text:o.text, speak:o.speak, key:o.key, parts:o.parts,
+    html:`<div class="sortit"><div class="sortcard${o.cardCls?' '+o.cardCls:''}">${o.card}</div><div class="bins b${o.bins.length}">${bins}</div></div>`,
+    answer:o.answer,
+    why:(stg,v,btn)=>{ const w=o.why?o.why(v):null; return w||{say:`Not that box. ${o.hint||'Look again.'}`}; },
+    async after(stg){
+      const s=styleState(); (s.sorted[o.answer]=s.sorted[o.answer]||[]).push(o.mini||'⭐');
+      const b=choiceBtn(stg,o.answer); if(b){ const box=b.querySelector('.binin'); if(box) box.insertAdjacentHTML('beforeend',`<i class="new">${o.mini||'⭐'}</i>`); }
+      if(o.reveal){ const c=stg.querySelector('.sortcard'); if(c) c.innerHTML=o.reveal; }
+      await say(o.praise||'Yes!');
+    }};
+}
+
+/* --- Treasure Map: tap the stepping stones in order to reach the treasure --- */
+function mapQ(o){
+  const stones=shuffle(o.items).map(it=>`<button class="opt stone${it.cls?' '+it.cls:''}" data-choice="${esc(it.v)}" aria-label="${esc(it.label||it.v)}">${it.html}</button>`).join('');
+  return {text:o.text, speak:o.speak, parts:o.parts, seq:o.order.map(String), answer:o.order.join(' > '),
+    html:`<div class="tmap"><span class="tstart" aria-hidden="true">🏝️</span><div class="choices stones">${stones}</div><span class="tchest" aria-hidden="true">🧰</span></div>`,
+    seqSay:o.seqSay, seqRetry:o.retry,
+    async seqDone(){ const c=$('stage').querySelector('.tchest'); if(c) c.textContent='💰'; await say(o.done||'You found the treasure!'); }};
+}
+
+/* --- Build It: pick the piece that completes the build --- */
+function buildQ(o){
+  return {text:o.text, speak:o.speak, key:o.key, parts:o.parts,
+    html:`<div class="buildit">${o.build}</div>`+choices(o.pieces.map(p=>`<button class="opt piece" data-choice="${esc(p.v)}" aria-label="${esc(p.label||p.v)}">${p.html}</button>`)),
+    answer:String(o.answer), why:o.why,
+    async after(stg){ if(o.fill) o.fill(stg); await say(o.praise||'You built it!'); }};
+}
+
+/* ---------- Build It · Make the number (number bonds to 5, 10, 20 and 100) ---------- */
+function frameHTML(total, have, perRow){
+  perRow = perRow || (total<=5?5:10);
+  const rows=Math.ceil(total/perRow); let h=`<div class="frames">`;
+  for(let r=0;r<rows;r++){ h+=`<div class="frame" style="grid-template-columns:repeat(${perRow},1fr)">`;
+    for(let i=r*perRow;i<Math.min(total,(r+1)*perRow);i++) h+=`<span class="${i<have?'full':'gap'}"></span>`;
+    h+='</div>'; }
+  return h+'</div>';
+}
+function tensHTML(have){ let h='<div class="rods10">'; for(let i=0;i<10;i++) h+=`<span class="${i<have?'full':'gap'}"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>`; return h+'</div>'; }
+const strip = n => `<span class="pnum">${n}</span><span class="pdots">${'<i></i>'.repeat(Math.min(n,10))}</span>`;
+function bBonds(lv){
+  if(lv===10) lv=pick([3,7,9]);
+  if(lv>=8){
+    const a=R(1,9)*10, ans=100-a, opts=numChoices(ans/10,1,9,4).map(x=>x*10);
+    return buildQ({text:`Make 100`, speak:`We have ${a}. How many more make 100?`, key:'100',
+      build:(lv===8?tensHTML(a/10):'')+`<div class="eq sm">${a} + <span class="qmark">?</span> = 100</div>`,
+      pieces:opts.map(n=>({v:n, html:`<span class="pnum">${n}</span><span class="prods">${'<i></i>'.repeat(n/10)}</span>`, label:String(n)})), answer:ans,
+      why:(st,v)=>({html:hintBox(`Count on in tens from ${a} to 100`, `<div class="w-eq">${Array.from({length:(100-a)/10},(_,i)=>a+10*(i+1)).join(', ')}</div>`), say:`Count on in tens from ${a}. How many tens to reach 100?`}),
+      fill:st=>{ st.querySelectorAll('.rods10 .gap').forEach(x=>{x.classList.remove('gap');x.classList.add('add');}); fillQ(st,ans); },
+      praise:`${a} and ${ans} make 100!`});
+  }
+  const total = lv===1?5 : lv<=4?10 : lv===5?R(6,9) : 20;
+  const a = lv===1?R(1,4) : lv===2?R(5,9) : lv===6?R(10,19) : R(1,total-1), ans=total-a;
+  const pieces=numChoices(ans,1,total-1,lv<=2?3:4).map(n=>({v:n, html:strip(n), label:String(n)}));
+  return buildQ({text:`Make ${total}`, speak:lv===4?`${a} plus what makes ${total}?`:`Here are ${a}. How many more make ${total}?`, key:String(total),
+    build:frameHTML(total,a)+(lv>=4?`<div class="eq sm">${a} + <span class="qmark">?</span> = ${total}</div>`:''),
+    pieces, answer:ans,
+    why:(st,v)=>{ const k=+v; return {html:hintBox(`${a} and ${k} make ${a+k}, not ${total}.`, frameHTML(Math.max(total,a+k), a)), say:`${a} and ${k} make ${a+k}. ${a+k>total?'Too many!':'Not enough!'} Count the empty spaces.`}; },
+    fill:st=>{ st.querySelectorAll('.frame .gap').forEach(x=>{x.classList.remove('gap');x.classList.add('add');}); fillQ(st,ans); },
+    praise:`${a} and ${ans} make ${total}!`});
+}
+
+/* ---------- Build It · Build the number (count to 20, numbers to 99, tens and ones) ---------- */
+const towerHTML = n => `<span class="tower">${'<i></i>'.repeat(n)}</span>`;
+function bNumber(lv){
+  if(lv===10) lv=pick([6,7,8,9]);
+  if(lv<=2){ const n=lv===1?R(1,5):R(6,10), opts=numChoices(n,1,10,3);
+    return buildQ({text:`Build ${n}`, speak:`Find the tower with ${n} blocks.`, key:String(n), build:`<div class="bignum">${n}</div>`,
+      pieces:opts.map(k=>({v:k, html:towerHTML(k), label:`${k} blocks`})), answer:n,
+      why:(st,v)=>({html:hintBox(`That tower has ${v} blocks.`, wdots(+v)), say:`That tower has ${v} blocks. Count them one by one. Find ${n}.`}),
+      praise:`${n} blocks!`}); }
+  if(lv<=6){ const n=lv===3?R(11,15):lv===4?R(16,20):lv===5?R(21,50):R(51,99);
+    const swap=(n%10)*10+Math.floor(n/10), other = (n%10 && swap!==n && swap>=10) ? swap : (n+10<=99 ? n+10 : n-10);
+    const opts=[...new Set([n, other, n+1<=99 && n+1!==other ? n+1 : n-1])];
+    return buildQ({text:`Build ${n}`, speak:`Build ${n}. Find ${Math.floor(n/10)} ten${Math.floor(n/10)>1?'s':''} and ${n%10} one${n%10===1?'':'s'}.`, key:String(n),
+      build:`<div class="bignum">${n}</div>`, pieces:shuffle(opts).map(k=>({v:k, html:blocksHTML(k), label:`${Math.floor(k/10)} tens and ${k%10} ones`})), answer:n,
+      why:(st,v)=>({html:hintBox(`That is ${Math.floor(v/10)} tens and ${v%10} ones = ${v}.`), say:`That is ${Math.floor(v/10)} tens and ${v%10} ones. That makes ${v}. We need ${Math.floor(n/10)} tens and ${n%10} ones.`}),
+      praise:`${Math.floor(n/10)} tens and ${n%10} ones make ${n}!`}); }
+  if(lv===7||lv===8){ const n = lv===7?R(11,99):(()=>{ let t=R(1,9),o=R(1,9); while(o===t) o=R(1,9); return t*10+o; })();
+    const swap=(n%10)*10+Math.floor(n/10), opts=lv===8?[n,swap,n+1>99?n-1:n+1]:numChoices(n,11,99,3);
+    return buildQ({text:'What number is this?', speak:'Count the tens and the ones. What number is it?', build:blocksHTML(n),
+      pieces:shuffle([...new Set(opts)]).map(k=>({v:k, html:`<span class="pnum big">${k}</span>`, label:String(k)})), answer:n,
+      why:(st,v)=>({html:hintBox(`Count the tens first: 10, 20, 30… then the ones.`), say:`Count the tens first, then count on the ones.`}),
+      praise:`${Math.floor(n/10)} tens and ${n%10} ones. ${n}!`}); }
+  const n=R(11,89), up=rnd()<.5, ans=up?n+10:n-10;
+  return buildQ({text:`10 ${up?'more':'less'} than ${n}`, speak:`What is 10 ${up?'more':'less'} than ${n}?`, build:blocksHTML(n)+`<div class="eq sm">${n} ${up?'+':'−'} 10 = <span class="qmark">?</span></div>`,
+    pieces:shuffle([...new Set([ans, up?n+1:n-1, up?n-10:n+10])]).map(k=>({v:k, html:`<span class="pnum big">${k}</span>`, label:String(k)})), answer:ans,
+    why:()=>({html:hintBox(`10 ${up?'more':'less'} changes the tens, not the ones.`), say:`Ten ${up?'more':'less'} adds one ten${up?'':' less'}. The ones stay the same.`}),
+    fill:st=>fillQ(st,ans), praise:`10 ${up?'more':'less'} than ${n} is ${ans}.`});
+}
+
+/* ---------- Treasure Map · Number trail (order, count back, count in 2s, 5s and 10s) ---------- */
+function tNumbers(lv){
+  let nums, back=false, step=0;
+  if(lv===1){ const a=R(1,7); nums=[a,a+1,a+2,a+3]; }
+  else if(lv===2){ nums=shuffle([1,2,3,4,5,6,7,8,9,10]).slice(0,5); }
+  else if(lv===3){ nums=shuffle(Array.from({length:20},(_,i)=>i+1)).slice(0,5); }
+  else if(lv===4){ nums=shuffle(Array.from({length:20},(_,i)=>i+1)).slice(0,5); back=true; }
+  else if(lv===5){ nums=shuffle(Array.from({length:31},(_,i)=>i+20)).slice(0,4); }
+  else if(lv===6){ const t=R(2,8); nums=[...new Set([t*10+R(1,9), (R(1,9))*10+t, t*10+R(1,9), R(10,99), R(10,99)])].slice(0,5); }
+  else if(lv===7){ step=10; const a=R(1,5)*10; nums=[a,a+10,a+20,a+30,a+40]; }
+  else if(lv===8){ step=2; const a=R(1,8)*2; nums=[a,a+2,a+4,a+6,a+8]; }
+  else if(lv===9){ step=5; const a=R(1,6)*5; nums=[a,a+5,a+10,a+15,a+20]; }
+  else { step=10; back=true; const a=R(5,9)*10; nums=[a,a-10,a-20,a-30,a-40]; }
+  const order=[...nums].sort((x,y)=>back?y-x:x-y);
+  const how = step ? `Count ${back?'back ':''}in ${step}s` : back ? 'Biggest to smallest' : 'Smallest to biggest';
+  const sp = step ? `Count ${back?'back ':''}in ${step}s. Tap the stones in order. Start with ${order[0]}.` : back ? 'Tap the numbers from the biggest to the smallest.' : 'Tap the numbers from the smallest to the biggest.';
+  return mapQ({text:how, speak:sp, items:nums.map(n=>({v:n, html:`<span class="snum">${n}</span>`, label:String(n)})), order,
+    seqSay:`${order.join(', ')}.`, retry:['Oops! Start again.', sp], done:`${order.join(', ')}. You found the treasure!`});
+}
+
+/* ---------- Treasure Map · Days and times (daily routine, parts of the day, days, months) ---------- */
+const ROUTINE=[['🌅','Wake up'],['🪥','Brush teeth'],['🍳','Breakfast'],['🎒','Go to school'],['📚','Learn'],['🍽️','Lunch'],['⚽','Play'],['🛁','Wash'],['🍲','Dinner'],['😴','Sleep']];
+const DAYPARTS=[['🌅','Morning'],['☀️','Afternoon'],['🌇','Evening'],['🌙','Night']];
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function tDays(lv){
+  if(lv===10) lv=pick([7,9]);
+  const pics = list => list.map(([e,w])=>({v:w, html:`<span class="se">${e}</span><span class="sl">${w}</span>`, label:w, cls:'pic2'}));
+  if(lv<=2){ const n=lv===1?3:4, a=R(0,ROUTINE.length-n), run=ROUTINE.slice(a,a+n);
+    return mapQ({text:'What happens first?', speak:`Put the day in order. What do we do first? Start with ${run[0][1].toLowerCase()}.`, items:pics(run), order:run.map(x=>x[1]),
+      seqSay:run.map(x=>x[1]).join(', then ')+'.', done:'Yes! That is the right order.'}); }
+  if(lv===3) return mapQ({text:'Morning to night', speak:'Put the times of day in order. Start with the morning.', items:pics(DAYPARTS), order:DAYPARTS.map(x=>x[1]),
+      seqSay:'Morning, afternoon, evening, night.', done:'Morning, afternoon, evening, night!'});
+  const months=lv>=8, list=months?MONTHS:DAYS, n=T(lv-3,[4,5,7,6,4,6]), start=lv===4||lv===6||lv===8?0:R(0,list.length-1);
+  const run=Array.from({length:n},(_,i)=>list[(start+i)%list.length]);
+  const sp=`Put the ${months?'months':'days'} in order. Start with ${run[0]}.`;
+  return mapQ({text:`${months?'Months':'Days'} in order`, speak:sp, items:run.map(w=>({v:w, html:`<span class="sword">${w}</span>`, label:w, cls:'wordst'})), order:run,
+    seqSay:run.join(', ')+'.', retry:['Oops! Start again.', sp], done:`${run.join(', ')}. Well done!`});
+}
+
+/* ---------- Sort It · Heavy or light, full or empty, long or short ---------- */
+const HEAVY=[['🐘','an elephant'],['🚗','a car'],['🐄','a cow'],['🚌','a bus'],['🏠','a house'],['🪨','a big rock'],['🐪','a camel'],['🚚','a lorry']];
+const LIGHT=[['🪶','a feather'],['🍃','a leaf'],['🎈','a balloon'],['🧦','a sock'],['✏️','a pencil'],['🔑','a key'],['🦋','a butterfly'],['📄','a sheet of paper']];
+const HEAVY2=[['🍉','a watermelon'],['🎒','a full school bag'],['📺','a television'],['🪑','a chair'],['🛢️','a full drum of water'],['🧱','a pile of bricks']];
+const LIGHT2=[['🍓','a strawberry'],['🥄','a spoon'],['🪥','a toothbrush'],['🧢','a cap'],['🖍️','a crayon'],['🍬','a sweet']];
+function potSVG(kind, fill){   // a container with water at fill (0 to 1)
+  const shapes={glass:'M28 14 L72 14 L66 92 L34 92 Z', jug:'M30 18 L70 18 L74 92 L26 92 Z', bucket:'M20 24 L80 24 L72 92 L28 92 Z', bottle:'M42 8 L58 8 L58 22 L70 34 L70 92 L30 92 L30 34 L42 22 Z'};
+  const d=shapes[kind]||shapes.glass, top=92-(92-(kind==='bottle'?30:20))*fill;
+  return `<svg viewBox="0 0 100 100" class="pot" aria-hidden="true"><defs><clipPath id="cp${kind}${Math.round(fill*100)}"><path d="${d}"/></clipPath></defs><rect x="0" y="${top}" width="100" height="${100-top}" fill="#5DB6F0" clip-path="url(#cp${kind}${Math.round(fill*100)})"/><path d="${d}" fill="none" stroke="#4A5568" stroke-width="4" stroke-linejoin="round"/>${kind==='bucket'?'<path d="M20 24 Q50 0 80 24" fill="none" stroke="#4A5568" stroke-width="3"/>':''}</svg>`;
+}
+const POTS=['glass','jug','bucket','bottle'];
+function sMeasure(lv){
+  if(lv>=9) lv=pick([2,4,6]);
+  if(lv<=2){ const heavy=rnd()<.5, [e,w]=pick(heavy?(lv===1?HEAVY:HEAVY2):(lv===1?LIGHT:LIGHT2));
+    return sortQ({text:'Heavy or light?', speak:`Is ${w} heavy or light?`, card:`<span class="bigemoji">${e}</span>`, mini:e,
+      bins:[{key:'heavy',label:'Heavy',icon:'🏋️'},{key:'light',label:'Light',icon:'🪶'}], answer:heavy?'heavy':'light',
+      why:()=>({say:`Think: could you lift ${w} with one hand? ${heavy?'No! It is heavy.':'Yes! It is light.'}`}), praise:`Yes! ${w[0].toUpperCase()+w.slice(1)} is ${heavy?'heavy':'light'}.`}); }
+  if(lv<=4){ const k=pick(POTS), lvls=lv===3?[0,1]:[0,.5,1], f=pick(lvls), key=f===0?'empty':f===1?'full':'half';
+    const bins=[{key:'full',label:'Full',icon:'🌊'},...(lv===4?[{key:'half',label:'Half full',icon:'🌗'}]:[]),{key:'empty',label:'Empty',icon:'⭕'}];
+    const name={glass:'glass',jug:'jug',bucket:'bucket',bottle:'bottle'}[k];
+    return sortQ({text:lv===3?'Full or empty?':'Full, half full or empty?', speak:`Is the ${name} ${lv===3?'full or empty':'full, half full, or empty'}?`, card:potSVG(k,f), mini:key==='full'?'🌊':key==='half'?'🌗':'⭕',
+      bins, answer:key, why:()=>({say:`Look at the water. ${key==='full'?'It reaches the top.':key==='half'?'It reaches the middle.':'There is no water.'}`}), praise:`Yes! The ${name} is ${key==='half'?'half full':key}.`}); }
+  if(lv<=6){ const k=pick(POTS), more=rnd()<.5, f=more?pick([.7,.8,.9]):pick([.1,.2,.3]);
+    return sortQ({text:'More or less than half?', speak:`Is the ${k} more than half full, or less than half full?`, card:potSVG(k,f)+'<span class="halfline" aria-hidden="true"></span>', mini:more?'⬆️':'⬇️',
+      bins:[{key:'more',label:'More than half',icon:'⬆️'},{key:'less',label:'Less than half',icon:'⬇️'}], answer:more?'more':'less',
+      why:()=>({say:'Find the middle of the container. Is the water above it or below it?'}), praise:more?'Yes! More than half.':'Yes! Less than half.'}); }
+  const tall=lv===8, ref=tall?5:6, n=pick([2,3,4,7,8,9].filter(x=>x!==ref)), longer=n>ref;
+  const bar = (k,c) => tall ? `<span class="tower" style="--tc:${c}">${'<i></i>'.repeat(k)}</span>` : `<span class="lbar" style="width:${k*11}%;background:${c}"></span>`;
+  return sortQ({text:tall?'Taller or shorter?':'Longer or shorter?', speak:tall?'Is the green tower taller or shorter than the grey tower?':'Is the green stick longer or shorter than the grey stick?',
+    card:`<div class="cmpbars${tall?' tall':''}">${bar(ref,'#9AA3B8')}${bar(n,'#2FA866')}</div>`, mini:longer?'⬆️':'⬇️',
+    bins:[{key:'more',label:tall?'Taller':'Longer',icon:tall?'🦒':'📏'},{key:'less',label:'Shorter',icon:tall?'🐢':'✂️'}], answer:longer?'more':'less',
+    why:()=>({say:tall?'Line them up at the bottom. Which one reaches higher?':'Line them up at the start. Which one goes further?'}), praise:longer?(tall?'Yes! It is taller.':'Yes! It is longer.'):'Yes! It is shorter.'});
+}
+
+/* ---------- Sort It · Grammar (one or many, is/are, this/these, he/she/they, a/an) ---------- */
+const PLUR_S=[['cat','cats','🐱'],['dog','dogs','🐶'],['book','books','📖'],['cup','cups','☕'],['pen','pens','🖊️'],['ball','balls','⚽'],['car','cars','🚗'],['egg','eggs','🥚'],['goat','goats','🐐'],['shoe','shoes','👟']];
+const PLUR_ES=[['box','boxes','📦'],['bus','buses','🚌'],['dish','dishes','🍽️'],['glass','glasses','🥛'],['fox','foxes','🦊'],['watch','watches','⌚'],['brush','brushes','🪥'],['dress','dresses','👗']];
+const PLUR_IRR=[['child','children','🧒'],['man','men','👨'],['woman','women','👩'],['foot','feet','🦶'],['tooth','teeth','🦷'],['mouse','mice','🐭'],['person','people','🧑'],['sheep','sheep','🐑']];
+const ISARE=[['The cat','is','🐱'],['The cats','are','🐱🐱'],['My friend','is','🧒'],['My friends','are','🧒🧒'],['The bus','is','🚌'],['The buses','are','🚌🚌'],['Amina','is','👧'],['Amina and Yusuf','are','👧👦'],['The mango','is','🥭'],['The mangoes','are','🥭🥭']];
+const ISARE_END=['happy.','in the garden.','big.','here.','ready.'];
+const WASWERE=[['the dog','was','🐶'],['the dogs','were','🐶🐶'],['my teacher','was','🧑‍🏫'],['the children','were','🧒🧒'],['the market','was','🏪'],['the shops','were','🏪🏪']];
+const DEMO=[['pencil','pencils','✏️'],['bag','bags','🎒'],['book','books','📖'],['ball','balls','⚽'],['shoe','shoes','👟'],['flower','flowers','🌸']];
+const DEMO_FAR=[['tree','trees','🌳'],['bird','birds','🐦'],['house','houses','🏠'],['star','stars','⭐'],['camel','camels','🐪'],['boat','boats','⛵']];
+const PRON=[['Yusuf','He','👦','likes football.'],['Amina','She','👧','likes reading.'],['Yusuf and Amina','They','👦👧','like mangoes.'],['My mother','She','👩','cooks rice.'],['My brother','He','🧑','runs fast.'],['The children','They','🧒🧒','play outside.']];
+const ARTICLES=[['apple','an','🍎'],['egg','an','🥚'],['orange','an','🍊'],['umbrella','an','☂️'],['owl','an','🦉'],['ant','an','🐜'],['ice cream','an','🍦'],['cat','a','🐱'],['ball','a','⚽'],['dog','a','🐶'],['book','a','📖'],['goat','a','🐐'],['banana','a','🍌'],['car','a','🚗']];
+function sGrammar(lv){
+  if(lv===10) lv=pick([2,3,4,6,8,9]);
+  if(lv<=3){ const [one,many,e]=pick(lv===1?PLUR_S:lv===2?PLUR_ES.concat(PLUR_S.slice(0,3)):PLUR_IRR), isMany=rnd()<.5, w=isMany?many:one;
+    return sortQ({text:'One or many?', speak:`${w}. Is it one, or many?`, key:w, card:`<span class="gword">${esc(w)}</span>`, mini:e,
+      bins:[{key:'one',label:'One',icon:'☝️'},{key:'many',label:'Many',icon:'🖐️'}], answer:isMany?'many':'one',
+      reveal:`<span class="gword">${esc(w)}</span><span class="gpic">${isMany?e+e+e:e}</span>`,
+      why:()=>({say: isMany ? `${w} means more than one. One is ${one}.` : `${w} means just one. Many is ${many}.`}),
+      praise: isMany ? `Yes! ${many}. Many.` : `Yes! One ${one}.`}); }
+  if(lv<=7){ let subj, ans, e, sentence, binsK;
+    if(lv===4){ const [s,v,pe]=pick(ISARE), end=pick(ISARE_END); subj=s; ans=v; e=pe; sentence=`${s} ___ ${end}`; binsK=['is','are']; }
+    else if(lv===5){ const [s,v,pe]=pick(WASWERE); ans=v; e=pe; sentence=`Yesterday ${s} ___ busy.`; binsK=['was','were']; }
+    else { const far=lv===7, [one,many,pe]=pick(far?DEMO_FAR:DEMO), pl=rnd()<.5; ans=far?(pl?'those':'that'):(pl?'these':'this'); e=pl?pe+pe:pe;
+      sentence=`___ ${pl?'are':'is'} ${far?(pl?'big ':'a big '):'my '}${pl?many:one}.`; binsK=far?['that','those']:['this','these']; }
+    const full=sentence.replace('___', ans); const cap=t=>t[0].toUpperCase()+t.slice(1);
+    return sortQ({text:'Which word fits?', speak:`${sentence.replace('___','hmm')} Which word fits?`, card:`<span class="gpic">${e}</span><span class="gsent">${esc(sentence).replace('___','<u>&nbsp;?&nbsp;</u>')}</span>`, mini:e.slice(0,2),
+      bins:binsK.map(k=>({key:k, label:cap(k)})), answer:ans, cardCls:'wide',
+      reveal:`<span class="gpic">${e}</span><span class="gsent">${esc(cap(full))}</span>`,
+      why:()=>({say: ['is','was','this','that'].includes(ans) ? `It is about one. We use ${ans} for one.` : `It is about more than one. We use ${ans} for many.`}),
+      praise:`Yes! ${cap(full)}`}); }
+  if(lv===8){ const [name,pr,e,end]=pick(PRON);
+    const sentence=`${name} ${name.includes(' and ')||/children/.test(name)?'are':'is'} my ${name.includes(' and ')||/children/.test(name)?'friends':'friend'}. ___ ${end}`;
+    return sortQ({text:'He, she or they?', speak:`${sentence.replace('___','hmm')} He, she, or they?`, card:`<span class="gpic">${e}</span><span class="gsent">${esc(sentence).replace('___','<u>&nbsp;?&nbsp;</u>')}</span>`, mini:e.slice(0,2),
+      bins:[{key:'He',label:'He',icon:'👦'},{key:'She',label:'She',icon:'👧'},{key:'They',label:'They',icon:'👦👧'}], answer:pr, cardCls:'wide',
+      reveal:`<span class="gpic">${e}</span><span class="gsent">${esc(sentence.replace('___',pr))}</span>`,
+      why:()=>({say:`Who is it about? ${name}. ${pr==='They'?'More than one person: they.':pr==='He'?'A boy or a man: he.':'A girl or a woman: she.'}`}), praise:`Yes! ${pr} ${end}`}); }
+  const [w,art,e]=pick(ARTICLES);
+  return sortQ({text:'A or an?', speak:`${w}. Do we say a, or an?`, key:w, card:`<span class="gpic">${e}</span><span class="gword">${esc(w)}</span>`, mini:e,
+    bins:[{key:'a',label:'a'},{key:'an',label:'an'}], answer:art,
+    why:()=>({say: art==='an' ? `${w} starts with a vowel sound, so we say an ${w}.` : `${w} starts with a consonant sound, so we say a ${w}.`}), praise:`Yes! ${art} ${w}.`});
+}
+
+/* ---------- Owl's Market · money in the school's currency ---------- */
+const bigSay = (v,big,small) => { const a=Math.floor(v/100), b=v%100; return `${a} ${big}${a===1?'':'s'}`+(b?` and ${b} ${small==='p'?(b===1?'penny':'pence'):small+(b===1?'':'s')}`:''); };
+const CUR = {
+  KES:{coins:[1,5,10,20], notes:[50,100], fmt:v=>`KSh ${v}`, say:v=>`${v} shilling${v===1?'':'s'}`, name:'shillings'},
+  USD:{coins:[1,5,10,25], notes:[100], fmt:v=>v>=100?`$${(v/100).toFixed(v%100?2:0)}`:`${v}¢`, say:v=>v>=100?bigSay(v,'dollar','cent'):`${v} cent${v===1?'':'s'}`, name:'cents'},
+  GBP:{coins:[1,2,5,10,20,50,100], notes:[], fmt:v=>v>=100?`£${(v/100).toFixed(v%100?2:0)}`:`${v}p`, say:v=>v>=100?bigSay(v,'pound','p'):v===1?'1 penny':`${v} pence`, name:'pence'},
+  coins:{coins:[1,2,5,10,20,50], notes:[100], fmt:v=>String(v), say:v=>String(v), name:'coins'}
+};
+const curOf = () => CUR[(store.mode==='school' && ((store.school||{}).opts||{}).currency) || 'coins'] || CUR.coins;
+function moneySVG(v, c){
+  c=c||curOf(); const fmt=c.fmt(v);
+  if(c.notes.includes(v) && !c.coins.includes(v)) return `<svg class="note" viewBox="0 0 120 60" aria-label="${esc(fmt)} note"><rect x="2" y="2" width="116" height="56" rx="8" fill="${v>=100?'#B9E4C9':'#F9D9A8'}" stroke="#5B7A64" stroke-width="3"/><circle cx="28" cy="30" r="14" fill="none" stroke="#5B7A64" stroke-width="2"/><text x="74" y="38" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fmt.length>5?18:22}" font-weight="700" fill="#172041">${esc(fmt)}</text></svg>`;
+  const big=v>=10, r=big?30:25;
+  return `<svg class="coin" width="${r*2+4}" height="${r*2+4}" viewBox="0 0 ${r*2+4} ${r*2+4}" aria-label="${esc(fmt)} coin"><circle cx="${r+2}" cy="${r+2}" r="${r}" fill="${big?'#D3D9E6':'#F2C14E'}" stroke="${big?'#7C879F':'#B8892A'}" stroke-width="3"/>${big?`<circle cx="${r+2}" cy="${r+2}" r="${r-9}" fill="#F2C14E"/>`:''}<text x="${r+2}" y="${r+8}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fmt.length>4?13:fmt.length>3?16:20}" font-weight="700" fill="#172041">${esc(fmt)}</text></svg>`;
+}
+const MARKET=[['🥭','mango'],['🍌','banana'],['🥚','egg'],['🍞','loaf of bread'],['🥛','cup of milk'],['✏️','pencil'],['📒','exercise book'],['🍬','sweet'],['🧃','juice'],['🍅','tomato'],['🍊','orange'],['🧁','cake']];
+function coinsFor(total, c){   // a few coins/notes that add up to total
+  const d=[...c.coins,...c.notes].sort((a,b)=>b-a), out=[]; let left=total, g=0;
+  while(left>0 && g++<40){ const ok=d.filter(x=>x<=left); const v = out.length<2 && ok.length>1 && rnd()<.35 ? ok[1] : ok[0]; out.push(v); left-=v; }
+  return out;
+}
+const sum = a => a.reduce((x,y)=>x+y,0);
+function mMarket(lv){
+  const c=curOf(), all=[...c.coins,...c.notes], stall=it=>`<div class="stall"><span class="seller" aria-hidden="true">🦉</span>${it}</div>`;
+  const tag=(e,n,p)=>`<span class="ware"><span class="we">${e}</span><span class="price">${esc(c.fmt(p))}</span></span>`;
+  const amtBtns=(ans,list)=>choices(shuffle([...new Set(list)]).slice(0,4).map(v=>`<button class="opt word money" data-choice="${v}" aria-label="${esc(c.say(v))}">${esc(c.fmt(v))}</button>`));
+  const near=(ans,lo,hi)=>[ans, ...numChoices(ans,Math.max(1,lo),hi,4).filter(x=>x!==ans)].slice(0,4);
+  if(lv<=2){ const pool=lv===1?c.coins.slice(0,3):all, v=pick(pool), opts=shuffle([v,...shuffle(pool.filter(x=>x!==v)).slice(0,lv===1?2:3)]);
+    return {text:`Find ${c.fmt(v)}`, speak:`Find the ${c.say(v)} ${c.notes.includes(v)&&!c.coins.includes(v)?'note':'coin'}.`, key:c.say(v),
+      html:stall('')+choices(opts.map(k=>`<button class="opt moneybtn" data-choice="${k}" aria-label="${esc(c.say(k))}">${moneySVG(k,c)}</button>`)),
+      answer:String(v), why:(st,k,btn)=>{ tagBtn(btn,c.fmt(+k)); return {say:`That is ${c.say(+k)}. Find ${c.say(v)}.`}; }, praise:`Yes! ${c.say(v)}.`}; }
+  if(lv<=4){ let coins;
+    if(lv===3){ const v=pick(c.coins.slice(0,3)); coins=Array(R(2,5)).fill(v); } else { coins=shuffle(c.coins.slice(0,4)).slice(0,R(2,3)).concat([pick(c.coins.slice(0,3))]); }
+    const tot=sum(coins);
+    return {text:'How much money?', speak:'Count the money. How much is there?', html:`<div class="coins">${coins.sort((a,b)=>b-a).map(v=>moneySVG(v,c)).join('')}</div>`+amtBtns(tot, near(tot,1,Math.max(tot+10,20))),
+      answer:String(tot), why:()=>({html:hintBox('Start with the biggest coin, then count on.', `<div class="w-eq">${coins.map(c.fmt).join(' + ')}</div>`), say:`Start with the biggest coin, then count on.`}), praise:`Yes! ${c.say(tot)}.`}; }
+  if(lv===5){ const [e,n]=pick(MARKET), price=R(3,Math.min(40,Math.max(10,c.coins[c.coins.length-1]*2))), right=coinsFor(price,c);
+    const wrong1=coinsFor(price+pick(c.coins.slice(0,2)),c), wrong2=coinsFor(Math.max(1,price-pick(c.coins.slice(0,2))),c);
+    const grp=(cs,k)=>`<button class="opt wide pay" data-choice="${k}" aria-label="${esc(cs.map(c.say).join(' and '))}">${cs.map(v=>moneySVG(v,c)).join('')}</button>`;
+    return {text:`Pay exactly ${c.fmt(price)}`, speak:`The ${n} costs ${c.say(price)}. Which coins pay exactly ${c.say(price)}?`, html:stall(tag(e,n,price))+`<div class="paygrid">${shuffle([grp(right,'R'),grp(wrong1,'A'),grp(wrong2,'B')]).join('')}</div>`,
+      answer:'R', why:(st,k)=>{ const cs=k==='A'?wrong1:wrong2; return {html:hintBox(`Those make ${c.fmt(sum(cs))}.`), say:`Those coins make ${c.say(sum(cs))}. We need ${c.say(price)}.`}; }, praise:`Yes! That is exactly ${c.say(price)}.`}; }
+  if(lv===6||lv===10){ const k=lv===6?2:3, its=shuffle(MARKET).slice(0,k), max=lv===6?20:40, ps=its.map(()=>R(2,max)), tot=sum(ps);
+    return {text:`How much for ${k===2?'both':'all three'}?`, speak:`${its.map((x,i)=>`A ${x[1]} costs ${c.say(ps[i])}`).join('. ')}. How much for ${k===2?'both':'all three'}?`,
+      html:stall(its.map((x,i)=>tag(x[0],x[1],ps[i])).join(''))+amtBtns(tot, near(tot,1,tot+20)), answer:String(tot),
+      why:()=>({html:hintBox('Add the prices', `<div class="w-eq">${ps.map(c.fmt).join(' + ')}</div>`), say:`Add the prices: ${ps.map(c.say).join(' plus ')}.`}), praise:`Yes! ${c.say(tot)} altogether.`}; }
+  if(lv===7){ const have=pick([10,20,50].filter(v=>all.includes(v)||c===CUR.coins)), its=shuffle(MARKET).slice(0,3), ok=R(0,2);
+    const ps=its.map((_,i)=>i===ok?R(Math.max(1,have-9),have):R(have+1,have+25));
+    return {text:`You have ${c.fmt(have)}. What can you buy?`, speak:`You have ${c.say(have)}. Which one can you buy?`,
+      html:stall(moneySVG(have,c))+choices(its.map((x,i)=>`<button class="opt ware big" data-choice="${i}" aria-label="${esc(x[1])}, ${esc(c.say(ps[i]))}"><span class="we">${x[0]}</span><span class="price">${esc(c.fmt(ps[i]))}</span></button>`)),
+      answer:String(ok), why:(st,k)=>({say:`That costs ${c.say(ps[+k])}. That is more than ${c.say(have)}.`}), praise:`Yes! ${c.say(ps[ok])} is not more than ${c.say(have)}.`}; }
+  const pays=all.filter(v=>lv===8?(v>=10&&v<=20):(v>=20&&v<=100)), pay=pays.length?pick(pays):(lv===8?10:50), [e,n]=pick(MARKET), price=R(1,pay-1), ch=pay-price;
+  return {text:'How much change?', speak:`The ${n} costs ${c.say(price)}. You pay with ${c.say(pay)}. How much change do you get?`,
+    html:stall(tag(e,n,price)+`<span class="paid">You pay ${moneySVG(pay,c)}</span>`)+amtBtns(ch, near(ch,1,pay)), answer:String(ch),
+    why:()=>({html:hintBox(`Count on from ${c.fmt(price)} to ${c.fmt(pay)}`, `<div class="w-eq">${c.fmt(pay)} − ${c.fmt(price)} = ?</div>`), say:`Count on from ${c.say(price)} to ${c.say(pay)}.`}), praise:`Yes! ${c.say(ch)} change.`};
+}
+
 const ENGLISH = {
   steps:[{n:1, name:'Listening ears', games:['etap','esafari','esimon','eparrot','ename']},
          {n:2, name:'Sound play', games:['erhyme','eclap','efish']},
-         {n:3, name:'Words and letters', games:['eopp','esort','eletter','etrace']},
+         {n:3, name:'Words and letters', games:['eopp','esort','sgrammar','eletter','etrace']},
          {n:4, name:'Reading', games:['ecaption','eyesno','estory','eread']},
          {n:5, name:'Writing', games:['emissing','espell','ebee','esentence','efix']}],
   order:{little:[1,2,3,4,5], middle:[4,5,3,1,2], older:[4,5,3,1,2]},
@@ -2184,6 +2569,14 @@ const GAMES = {
   orderops:{name:'Order of Operations', icon:'🧮', acc:'#C2410C', learn:'Brackets first, then × ÷', make:gOrderOps, sprint:true},
   words:{name:'Word Problems', icon:'📝', acc:'#4D7C0F', learn:'Real-life problem solving', make:gWords},
 
+  /* play-style games (update 8): shown only where new games are switched on */
+  bbonds:{name:'Build It: Make 10', icon:'🧱', acc:'#C2410C', learn:'Number bonds to 5, 10, 20 and 100', style:'Build It', isNew:true, make:bBonds},
+  bnumber:{name:'Build It: Numbers', icon:'🏗️', acc:'#3657E0', learn:'Build numbers with tens and ones', style:'Build It', isNew:true, make:bNumber},
+  tnumbers:{name:'Treasure Map: Numbers', icon:'🗺️', acc:'#0F9BB5', learn:'Order numbers, count in 2s, 5s and 10s', style:'Treasure Map', isNew:true, make:tNumbers},
+  tdays:{name:'Treasure Map: Days', icon:'📅', acc:'#8B5CF6', learn:'My day, the days and the months in order', style:'Treasure Map', isNew:true, make:tDays},
+  smeasure:{name:'Sort It: Heavy and Full', icon:'⚖️', acc:'#22955A', learn:'Heavy or light, full or empty, long or short', style:'Sort It', isNew:true, make:sMeasure},
+  mmarket:{name:"Owl's Market", icon:'🛒', acc:'#D19A06', learn:'Coins, prices and change', style:"Owl's Market", isNew:true, make:mMarket},
+
   etap:{name:'Tap What I Say', icon:'👂', acc:'#3657E0', learn:'Hear a word, find the picture', skill:'Listening', make:eTap},
   esafari:{name:'Sound Safari', icon:'🦁', acc:'#C2410C', learn:'Who makes that sound?', skill:'Listening', make:eSafari},
   esimon:{name:'Simon Says Tap', icon:'👆', acc:'#0F9BB5', learn:'Follow spoken instructions', skill:'Listening', make:eSimon},
@@ -2205,22 +2598,24 @@ const GAMES = {
   ebee:{name:'Spelling Bee', icon:'🐝', acc:'#D19A06', learn:'Hear a word, type it', skill:'Writing', make:eBee},
   esentence:{name:'Sentence Builder', icon:'🧱', acc:'#C2410C', learn:'Words in order, capitals and full stops', skill:'Writing', make:eSentence},
   efix:{name:'Fix-It Doctor', icon:'🩺', acc:'#E0567A', learn:'Find the sentence written correctly', skill:'Writing', make:eFix},
+  sgrammar:{name:'Sort It: Grammar', icon:'🗂️', acc:'#3657E0', learn:'One or many, is or are, he, she or they', skill:'Grammar', style:'Sort It', isNew:true, make:sGrammar},
 
   placement:{name:'Quick check', icon:'🧭', acc:'#0F9BB5', learn:'Find the right games', isPlacement:true},
   review:{name:'Review', icon:'🔁', acc:'#D19A06', learn:'Questions to try again', isReview:true},
   sprint:{name:'60-Second Challenge', icon:'⏱️', acc:'#D63E55', learn:'Quick-fire mixed questions', isSprint:true}
 };
 const GROUPS = {
-  little:{label:'Ages 3–5', games:['count','findnum','order','shapes','colours','more','sizes','odd','pattern','addpics','takeaway'], perLevel:5, voice:true},
-  middle:{label:'Ages 6–8', games:['addsub','missing','place','compare','skip','story','clock','money','doubles','groups','sprint'], perLevel:6, voice:true},
+  little:{label:'Ages 3–5', games:['count','findnum','order','shapes','colours','more','sizes','odd','pattern','addpics','takeaway','smeasure','tdays','bnumber','tnumbers'], perLevel:5, voice:true},
+  middle:{label:'Ages 6–8', games:['addsub','missing','place','compare','skip','story','clock','money','doubles','groups','bbonds','bnumber','tnumbers','tdays','mmarket','sprint'], perLevel:6, voice:true},
   older:{label:'Ages 9–12', games:['times','divide','fractions','decimals','percent','sequence','logic','area','orderops','words','sprint'], perLevel:8, voice:false}
 };
 const groupOf = age => age<=5?'little':age<=8?'middle':'older';
 const bandOf = p => (p && GROUPS[p.band] ? p.band : groupOf(p.age));   // set by the quick check or the parent; age otherwise
 const G = () => { const g=GROUPS[bandOf(me)]; const band=bandOf(me);
-  if(SCH.cls){ const c=classCfg(SCH.cls.name), ids=subject==='english'?c.english:c.maths;     // school: the class decides the games
+  if(SCH.cls){ const c=classPlan(SCH.cls), ids=subject==='english'?c.english:c.maths;     // school: the class decides the games
     return Object.assign({}, g, {label:SCH.cls.name, games:ids, practiceGames:ids, perLevel:subject==='english'?(g===GROUPS.little?5:6):g.perLevel, voice:true}); }
-  return subject==='english' ? Object.assign({}, g, {label:'English', games:ENGLISH.gamesFor(band), practiceGames:ENGLISH.practiceFor(band), perLevel:g===GROUPS.little?5:6, voice:true}) : g; };
+  return subject==='english' ? Object.assign({}, g, {label:'English', games:ENGLISH.gamesFor(band).filter(shown), practiceGames:ENGLISH.practiceFor(band).filter(shown), perLevel:g===GROUPS.little?5:6, voice:true})
+                            : Object.assign({}, g, {games:g.games.filter(shown)}); };
 
 /* ---------- school classes: which games each class sees, and the highest level that suits it ---------- */
 const CLASS_GAMES = {
@@ -2242,7 +2637,51 @@ function classCfg(name){
   const key = /^kg1|^kindergarten1/.test(n)?'KG1' : /^kg2/.test(n)?'KG2' : /^kg3/.test(n)?'KG3' : /^(standard|std|grade|class)1$/.test(n)?'Standard 1' : 'Standard 2';
   return CLASS_GAMES[name] || CLASS_GAMES[key];
 }
-const capOf = id => (SCH.cls && (classCfg(SCH.cls.name).caps||{})[id]) || 10;
+const capOf = id => (SCH.cls && classPlan(SCH.cls).caps[id]) || 10;
+
+/* ---------- update 8: switches, the school's curriculum, and the new games for each class ----------
+   New games, the teacher's class page and competition are switched on per school by the Garaad admin
+   (families: Admin > New games). A phone opened once with ?try=new sees them all, to test; ?try=off stops it. */
+const schOpts = () => (store.mode==='school' && store.school && store.school.opts) || {};
+const featOn = k => !!store.newTest || (store.mode==='school' ? !!((schOpts().features||{})[k]) : (k==='new_games' && (store.settings||{}).new_games==='on'));
+const shown = id => !(GAMES[id] && GAMES[id].isNew) || featOn('new_games');
+const NEW_CLASS_GAMES = {
+  'KG1': {maths:['smeasure','tdays'], caps:{smeasure:2, tdays:2}},
+  'KG2': {maths:['smeasure','tdays','bnumber','tnumbers'], caps:{smeasure:4, tdays:3, bnumber:2, tnumbers:2}},
+  'KG3': {maths:['smeasure','tdays','bnumber','tnumbers','bbonds','mmarket'], english:['sgrammar'], caps:{tdays:4, bnumber:4, tnumbers:4, bbonds:5, mmarket:4, sgrammar:2}},
+  'Standard 1': {maths:['bbonds','bnumber','tnumbers','tdays','smeasure','mmarket'], english:['sgrammar'], caps:{bbonds:7, bnumber:8, tnumbers:8, tdays:7, mmarket:8, sgrammar:8}},
+  'Standard 2': {maths:['bbonds','bnumber','tnumbers','tdays','mmarket'], english:['sgrammar']}
+};
+/* what a curriculum class changes: level caps (e.g. no carrying yet in Cambridge Stage 2) and games it adds (times tables in Grade 2) */
+const CURRIC_RULES = {
+  cambridge:{'Stage 1':{caps:{addsub:6}}, 'Stage 2':{caps:{addsub:7}, add:{times:2}}},
+  kenya_cbe:{'Grade 2':{add:{times:4}}},
+  england:{'Year 2':{add:{times:2}}}
+};
+const CURRIC = {garaad:'Garaad (no curriculum)', kenya_cbe:'Kenya CBE', england:'England (British)', cambridge:'Cambridge Primary'};
+const CURRIC_CLASSES = {kenya_cbe:['PP1','PP2','Grade 1','Grade 2','Grade 3'], england:['Nursery','Reception','Year 1','Year 2','Year 3'], cambridge:['Early Years','Stage 1','Stage 2','Stage 3']};
+const curClassOf = cls => cls ? ((schOpts().classes||[]).find(c=>c.id===cls.id)||{}).curriculum_class||null : null;
+function classPlan(cls){
+  const base=classCfg(cls&&cls.name), key=classKey(cls&&cls.name), o=schOpts();
+  const plan={band:base.band, maths:base.maths.slice(), english:base.english.slice(), caps:Object.assign({}, base.caps||{})};
+  if(featOn('new_games')){ const n=NEW_CLASS_GAMES[key]||{};
+    (n.maths||[]).forEach(id=>{ if(!plan.maths.includes(id)) plan.maths.push(id); });
+    (n.english||[]).forEach(id=>{ if(!plan.english.includes(id)) plan.english.push(id); });
+    Object.assign(plan.caps, n.caps||{}); }
+  const r=(CURRIC_RULES[o.curriculum]||{})[curClassOf(cls)];
+  if(r){ Object.assign(plan.caps, r.caps||{}); Object.entries(r.add||{}).forEach(([id,cap])=>{ if(!plan.maths.includes(id)) plan.maths.push(id); plan.caps[id]=cap; }); }
+  return plan;
+}
+/* the topic the teacher set for this class today, if any */
+function classPractice(){
+  const o=schOpts(); if(!SCH.cls || !o.practice || o.date!==todayStr()) return null;
+  const p=o.practice[SCH.cls.id]; return p && (p.games||[]).length ? p : null;
+}
+async function loadSchoolOpts(){
+  if(!tokenOf()) return;
+  try{ const o=await rpc('school_options', {p_token:tokenOf()}); if(o && typeof o==='object'){ store.school.opts=o; save(); } }
+  catch(e){ /* before database update 8, or offline: keep what this phone has */ }
+}
 
 /* ================= storage ================= */
 const KEY='cwm.v2';
@@ -2256,11 +2695,12 @@ function load(){
   store.profiles.forEach((p,i)=>{ if(!p.games) p.games={}; if(!p.best) p.best={}; if(!p.color) p.color=AVCOL[i%AVCOL.length]; });
   if(!store.device) store.device='tab-'+Math.random().toString(36).slice(2,7);
   try{ const to=new URLSearchParams(location.search).get('to'); if(validEmail(to)) store.sendTo=to; }catch(e){}
+  try{ const tr=new URLSearchParams(location.search).get('try'); if(tr==='new') store.newTest=true; if(tr==='off') delete store.newTest; }catch(e){}
   if(store.version!==3){ store.version=3; }
   if(store.school && !Array.isArray(store.school.outbox)) store.school.outbox=[];
   // Families now need a free account (agreed 25 Oct 2026). A family phone without one starts fresh, like a new phone.
   if(store.mode!=='school' && !store.familyAccount && (store.profiles.length || store.sessions.length || store.mode==='family' || store.familyCode || store.familyLegacy)){
-    store={device:store.device, sendTo:store.sendTo, settings:store.settings, school:store.school, version:3, profiles:[], sessions:[]};   // school logins and unsent school results stay
+    store={device:store.device, sendTo:store.sendTo, settings:store.settings, school:store.school, newTest:store.newTest, version:3, profiles:[], sessions:[]};   // school logins and unsent school results stay
   }
   save();
 }
@@ -2471,7 +2911,7 @@ async function openChild(id, btn){
 }
 function openPreview(k){
   SCH.preview=true; SCH.child=null; SCH.session=null; SCH.cls={id:k.id, name:k.name};
-  const c=classCfg(k.name), games={};
+  const c=classPlan(SCH.cls), games={};
   c.maths.concat(c.english).forEach(id=>{ games[id]={unlocked:capOf(id), stars:{}, plays:0, right:0, tries:0, last:0}; });   // every level open, to check the questions
   me={id:'preview', name:(store.school&&store.school.teacher)||'Teacher', age:5, color:AVCOL[0], games, best:{}, review:[], words:{}, practiceDays:[], bonus:0, band:c.band, last:0};
   subject='maths'; openGames();
@@ -2713,10 +3153,11 @@ function openSchoolHome(){
   if(!store.school.code) return openSchool('code');
   if(!tokenOf()) return openSchool('login');
   openSchool('task'); obFlush();
+  loadSchoolOpts().then(()=>{ if(current==='sSchool' && SCH.view==='task') renderSchool(); });
 }
 function openSchool(v, err){
   SCH.view=v; SCH.err=err||''; SCH.arm='';
-  if(v==='children'){ SCH.search=''; SCH.kids=null; SCH.help=null; loadKids(); loadNeedHelp(); }
+  if(v==='children'){ SCH.search=''; SCH.kids=null; SCH.help=null; loadKids(); loadNeedHelp(); loadSchoolOpts().then(()=>{ if(current==='sSchool' && SCH.view==='children'){ const t=$('classTools'); if(t) t.outerHTML=classToolsHTML(); } }); }
   if(v==='classes' && !SCH.classes) loadClasses();
   if(v==='addchild'){ SCH.addAge=null; SCH.addGroup=null; SCH.addOwl=OWL_KEYS[Math.floor(Math.random()*OWL_KEYS.length)]; }
   if(v==='pilot'){ SCH.pilot=null; loadPilot(); }
@@ -2733,7 +3174,10 @@ function schoolBack(){
   if(v==='register'||v==='setpin') return openSchool('login');
   if(v==='children') return openSchool('classes');
   if(v==='addchild') return openSchool('children');
-  if(v==='report') return SCH.klass ? openSchool('children') : openSchool('task');
+  if(v==='report') return SCH.klass && SCH.back==='classday' ? (SCH.back=null, openSchool('classday')) : SCH.klass ? openSchool('children') : openSchool('task');
+  if(v==='classday'||v==='practice'||v==='compete') return openSchool('children');
+  if(v==='screen'){ clearInterval(CT.screenT); try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} return openSchool('compete'); }
+  if(v==='league') return openSchool('task');
   openSchool('task');
 }
 async function loadClasses(){
@@ -3081,7 +3525,8 @@ function renderSchool(){
     ${SCH.msg?`<p class="okmsg" style="margin:0 0 12px">${esc(SCH.msg)}</p>`:''}
     <div class="tasks">
       <button class="card task tap" data-s="inclass"><span class="te">${ICON_SCHOOL}</span><span><b>In-class exercise</b><small>${pr?'See the games for each class':'A child plays now, on this phone'}</small></span></button>
-      ${pr?`<button class="card task tap" data-s="sadmin"><span class="te">${ICON_REPORT}</span><span><b>Manage school</b><small>Results, teachers and children</small></span></button>`:''}
+      ${pr?`<button class="card task tap" data-s="sadmin"><span class="te">${ICON_REPORT}</span><span><b>Manage school</b><small>Results, teachers, children and curriculum</small></span></button>`:''}
+      ${featOn('competition')?`<button class="card task tap" data-s="ct-league"><span class="te">🏆</span><span><b>Class league</b><small>Which class earned the most stars this week</small></span></button>`:''}
       <button class="card task" disabled aria-disabled="true"><span class="te">${ICON_HOME}</span><span><b>Send homework</b><small>Children practise at home</small><br><span class="soon">Coming soon</span></span></button>
     </div>
     ${wait?`<p class="note" style="margin-top:14px">${wait} result${wait>1?'s':''} waiting to be sent. They go when the internet is back.</p>`:''}
@@ -3090,6 +3535,7 @@ function renderSchool(){
   else if(v==='classes') b.innerHTML=`<div class="head"><h1>Pick a class</h1><p>${sc.role==='principal'?'Open a class to try its games. Nothing is saved.':'Then pick the child who is playing.'}</p></div>${errP()}
     ${SCH.classes===null?`<div class="spin">Loading classes…</div>`:`<div class="classes">${SCH.classes.map((k,i)=>`<button class="card cls tap" data-cls="${i}">${esc(k.name)}</button>`).join('')}</div>`}`;
   else if(v==='children') b.innerHTML=`<div class="head"><h1>${esc(SCH.klass?SCH.klass.name:'')}</h1><p>Who is playing?</p></div>
+    ${classToolsHTML()}
     <div class="search"><input class="input" id="sSearch" type="search" autocomplete="off" placeholder="Search a name" value="${esc(SCH.search)}" aria-label="Search children"></div>
     <div id="needHelp">${needHelpHTML()}</div>
     ${errP()}<div class="rows" id="kidRows">${kidRowsHTML()}</div>`;
@@ -3104,8 +3550,243 @@ function renderSchool(){
       <p class="note" style="margin-top:-6px">Used to send the weekly report to the parent.</p>
       ${errP()}<div class="btns"><button class="btn primary" data-s="addchild">Save and start</button></div></div>`;
   else if(v==='report') b.innerHTML=reportViewHTML();
+  else if(v==='classday') b.innerHTML=classDayHTML();
+  else if(v==='practice') b.innerHTML=practiceHTML();
+  else if(v==='compete') b.innerHTML=compHTML();
+  else if(v==='screen') b.innerHTML=screenHTML();
+  else if(v==='league') b.innerHTML=leagueHTML();
   else if(v==='sadmin') b.innerHTML=sadminHTML();
   else if(v==='pilot') b.innerHTML=`<div class="head"><h1>Pilot results</h1><p>${esc(sc.name||'')}</p></div>${errP()}${SCH.pilot===null?`<div class="spin">Loading results…</div>`:pilotHTML(SCH.pilot, 'school')}`;
+}
+
+/* ================= the teacher's class page, today's practice and competition (update 8) =================
+   Switched on per school by the Garaad admin: 'class_tools' (My class today, Set today's practice) and
+   'competition' (class goal, teams, badges, classroom screen, the principal's class league). */
+const CT = { day:null, skills:null, topics:null, comp:null, league:null, sel:[], subj:'maths', err:'', msg:'', copy:'', screenT:null };
+const pctOf = (rf,q) => q ? Math.round(100*rf/q) : null;
+const firstName = n => String(n||'').trim().split(/\s+/)[0];
+const classPracticeFor = k => { const o=schOpts(); if(!k || !o.practice || o.date!==todayStr()) return null; const p=o.practice[k.id]; return p && (p.games||[]).length ? p : null; };
+const curLabel = () => { const o=schOpts(), cc=curClassOf(SCH.klass); return o.curriculum && o.curriculum!=='garaad' ? `${CURRIC[o.curriculum]}${cc?' · '+cc:''}` : ''; };
+function classToolsHTML(){
+  const tools=featOn('class_tools'), comp=featOn('competition'), pr=(store.school||{}).role==='principal';
+  if(pr || (!tools && !comp)) return '<div id="classTools"></div>';
+  const cp=classPracticeFor(SCH.klass), names=cp?(cp.skills||[]).map(x=>x.name).join(' · '):'';
+  return `<div id="classTools" class="ctools">
+    ${tools?`<button class="card ctool tap" data-s="ct-day"><span class="ci">📊</span><span><b>My class today</b><small>Who played, needs help, skills</small></span></button>
+    <button class="card ctool tap" data-s="ct-practice"><span class="ci">📝</span><span><b>${cp?"Today's practice is set":"Set today's practice"}</b><small>${cp?esc(names):'The topic you taught today'}</small></span></button>`:''}
+    ${comp?`<button class="card ctool tap" data-s="ct-compete"><span class="ci">🏆</span><span><b>Competition</b><small>Class goal, teams, badges</small></span></button>`:''}</div>`;
+}
+async function ctLoad(fn, args, key){
+  try{ CT[key]=await rpc(fn, Object.assign({p_token:tokenOf()}, args)); CT.err=''; }
+  catch(e){ if(e.code==='invalid_token') return needLogin(); CT[key]=CT[key]||null; CT.err=serr(e); }
+}
+async function loadClassDay(){
+  const k=SCH.klass; if(!k) return;
+  try{ await obFlush(); }catch(e){}   // this phone's waiting results first
+  await Promise.all([ctLoad('class_today', {p_class_id:k.id}, 'day'), ctLoad('class_skills', {p_class_id:k.id, p_days:7}, 'skills'), ctLoad('class_topics', {p_class_id:k.id}, 'topics')]);
+  if(current==='sSchool' && SCH.view==='classday') renderSchool();
+}
+async function loadTopics(){
+  await ctLoad('class_topics', {p_class_id:SCH.klass.id}, 'topics');
+  if(CT.topics && CT.topics.today) CT.sel=(CT.topics.today.skills||[]).slice();
+  if(current==='sSchool' && SCH.view==='practice') renderSchool();
+}
+async function loadComp(){ await ctLoad('class_competition', {p_class_id:SCH.klass.id}, 'comp'); if(current==='sSchool' && ['compete','screen'].includes(SCH.view)) renderSchool(); }
+async function loadLeague(){ await ctLoad('school_league', {}, 'league'); if(current==='sSchool' && SCH.view==='league') renderSchool(); }
+const ctErr = () => CT.err ? `<p class="err">${esc(CT.err)}</p>` : '';
+const ctMsg = () => { const m=CT.msg; CT.msg=''; return m ? `<p class="okmsg" style="margin:0 0 12px">${esc(m)}</p>` : ''; };
+
+/* ---------- My class today ---------- */
+const cellCls = p => p===null ? '' : p>=80 ? 'g' : p>=50 ? 'y' : 'r';
+function classDayHTML(){
+  const k=SCH.klass||{}, d=CT.day, sk=CT.skills;
+  const head=`<div class="head"><h1>${esc(k.name)} today</h1><p>${esc(curLabel()||'Results from this class')} · ${fmtDay(todayStr())}</p></div>${ctErr()}${ctMsg()}`;
+  if(!d) return head+(CT.err?'':`<div class="spin">Loading the class…</div>`);
+  const tile=(n,l)=>`<div class="ctile"><b>${n}</b><small>${l}</small></div>`;
+  const cp=d.practice, topicName=id=>{ const t=(CT.topics&&CT.topics.skills||[]).find(x=>x.id===id); return t?t.name:id; };
+  let h=head+`<div class="ctiles">${tile(`${d.played}/${d.children}`,'children played')}${tile(Math.round(d.minutes),'minutes')}${tile(d.stars,'stars')}${tile(d.right_pct===null?'–':d.right_pct+'%','right first time')}</div>`;
+  h+=`<div class="card panel cpanel"><h3>Today's practice</h3>${cp&&(cp.skills||[]).length?`<p>${cp.skills.map(id=>`<span class="chip">${esc(topicName(id))}</span>`).join(' ')}</p>`:'<p>Not set yet. Children get practice picked for them.</p>'}
+    <div class="btns"><button class="btn small" data-s="ct-practice">${cp?'Change':"Set today's practice"}</button></div></div>`;
+  if((d.needs_help||[]).length) h+=`<div class="needhelp"><h3>${ICON_HEART}Needs help today</h3>${d.needs_help.map(r=>{ const g=GAMES[r.game];
+      return `<button class="nh" data-report="${esc(r.id)}"><b>${esc(r.name)}</b><span>${r.hints>=3?`used ${r.hints} hints`:`${r.right_pct}% right first time`}${g?` on ${esc(g.name)}`:''}</span></button>`; }).join('')}</div>`;
+  if((d.ready||[]).length) h+=`<div class="card panel cpanel ready"><h3>🚀 Ready to move up</h3><p>85% or more right first time today. Give them the next level or the next topic.</p>
+    <div class="tlist">${d.ready.map(r=>`<div class="trow"><div><b>${esc(r.name)}</b><small>${r.right_pct}% right${r.skill?` · strongest: ${esc(r.skill)}`:''}</small></div></div>`).join('')}</div></div>`;
+  h+=`<div class="card panel cpanel"><h3>Children today</h3><div class="tlist">${(d.kids||[]).map(c=>c.rounds?`<button class="trow kidday" data-report="${esc(c.id)}"><div><b>${esc(c.name)}</b><small>${c.questions} questions · ${c.right_pct}% right first time · ${c.stars} ★ · ${Math.round(c.minutes)} min${c.hints?` · ${c.hints} hints`:''}</small></div></button>`
+      : `<div class="trow off"><div><b>${esc(c.name)}</b><small>Not played today</small></div></div>`).join('')||'<p>No children in this class yet.</p>'}</div></div>`;
+  if(sk) h+=skillsGridHTML(sk)+weekHTML(sk);
+  h+=`<div class="btns" style="margin-top:12px"><button class="btn small" data-s="ct-copyreport">Copy class report</button><button class="btn small" data-s="ct-refresh">Refresh</button></div>
+    ${CT.copy?`<textarea class="input" rows="8" style="margin-top:10px;width:100%" readonly>${esc(CT.copy)}</textarea>`:''}`;
+  return h;
+}
+function skillsGridHTML(sk){
+  const kids=sk.kids||[], skills=sk.skills||[], cell={};
+  (sk.cells||[]).forEach(c=>{ cell[c.child+'|'+c.skill]=c; });
+  if(!skills.length) return `<div class="card panel cpanel"><h3>Skills this week</h3><p>No skills practised in the last 7 days yet.</p></div>`;
+  const advice=[], small={};   // the whole class found it hard: re-teach; a few children: a small group, one line per child
+  skills.forEach(s=>{ const got=kids.map(k=>({k, c:cell[k.id+'|'+s.id]})).filter(x=>x.c && x.c.q>=3), red=got.filter(x=>pctOf(x.c.rf,x.c.q)<50);
+    if(got.length>=3 && red.length/got.length>=0.5) advice.push(`<li><b>Re-teach ${esc(s.name)}:</b> ${red.length} of ${got.length} children found it hard.</li>`);
+    else red.forEach(x=>{ (small[x.k.id]=small[x.k.id]||{name:firstName(x.k.name), skills:[]}).skills.push(s.name); }); });
+  Object.values(small).forEach(c=>advice.push(`<li><b>Small group · ${esc(c.name)}:</b> ${c.skills.map(esc).join('; ')}.</li>`));
+  return `<div class="card panel cpanel"><h3>Skills this week</h3><p>Right first time, last 7 days. <span class="key g">80%+</span> <span class="key y">50–79%</span> <span class="key r">under 50%</span></p>
+    ${advice.length?`<ul class="advice">${advice.join('')}</ul>`:''}
+    <div class="gridwrap"><table class="sgrid"><thead><tr><th>Child</th>${skills.map(s=>`<th title="${esc(s.name)}"><span>${esc(s.id)}</span><small>${esc(s.name)}</small></th>`).join('')}</tr></thead>
+    <tbody>${kids.filter(k=>skills.some(s=>cell[k.id+'|'+s.id])).map(k=>`<tr><th>${esc(firstName(k.name))}</th>${skills.map(s=>{ const c=cell[k.id+'|'+s.id], p=c?pctOf(c.rf,c.q):null;
+      return `<td class="${cellCls(p)}" title="${c?`${c.q} questions`:'not practised'}">${p===null?'':p+'%'}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+}
+function weekHTML(sk){
+  const kids=(sk.kids||[]).filter(k=>k.q||k.pq);
+  if(!kids.length) return '';
+  const arrow=(a,b)=> a===null||b===null ? '' : a-b>=5 ? '<span class="up">▲</span>' : b-a>=5 ? '<span class="down">▼</span>' : '<span class="same">●</span>';
+  const tq=kids.reduce((a,k)=>a+k.q,0), trf=kids.reduce((a,k)=>a+k.rf,0), tpq=kids.reduce((a,k)=>a+k.pq,0), tprf=kids.reduce((a,k)=>a+k.prf,0);
+  return `<div class="card panel cpanel"><h3>This week and last week</h3><p>Class: ${pctOf(trf,tq)??'–'}% right first time this week, ${pctOf(tprf,tpq)??'–'}% last week ${arrow(pctOf(trf,tq),pctOf(tprf,tpq))}</p>
+    <div class="tlist">${kids.map(k=>{ const a=pctOf(k.rf,k.q), b=pctOf(k.prf,k.pq);
+      return `<div class="trow"><div><b>${esc(k.name)}</b><small>This week: ${k.q} questions, ${a??'–'}% right, ${Math.round(k.minutes)} min · last week: ${k.pq} questions, ${b??'–'}% right, ${Math.round(k.prev_minutes)} min</small></div><div class="trend">${arrow(a,b)}</div></div>`; }).join('')}</div></div>`;
+}
+/* the class report in the school's own language: Kenyan CBE levels, England's terms, or percentages */
+function levelWord(p){
+  const c=schOpts().curriculum;
+  if(c==='kenya_cbe') return p>=90?'Exceeding expectation':p>=70?'Meeting expectation':p>=50?'Approaching expectation':'Below expectation';
+  if(c==='england') return p>=90?'Greater depth':p>=70?'Expected':'Working towards';
+  return p>=80?'Secure':p>=50?'Developing':'Beginning';
+}
+function classReport(){
+  const sk=CT.skills, k=SCH.klass||{}; if(!sk) return '';
+  const refs=id=>{ const t=(CT.topics&&CT.topics.skills||[]).find(x=>x.id===id); return t&&t.refs&&t.refs.length?` (${t.refs.join(', ')})`:''; };
+  const lines=[`${k.name} · Garaad class report · last 7 days to ${fmtDay(todayStr())}`, curLabel()?`Curriculum: ${curLabel()}`:'', 'Levels are Garaad estimates from right-first-time scores (3+ questions).', ''];
+  (sk.kids||[]).forEach(c=>{ const rows=(sk.cells||[]).filter(x=>x.child===c.id && x.q>=3);
+    if(!rows.length) return; lines.push(c.name);
+    rows.forEach(x=>{ const s=(sk.skills||[]).find(y=>y.id===x.skill)||{name:x.skill}, p=pctOf(x.rf,x.q);
+      lines.push(`  ${s.name}${refs(x.skill)}: ${levelWord(p)} (${p}%, ${x.q} questions)`); });
+    lines.push(''); });
+  return lines.filter((l,i)=>l!==''||i>2).join('\n');
+}
+
+/* ---------- Set today's practice ---------- */
+function practiceHTML(){
+  const k=SCH.klass||{}, t=CT.topics;
+  const head=`<div class="head"><h1>Set today's practice</h1><p>${esc(k.name)}${curLabel()?' · '+esc(curLabel()):''}. Pick up to 3 topics you taught today. Each child practises them at their own level.</p></div>${ctErr()}${ctMsg()}`;
+  if(!t) return head+(CT.err?'':`<div class="spin">Loading topics…</div>`);
+  const plan=classPlan(k), games=new Set(plan.maths.concat(plan.english));
+  const usable=(t.skills||[]).map(s=>Object.assign({}, s, {g:(s.games||[]).map(x=>x.game).filter(id=>games.has(id) && GAMES[id] && !GAMES[id].isSprint)})).filter(s=>s.g.length && s.subject===CT.subj);
+  const row=s=>{ const on=CT.sel.includes(s.id);
+    return `<button class="card topic tap" data-s="ct-pick" data-sk="${esc(s.id)}" aria-pressed="${on}"><span class="tick">${on?'✓':''}</span><span class="tt"><b>${esc(s.name)}</b>
+      <small>${(s.refs||[]).length?(s.refs.slice(0,4).map(r=>`<span class="chip code">${esc(r)}</span>`).join(' ')+' '):''}${[...new Set(s.g)].map(id=>esc(GAMES[id].name)).join(' · ')}</small></span></button>`; };
+  const inCls=usable.filter(s=>s.in_class), other=usable.filter(s=>!s.in_class);
+  const groupBy=list=>{ const by={}; list.forEach(s=>(by[s.strand]=by[s.strand]||[]).push(s)); return Object.entries(by).map(([st,l])=>`<h3 class="strandh">${esc(st)}</h3>${l.map(row).join('')}`).join(''); };
+  const cc=t.curriculum_class;
+  const today=t.today&&(t.today.skills||[]).length;
+  return head+`<div class="seg ctsubj" role="group" aria-label="Subject"><button data-s="ct-subj" data-subj="maths" aria-pressed="${CT.subj==='maths'}">Maths</button><button data-s="ct-subj" data-subj="english" aria-pressed="${CT.subj==='english'}">English</button></div>
+    ${inCls.length?`<h2 class="stephead">In ${esc(cc)}</h2>${groupBy(inCls)}${other.length?`<details class="more"><summary>Other topics (${other.length})</summary>${groupBy(other)}</details>`:''}`
+      : (usable.length?groupBy(usable):'<p class="note">No game for these topics in this class yet.</p>')}
+    <div class="stickybar"><span>${CT.sel.length} of 3 picked</span><div class="btns">${today?`<button class="btn small" data-s="ct-clear">Clear today</button>`:''}<button class="btn primary" data-s="ct-setpractice" ${CT.sel.length?'':'disabled'}>Set for today</button></div></div>`;
+}
+
+/* ---------- Competition: class goal, teams and badges ---------- */
+function treeSVG(frac, big){
+  const n=24, on=Math.round(Math.max(0,Math.min(1,frac))*n), pts=[];
+  for(let i=0;i<n;i++){ const ring=i<8?0:i<16?1:2, a=(i%8)/8*Math.PI*2+ring*.4, r=[22,40,56][ring]; pts.push([100+r*Math.cos(a), 78+r*.8*Math.sin(a)]); }
+  return `<svg viewBox="0 0 200 190" class="ctree${big?' big':''}" role="img" aria-label="${Math.round(frac*100)}% of the class goal"><rect x="90" y="110" width="20" height="70" rx="6" fill="#8D5B3C"/><ellipse cx="100" cy="78" rx="78" ry="64" fill="#2FA866"/><ellipse cx="100" cy="70" rx="60" ry="46" fill="#3DBB77"/>
+    ${pts.map(([x,y],i)=>i<on?`<polygon points="${starPts(x,y,7,3)}" fill="#F7C531" stroke="#B8892A" stroke-width="1"/>`:`<circle cx="${x}" cy="${y}" r="3.5" fill="#BDE8CC"/>`).join('')}
+</svg>`;
+}
+function compHTML(){
+  const k=SCH.klass||{}, c=CT.comp;
+  const head=`<div class="head"><h1>${esc(k.name)} · Competition</h1><p>This week, from Monday. Effort counts: every star a child earns helps their team and the class.</p></div>${ctErr()}${ctMsg()}`;
+  if(!c) return head+(CT.err?'':`<div class="spin">Loading…</div>`);
+  if(c.options && c.options.competition===false) return head+`<div class="card panel cpanel"><h3>Competition is off for this class</h3><p>Children still play and earn stars as usual.</p><div class="btns"><button class="btn primary small" data-s="ct-on">Switch it on</button></div></div>`;
+  const frac=c.goal?c.class_stars/c.goal:0, max=Math.max(1,...(c.teams||[]).map(t=>t.stars));
+  const names=!(c.options && c.options.names_on_screen===false);
+  return head+`<div class="card panel cpanel goal">${treeSVG(frac)}<div><h3>Class goal: fill the owl tree</h3><p><b>${c.class_stars}</b> of <b>${c.goal}</b> stars this week${frac>=1?' · 🎉 Goal reached!':''}. ${c.played} child${c.played===1?'':'ren'} played.</p>
+      <div class="inline"><input class="input" id="ctGoal" type="number" inputmode="numeric" min="1" max="100000" value="${c.goal}" aria-label="Class goal in stars" style="max-width:120px"><button class="btn small" data-s="ct-goal">${c.goal_set?'Change goal':'Set goal'}</button></div></div></div>
+    <div class="card panel cpanel"><h3>Teams</h3>${(c.teams||[]).length?`<p>Tap a child to move them to the next team.</p>${c.teams.map((t,i)=>`<div class="team"><div class="tbar"><span class="tname" style="color:${esc(t.colour)}">${esc(t.name)}</span><span class="bar"><i style="width:${Math.round(100*t.stars/max)}%;background:${esc(t.colour)}"></i></span><b>${t.stars} ★</b></div>
+        <div class="chips">${(t.members||[]).map(m=>`<button class="chip tap" data-s="ct-move" data-kid="${esc(m.id)}" data-team="${esc(c.teams[(i+1)%c.teams.length].id)}">${esc(m.name)}</button>`).join('')||'<span class="note">No one yet</span>'}</div></div>`).join('')}
+        ${(c.no_team||[]).length?`<p class="note">Not in a team yet: ${c.no_team.map(m=>`<button class="chip tap" data-s="ct-move" data-kid="${esc(m.id)}" data-team="${esc(c.teams[0].id)}">${esc(m.name)}</button>`).join(' ')}</p>`:''}
+        <div class="btns"><span class="note">New teams:</span>${[2,3,4].map(n=>`<button class="btn small" data-s="ct-teams" data-n="${n}">${n} teams</button>`).join('')}</div>`
+      : `<p>Split the class into teams. Each team gets children of every level, so every child's stars count.</p><div class="btns">${[2,3,4].map(n=>`<button class="btn small" data-s="ct-teams" data-n="${n}">Make ${n} teams</button>`).join('')}</div>`}</div>
+    <div class="card panel cpanel"><h3>This week's badges</h3>${(c.badges||[]).length?`<div class="badges">${c.badges.map(b=>`<div class="badge"><span class="bi">${{improved:'📈',streak:'🔥',practice:'💪',stars:'⭐'}[b.kind]||'🏅'}</span><b>${esc(b.label)}</b><span>${esc(b.name)}</span></div>`).join('')}</div>`:'<p>Badges appear as children play this week: most improved, longest streak, most practice and star collector. Each goes to a different child.</p>'}</div>
+    <div class="btns" style="margin-top:12px"><button class="btn primary small" data-s="ct-screen">Classroom screen</button><button class="btn small" data-s="ct-share">Share the class tree</button>
+      <button class="btn small" data-s="ct-names">${names?'Hide names on the screen':'Show names on the screen'}</button><button class="btn small" data-s="ct-off">Switch competition off</button></div>`;
+}
+/* the big screen for a projector or TV: first names only, no individual scores */
+function screenHTML(){
+  const k=SCH.klass||{}, c=CT.comp; if(!c) return `<div class="spin">Loading…</div>`;
+  const frac=c.goal?c.class_stars/c.goal:0, max=Math.max(1,...(c.teams||[]).map(t=>t.stars)), names=!(c.options && c.options.names_on_screen===false);
+  const teamOf=id=>((c.teams||[]).find(t=>(t.members||[]).some(m=>m.id===id))||{}).name;
+  return `<div class="cscreen"><div class="sleft"><h1>${esc(k.name)}</h1>${treeSVG(frac,true)}<p class="sgoal"><b>${c.class_stars}</b> / ${c.goal} ★${frac>=1?' 🎉':''}</p></div>
+    <div class="sright">${(c.teams||[]).length?`<h2>Team race</h2>${c.teams.map(t=>`<div class="steam"><span class="tname">${esc(t.name)}</span><span class="bar"><i style="width:${Math.round(100*t.stars/max)}%;background:${esc(t.colour)}"></i></span><b>${t.stars}</b></div>`).join('')}`:''}
+      ${(c.badges||[]).length?`<h2>Badges</h2><div class="sbadges">${c.badges.map(b=>`<div><span>${{improved:'📈',streak:'🔥',practice:'💪',stars:'⭐'}[b.kind]||'🏅'}</span><b>${esc(b.label)}</b><em>${names?esc(b.name):(teamOf(b.child_id)?'a '+esc(teamOf(b.child_id))+' star':'a class star')}</em></div>`).join('')}</div>`:''}
+      <button class="btn small" data-s="ct-exitscreen" style="margin-top:18px">Close the screen</button></div></div>`;
+}
+async function shareTree(btn){
+  const c=CT.comp, k=SCH.klass||{}; if(!c) return;
+  await busy(btn, async()=>{
+    const cv=document.createElement('canvas'); cv.width=1080; cv.height=1080; const x=cv.getContext('2d');
+    x.fillStyle='#FFF7E8'; x.fillRect(0,0,1080,1080);
+    const im=await svgToImg(treeSVG(c.goal?c.class_stars/c.goal:0).replace('<svg ','<svg width="640" height="608" xmlns="http://www.w3.org/2000/svg" '));
+    if(im) x.drawImage(im, 220, 170, 640, 608);
+    x.fillStyle='#172041'; x.textAlign='center'; x.font='700 64px Lexend, sans-serif'; x.fillText(k.name||'', 540, 120);
+    x.font='600 48px Lexend, sans-serif'; x.fillText(c.class_stars>=c.goal?'filled the owl tree this week! 🎉':`${c.class_stars} of ${c.goal} stars this week`, 540, 870);
+    x.font='400 34px Lexend, sans-serif'; x.fillStyle='#596282'; x.fillText(`${store.school&&store.school.name||''} · learning with Garaad`, 540, 950);
+    const blob=await new Promise(r=>cv.toBlob(r,'image/png')), file=blob && typeof File==='function' ? new File([blob], 'garaad-class-tree.png', {type:'image/png'}) : null;
+    try{ if(file && navigator.canShare && navigator.canShare({files:[file]})) { await navigator.share({files:[file], title:'Our class tree', text:`${k.name} on Garaad this week`}); return; } }catch(e){ if(e&&e.name==='AbortError') return; }
+    if(blob){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='garaad-class-tree.png'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 4000); }
+  });
+}
+
+/* ---------- the principal's class league ---------- */
+function leagueHTML(){
+  const L=CT.league, head=`<div class="head"><h1>Class league</h1><p>This week, from Monday: stars, practice and how many children played.</p></div>${ctErr()}`;
+  if(!L) return head+(CT.err?'':`<div class="spin">Loading…</div>`);
+  const medal=(i,c)=>c.stars>0 && i<3 ? ['🥇','🥈','🥉'][i] : `${i+1}.`;
+  return head+`<div class="card panel cpanel"><div class="tlist">${(L.classes||[]).map((c,i)=>`<div class="trow"><div><b>${medal(i,c)} ${esc(c.name)}</b><small>${c.stars} ★ · ${c.questions} questions · ${Math.round(c.minutes)} min · ${c.played} of ${c.children} children played</small></div></div>`).join('')||'<p>No classes yet.</p>'}</div></div>`;
+}
+
+/* ---------- the principal: curriculum, class names and currency (Manage school > Curriculum) ---------- */
+function saCurricHTML(){
+  const o=schOpts(), cur=SA.cur||(SA.cur={curriculum:o.curriculum||'garaad', currency:o.currency||'', map:{}});
+  if(!o.classes) return `<div class="card panel adm"><h3>Curriculum</h3><p>${esc(SCH.err||'Loading…')}</p></div>`;
+  const f=o.features||{}, onoff=b=>b?'<span class="chip">On</span>':'<span class="chip">Off</span>';
+  const opts=CURRIC_CLASSES[cur.curriculum]||[];
+  return `<div class="card panel adm"><h3>Curriculum</h3><p>Garaad shows each topic in your curriculum's own words and codes, and fits the games to each class.</p>
+    <div class="seg currseg" role="group" aria-label="Curriculum">${Object.keys(CURRIC).map(c=>`<button data-s="sa-curric" data-c="${c}" aria-pressed="${cur.curriculum===c}">${esc(CURRIC[c])}</button>`).join('')}</div>
+    ${opts.length?`<p style="margin-top:12px">Which ${esc(CURRIC[cur.curriculum])} class is each Garaad class?</p>
+      ${o.classes.map(c=>{ const v=cur.map[c.id]!==undefined?cur.map[c.id]:(c.curriculum_class||''); return `<div class="inline"><label class="label" style="min-width:110px" for="cc-${esc(c.id)}">${esc(c.name)}</label><select class="input" id="cc-${esc(c.id)}" data-ccid="${esc(c.id)}"><option value="">Not set</option>${opts.map(x=>`<option${x===v?' selected':''}>${esc(x)}</option>`).join('')}</select></div>`; }).join('')}`:''}
+    <label class="label" for="saCurrency" style="margin-top:12px">Money games currency</label>
+    <select class="input" id="saCurrency"><option value="">Plain coins (no currency)</option>${[['KES','Kenyan shillings (KSh)'],['USD','US dollars and cents'],['GBP','Pounds and pence']].map(([v,l])=>`<option value="${v}"${cur.currency===v?' selected':''}>${l}</option>`).join('')}</select>
+    <div class="btns" style="margin-top:12px"><button class="btn primary small" data-s="sa-savecurric">Save</button></div></div>
+    <div class="card panel adm"><h3>New features</h3><p>The Garaad admin switches these on for your school.</p>
+      <div class="tlist"><div class="trow"><div><b>New games</b><small>Build It, Sort It, Treasure Map, Owl's Market</small></div>${onoff(f.new_games)}</div>
+      <div class="trow"><div><b>Teacher's class page</b><small>My class today, Set today's practice</small></div>${onoff(f.class_tools)}</div>
+      <div class="trow"><div><b>Competition</b><small>Class goal, teams, badges, class league</small></div>${onoff(f.competition)}</div></div></div>`;
+}
+
+/* ---------- taps ---------- */
+async function classToolAction(a, btn){
+  const k=SCH.klass, call=async(fn,args,msg)=>{ try{ const r=await rpc(fn, Object.assign({p_token:tokenOf()}, args)); if(r && r.ok===false){ CT.err=serr(r.error); return false; } CT.err=''; if(msg) CT.msg=msg; return true; }
+    catch(e){ if(e.code==='invalid_token'){ needLogin(); return false; } CT.err=serr(e); return false; } };
+  if(a==='ct-day'){ CT.day=null; CT.copy=''; openSchool('classday'); return loadClassDay(); }
+  if(a==='ct-refresh'){ return busy(btn, async()=>{ CT.copy=''; await loadClassDay(); }); }
+  if(a==='ct-copyreport'){ const t=classReport(); if(!t){ return; } try{ await navigator.clipboard.writeText(t); toast('Class report copied'); CT.copy=''; }catch(e){ CT.copy=t; } return renderSchool(); }
+  if(a==='ct-practice'){ CT.topics=null; CT.sel=[]; openSchool('practice'); return loadTopics(); }
+  if(a==='ct-subj'){ CT.subj=btn.dataset.subj; return renderSchool(); }
+  if(a==='ct-pick'){ const id=btn.dataset.sk; if(CT.sel.includes(id)) CT.sel=CT.sel.filter(x=>x!==id); else if(CT.sel.length<3) CT.sel.push(id); else { toast('Pick up to 3 topics'); return; } return renderSchool(); }
+  if(a==='ct-setpractice'||a==='ct-clear'){ const plan=classPlan(k), ok=new Set(plan.maths.concat(plan.english));
+    const sel=a==='ct-clear'?[]:CT.sel, gs=[...new Set(sel.flatMap(id=>((CT.topics.skills||[]).find(s=>s.id===id)||{games:[]}).games.map(x=>x.game)).filter(id=>ok.has(id)&&GAMES[id]&&!GAMES[id].isSprint))];
+    return busy(btn, async()=>{ if(await call('class_set_practice', {p_class_id:k.id, p_skills:sel, p_games:gs}, sel.length?"Today's practice is set. Children see it as Today's class practice.":"Today's practice is cleared.")){
+      await loadSchoolOpts(); openSchool('children'); } else renderSchool(); }); }
+  if(a==='ct-compete'){ CT.comp=null; openSchool('compete'); return loadComp(); }
+  if(a==='ct-goal'){ const v=parseInt(($('ctGoal')||{}).value,10); if(!(v>=1)) { CT.err='Type a number of stars, for example 150.'; return renderSchool(); }
+    return busy(btn, async()=>{ await call('class_set_goal', {p_class_id:k.id, p_target:v}, 'Class goal saved.'); await loadComp(); }); }
+  if(a==='ct-teams') return busy(btn, async()=>{ await call('class_make_teams', {p_class_id:k.id, p_count:+btn.dataset.n}, 'New teams made.'); await loadComp(); });
+  if(a==='ct-move') return busy(btn, async()=>{ await call('class_set_team', {p_child_id:btn.dataset.kid, p_team_id:btn.dataset.team}); await loadComp(); });
+  if(a==='ct-off'||a==='ct-on') return busy(btn, async()=>{ await call('class_set_options', {p_class_id:k.id, p_options:{competition:a==='ct-on'}}, a==='ct-on'?'Competition is on.':'Competition is off for this class.'); await loadComp(); });
+  if(a==='ct-names'){ const hide=!(CT.comp&&CT.comp.options&&CT.comp.options.names_on_screen===false);
+    return busy(btn, async()=>{ await call('class_set_options', {p_class_id:k.id, p_options:{names_on_screen:!hide}}, hide?'Names are hidden on the classroom screen.':'First names show on the classroom screen.'); await loadComp(); }); }
+  if(a==='ct-screen'){ openSchool('screen'); try{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){}
+    clearInterval(CT.screenT); CT.screenT=setInterval(()=>{ if(current==='sSchool' && SCH.view==='screen') loadComp(); else clearInterval(CT.screenT); }, 60000); return; }
+  if(a==='ct-exitscreen'){ clearInterval(CT.screenT); try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} return openSchool('compete'); }
+  if(a==='ct-share') return shareTree(btn);
+  if(a==='ct-league'){ CT.league=null; openSchool('league'); return loadLeague(); }
 }
 
 /* ---------- the principal is the school admin: results, teachers and children of their own school ---------- */
@@ -3164,11 +3845,12 @@ function saChildrenHTML(d){
 }
 function sadminHTML(){
   const d=SA.data, sc=store.school||{};
-  const tabs=[['results','Results'],['teachers','Teachers'],['children','Children']];
+  const tabs=[['results','Results'],['teachers','Teachers'],['children','Children'],['curric','Curriculum']];
   const head=`<div class="head"><h1>Manage school</h1><p>${esc(d?d.school.name:(sc.name||''))}${d?` · code ${esc(d.school.code)}`:''}</p></div>
     <div class="seg satabs" role="tablist" aria-label="Manage school">${tabs.map(([k,v])=>`<button role="tab" data-s="sa-tab" data-tab="${k}" aria-pressed="${SA.tab===k}" aria-selected="${SA.tab===k}">${v}</button>`).join('')}</div>
     ${SA.msg?`<p class="okmsg" style="margin:12px 0 0">${esc(SA.msg)}</p>`:''}${errP()}`;
   if(SA.tab==='results') return head+`<div style="margin-top:14px">${SCH.pilot===null||SCH.pilot===undefined?`<div class="spin">Loading results…</div>`:pilotHTML(SCH.pilot, 'school')}</div>`;
+  if(SA.tab==='curric') return head+`<div style="margin-top:14px">${saCurricHTML()}</div>`;
   if(!d) return head+`<div class="spin">Loading…</div>`;
   return head+`<div style="margin-top:14px">${SA.tab==='teachers'?saTeachersHTML(d):saChildrenHTML(d)}</div>`;
 }
@@ -3184,7 +3866,16 @@ async function sadminAction(a, btn){
   if(a==='sa-tab'){ SA.tab=btn.dataset.tab; SA.arm=''; SA.edit=null; SA.msg=''; SCH.err='';
     if(SA.tab==='results' && !SCH.pilot){ SCH.pilot=null; loadPilot(); }
     if(SA.tab==='children'){ SA.kids=null; loadSAKids(); }
+    if(SA.tab==='curric'){ SA.cur=null; loadSchoolOpts().then(()=>{ if(current==='sSchool' && SCH.view==='sadmin' && SA.tab==='curric') renderSchool(); }); }
     return renderSchool(); }
+  if(a==='sa-curric'){ SA.cur=Object.assign(SA.cur||{}, {curriculum:btn.dataset.c, map:{}}); SA.cur.currency=($('saCurrency')||{}).value||SA.cur.currency||''; if(btn.dataset.c==='kenya_cbe' && !SA.cur.currency) SA.cur.currency='KES'; return renderSchool(); }
+  if(a==='sa-savecurric'){ const cur=SA.cur||{}, map={};
+    document.querySelectorAll('[data-ccid]').forEach(el=>{ map[el.dataset.ccid]=el.value||''; });
+    if(!(CURRIC_CLASSES[cur.curriculum]||[]).length) (schOpts().classes||[]).forEach(c=>{ map[c.id]=''; });
+    return busy(btn, async()=>{ try{ const r=await rpc('school_set_options', {p_token:tokenOf(), p_curriculum:cur.curriculum||'garaad', p_currency:($('saCurrency')||{}).value||'', p_class_map:map});
+        if(r && r.ok===false){ SCH.err=serr(r.error); return renderSchool(); }
+        await loadSchoolOpts(); SA.cur=null; SA.msg='Curriculum saved. Teachers see it the next time they open a class.'; SCH.err=''; renderSchool(); }
+      catch(e){ if(e.code==='invalid_token') return needLogin(); SCH.err=serr(e); renderSchool(); } }); }
   if(a==='sa-reset'){ const k='reset'+btn.dataset.tid; if(SA.arm!==k){ SA.arm=k; SA.msg=''; return renderSchool(); }
     return saCall(btn, 'school_reset_pin', {p_teacher_id:btn.dataset.tid}, 'PIN reset. The teacher chooses a new PIN at their next login.'); }
   if(a==='sa-remove'){ const k='remove'+btn.dataset.tid; if(SA.arm!==k){ SA.arm=k; SA.msg=''; return renderSchool(); }
@@ -3203,6 +3894,7 @@ async function sadminAction(a, btn){
 
 async function schoolAction(a, btn){
   if(a==='sadmin' || a.startsWith('sa-')) return sadminAction(a, btn);
+  if(a.startsWith('ct-')) return classToolAction(a, btn);
   const sc=store.school||(store.school={outbox:[]});
   const pinOk = id => /^\d{4}$/.test(($(id)||{}).value||'');
   if(a==='code'){ const code=($('sCode').value||'').trim().toUpperCase(); if(!code) return setErr('sErr','Type the school code.');
@@ -3248,12 +3940,14 @@ async function schoolAction(a, btn){
         p_avatar:SCH.addOwl, p_theme:'savanna', p_parent_phone:pp?'+252'+pp:null});
       if(!r.ok) return setErr('sErr', serr(r.error)); await openChild(r.child_id); }catch(e){ if(e.code==='invalid_token') return needLogin(); setErr('sErr', serr(e)); } }); }
 }
-function loggedIn(r){ const sc=store.school; Object.assign(sc, {token:r.token, teacher:r.name, role:r.role, name:r.school||sc.name}); save(); SCH.classes=null; openSchool('task'); obFlush(); }
+function loggedIn(r){ const sc=store.school; Object.assign(sc, {token:r.token, teacher:r.name, role:r.role, name:r.school||sc.name, opts:null}); save(); SCH.classes=null; openSchool('task'); obFlush();
+  loadSchoolOpts().then(()=>{ if(current==='sSchool' && SCH.view==='task') renderSchool(); }); }
 
 /* ---------- admin: school and family codes, PIN resets ---------- */
 function openAdmin(){ ADM.err=''; ADM.arm=''; renderAdmin(); show('sAdmin'); if(ADM.tok) adminLoad(); else setTimeout(()=>{ const i=$('aPin'); if(i) i.focus(); },60); }
 function adminBack(){ if(ADM.pilot){ ADM.pilot=null; return renderAdmin(); } if(store.mode==='school') return openSchoolHome(); renderHome(); show('sHome'); }
 async function adminLoad(){
+  try{ ADM.opts=await rpc('admin_school_options', {p_token:ADM.tok}); }catch(e){ ADM.opts=null; }   // before database update 8: no switches yet
   try{ ADM.data=await rpc('admin_overview', {p_token:ADM.tok}); ADM.err=''; }
   catch(e){ if(e.code==='invalid_token'||e.code==='admin_only'){ ADM.tok=null; ADM.err='Please log in again.'; } else ADM.err=serr(e); }
   if(current==='sAdmin') renderAdmin();
@@ -3273,6 +3967,7 @@ function renderAdmin(){
       <h3><span>${esc(s.name)}</span><span class="chip">Code ${esc(s.code)}</span></h3>
       <p>${s.children} child${s.children===1?'':'ren'} · ${(s.teachers||[]).length} teacher${(s.teachers||[]).length===1?'':'s'}</p>
       <div class="btns"><button class="btn small" data-a="pilot" data-sid="${esc(s.id)}" data-sname="${esc(s.name)}">Pilot results</button></div>
+      ${admFeaturesHTML(s)}
       <div class="chips">${(s.classes||[]).map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>
       <div class="inline"><input class="input" id="cls-${esc(s.id)}" maxlength="30" placeholder="New class, e.g. Standard 3"><button class="btn small" data-a="addclass" data-sid="${esc(s.id)}">Add class</button></div>
       ${(s.teachers||[]).length?`<div class="tlist">
@@ -3287,9 +3982,25 @@ function renderAdmin(){
     ${schools||'<div class="card panel"><p>No schools yet.</p></div>'}
     <div class="card panel adm"><h3>New school</h3><p>Creates the school with KG1, KG2, KG3, Standard 1 and Standard 2.</p>
       <div class="inline"><input class="input" id="nsName" maxlength="60" placeholder="School name"><input class="input" id="nsCode" maxlength="20" placeholder="School code" style="text-transform:uppercase"><button class="btn small primary" data-a="newschool">Create</button></div></div>
+    ${admNewGamesHTML(d.settings)}
     ${admFamiliesHTML(d)}
     <div class="foot"><button class="linkbtn" data-a="logout">Log out of admin</button></div>`;
   ADM.msg='';
+}
+/* update 8: per-school switches for the new games, the teacher's class page and competition (all off until switched on) */
+const FEATS = [['new_games','New games'],['class_tools','Teacher class page'],['competition','Competition']];
+function admFeaturesHTML(s){
+  if(!ADM.opts) return '';
+  const o=ADM.opts.find(x=>x.id===s.id); if(!o) return '';
+  const f=o.features||{};
+  return `<div class="featrow"><span class="note">New features${o.curriculum&&o.curriculum!=='garaad'?` · ${esc(CURRIC[o.curriculum]||o.curriculum)}`:''}${o.currency?` · ${esc(o.currency)}`:''}:</span>
+    ${FEATS.map(([k,l])=>`<button class="chip tap" data-a="feat" data-sid="${esc(s.id)}" data-k="${k}" aria-pressed="${!!f[k]}">${f[k]?'✓ ':''}${l}</button>`).join('')}</div>`;
+}
+function admNewGamesHTML(st){
+  if(!ADM.opts) return '';
+  const on=(st||{}).new_games==='on';
+  return `<div class="card panel adm"><h3>New games for families</h3><p>Build It, Sort It, Treasure Map and Owl's Market. Schools get them with their own switch above. To try them on one phone first, open garaad.app/?try=new on that phone (garaad.app/?try=off stops it). <b>Now: ${on?'on':'off'} for families.</b></p>
+    <div class="btns"><button class="btn small" data-a="newgames" data-v="${on?'':'on'}">${on?'Switch off for families':'Switch on for families'}</button></div></div>`;
 }
 function admFamiliesHTML(d){
   if(!FAM.data){ loadPlaces().then(()=>{ if(current==='sAdmin') renderAdmin(); }).catch(()=>{}); }
@@ -3355,6 +4066,9 @@ async function adminAction(a, el){
     return busy(el, ()=>call('admin_block_family', {p_family_id:el.dataset.fid, p_blocked:block}, block?'Family blocked and signed out.':'Family unblocked.')); }
   if(a==='setgroup'){ const v=($('setGroup').value||'').trim(); return busy(el, ()=>call('admin_set_setting', {p_key:'parents_group_link', p_value:v}, v?'Group link saved.':'Group link removed.')); }
   if(a==='setadminwa'){ const v=($('setAdminWa').value||'').trim(); return busy(el, async()=>{ if(await call('admin_set_setting', {p_key:'admin_whatsapp', p_value:v}, v?'Admin number saved.':'Admin number removed.')) loadSettings(); }); }
+  if(a==='feat'){ const o=(ADM.opts||[]).find(x=>x.id===el.dataset.sid); if(!o) return; const f=Object.assign({}, o.features||{}), k=el.dataset.k; f[k]=!f[k];
+    return busy(el, ()=>call('admin_set_school_features', {p_school_id:o.id, p_features:f}, `${FEATS.find(x=>x[0]===k)[1]} ${f[k]?'switched on':'switched off'} for ${o.name}.`)); }
+  if(a==='newgames'){ const v=el.dataset.v||''; return busy(el, async()=>{ if(await call('admin_set_setting', {p_key:'new_games', p_value:v}, v?'New games are on for families.':'New games are off for families.')) loadSettings(); }); }
   if(a==='copygroup'){ const fams=(ADM.data.families||[]).filter(f=>f.wants_group && !f.blocked && f.whatsapp && (!ADM.fc||f.country===ADM.fc) && (!ADM.fr||f.region===ADM.fr));
     const list=fams.map(f=>`${f.name}: ${f.whatsapp}`).join('\n');
     try{ await navigator.clipboard.writeText(list); toast(`${fams.length} number${fams.length===1?'':'s'} copied`); }catch(e){ ADM.msg=list; renderAdmin(); } return; }
@@ -3375,7 +4089,7 @@ document.addEventListener('click', e=>{
     return schoolAction(a, s); }
   const c=t.closest('[data-cls]'); if(c && SCH.classes){ audio(); const k=SCH.classes[+c.dataset.cls]; SCH.klass=k; return store.school.role==='principal' ? openPreview(k) : openSchool('children'); }
   const ch=t.closest('[data-child]'); if(ch){ audio(); SCH.assess=null; return openChild(ch.dataset.child, ch); }
-  const rp=t.closest('[data-report]'); if(rp){ audio(); return openReport(rp.dataset.report); }
+  const rp=t.closest('[data-report]'); if(rp){ audio(); SCH.back = SCH.view==='classday' ? 'classday' : null; return openReport(rp.dataset.report); }
   const so=t.closest('[data-sowl]'); if(so){ SCH.addOwl=so.dataset.sowl; const box=$('sOwlPick'); if(box){ box.innerHTML=owlPickHTML(SCH.addOwl,'data-sowl'); const f=box.querySelector(`[data-sowl="${SCH.addOwl}"]`); if(f) f.focus(); } return; }
   const ag=t.closest('[data-sage]'); if(ag){ setErr('sErr',''); SCH.addAge=+ag.dataset.sage; ag.parentNode.querySelectorAll('[data-sage]').forEach(x=>x.setAttribute('aria-pressed', String(x===ag))); return; }
   const gr=t.closest('[data-sgroup]'); if(gr){ setErr('sErr',''); SCH.addGroup=gr.dataset.sgroup; gr.parentNode.querySelectorAll('[data-sgroup]').forEach(x=>x.setAttribute('aria-pressed', String(x===gr))); return; }
@@ -3633,7 +4347,8 @@ function openGames(){
   $('subjTabs').innerHTML=`<button class="tap${eng?'':' on'}" data-subject="maths" aria-pressed="${!eng}"><svg viewBox="0 0 24 24"><path d="M7 4v7M3.5 7.5h7M14 17.5h7M4 16l6 6M10 16l-6 6M17.5 3.5v0M17.5 11v0M14 7.5h7"/></svg>Maths</button><button class="tap${eng?' on':''}" data-subject="english" aria-pressed="${eng}"><svg viewBox="0 0 24 24"><path d="M4 19l5-14 5 14M6 14h6M15 9h5v10M15 14h5"/></svg>English</button>`;
   $('gamesSub').innerHTML=`<span class="tag">${grp.label}</span>&nbsp; ${eng?'Listen, speak, read and write.':'Start today\'s practice, or pick a game.'}`;
   const due=dueReviews().length, days=practiceDays(me), doneToday=(me.practiceDays||[]).includes(todayStr());
-  const card=`<button class="card practice tap" id="practiceBtn"><span class="pi">${doneToday?'✅':'🌟'}</span><span class="pt"><b>Today's ${eng?'English ':''}practice</b><small>${doneToday?'Done today. You can play it again.':'About 10 minutes · games picked for you'}</small>${days?`<small class="streak">⭐ ${days} day${days>1?'s':''} in a row</small>`:''}</span><span class="btn primary small go">${doneToday?'Again':'Start'}</span></button>`;
+  const cp=classPractice(), cpNames=cp?(cp.skills||[]).map(x=>x.name).join(' · '):'';
+  const card=`<button class="card practice tap" id="practiceBtn"><span class="pi">${doneToday?'✅':cp?'📝':'🌟'}</span><span class="pt"><b>${cp?"Today's class practice":`Today's ${eng?'English ':''}practice`}</b><small>${cp?`Set by your teacher: ${esc(cpNames)}`:doneToday?'Done today. You can play it again.':'About 10 minutes · games picked for you'}</small>${days?`<small class="streak">⭐ ${days} day${days>1?'s':''} in a row</small>`:''}</span><span class="btn primary small go">${doneToday?'Again':'Start'}</span></button>`;
   const check = !eng && !me.placement && !SCH.cls ? `<button class="card checkcard tap" id="checkBtn"><span class="pi">🧭</span><span class="pt"><b>Quick check</b><small>8 warm-up questions to find the best games for ${esc(me.name)}</small></span><span class="btn primary small go">Start</span></button>` : '';
   const nw=Object.keys(me.words||{}).length;
   const garden = eng ? `<button class="card practice garden tap" id="gardenBtn"><span class="pi">🌼</span><span class="pt"><b>Word Garden</b><small>${nw?`${nw} word${nw>1?'s':''} grown so far. Tap to visit.`:'Every new word you learn grows a flower.'}</small></span><span class="btn small go">Visit</span></button>` : '';
@@ -3644,7 +4359,8 @@ function openGames(){
     const s=gp(me,id), cap=capOf(id), done=Math.min(levelsDone(s),cap);
     return `<button class="card game tap" data-game="${id}" style="--acc:${g.acc}"><span class="gicon">${g.icon}</span><b>${g.name}</b><small>${g.skill?`<span class="skill">${g.skill}</span> `:''}${g.learn}</small><div class="gprog"><span class="bar"><i style="width:${Math.round(done*100/cap)}%"></i></span>${done}/${cap}</div></button>`;
   };
-  const steps = SCH.cls ? ENGLISH.steps.map(st=>({n:st.n, name:st.name, games:st.games.filter(id=>grp.games.includes(id))})).filter(st=>st.games.length) : ENGLISH.stepsFor(bandOf(me));
+  const steps = SCH.cls ? ENGLISH.steps.map(st=>({n:st.n, name:st.name, games:st.games.filter(id=>grp.games.includes(id))})).filter(st=>st.games.length)
+                        : ENGLISH.stepsFor(bandOf(me)).map(st=>({n:st.n, name:st.name, games:st.games.filter(shown)}));
   const list = eng ? steps.map(st=>`<h2 class="stephead">Step ${st.n} · ${st.name}</h2>`+st.games.map(gameCard).join('')).join('') : grp.games.map(gameCard).join('');
   const banner = SCH.preview ? `<div class="banner" style="grid-column:1/-1">Preview: try any game to check the questions. Nothing is saved.</div>` : '';
   $('games').innerHTML=banner+(eng||me.placement||SCH.cls?card:check+card)+garden+rev+list;
@@ -3714,6 +4430,10 @@ function practiceDays(p){
   return n;
 }
 function buildPractice(){
+  const cp=classPractice();   // the teacher set today's topic for the class: practise its games, each at the child's own level
+  if(cp){ const pl=classPlan(SCH.cls), ok=new Set(pl.maths.concat(pl.english)), ids=cp.games.filter(id=>GAMES[id] && ok.has(id) && !GAMES[id].isSprint);
+    if(ids.length){ const steps=[]; if(dueReviews().length) steps.push({g:'review', lv:0});
+      ids.slice(0,4).forEach(id=>steps.push({g:id, lv:Math.min(capOf(id), gp(me,id).unlocked)})); return steps; } }
   const ids=(G().practiceGames||G().games).filter(id=>!GAMES[id].isSprint);
   const st=ids.map(id=>{ const g=gp(me,id); return {id, acc:g.tries>=3?g.right/g.tries:null, done:levelsDone(g), last:g.last||0}; });
   const used=new Set(), steps=[];
