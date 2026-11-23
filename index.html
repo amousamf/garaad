@@ -812,6 +812,10 @@ details.more{margin-top:12px}details.more summary{cursor:pointer;font-weight:600
 .featrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.featrow .chip.tap{cursor:pointer;font:inherit;font-size:13px;font-weight:600}
 .featrow .chip[aria-pressed="true"],.currseg button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
 .currseg button{height:auto;min-height:46px;padding:8px 12px}
+.lockopt{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;margin-top:14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);cursor:pointer}
+.lockopt input{width:22px;height:22px;margin-top:2px;accent-color:var(--primary)}.lockopt b{display:block}.lockopt small{display:block;color:var(--muted);font-size:13px}
+.tbhead h1{font-size:clamp(30px,6vw,44px)}.tbkids{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.tbdone{font-size:13px;color:var(--success);font-weight:600}
 </style>
 
 <div class="app">
@@ -2822,7 +2826,9 @@ function endChildSession(){
   if(SCH.session){ obPush('end_session', {p_session_id:SCH.session.id, p_minutes:Math.round((Date.now()-SCH.session.started)/6000)/10}); }
   SCH.session=null; SCH.cls=null; SCH.child=null;
 }
-function leaveChild(){ const wasPreview=SCH.preview; endChildSession(); SCH.preview=false; me=null; openSchool(wasPreview?'classes':'children'); }
+function leaveChild(){ const wasPreview=SCH.preview; endChildSession(); SCH.preview=false; me=null;
+  if(isTablet()){ openSchool('tablet'); return loadTablet(); }
+  openSchool(wasPreview?'classes':'children'); }
 function schoolRound(rec){
   if(SCH.preview || !SCH.child) return;
   saveChildProgress();
@@ -2906,6 +2912,7 @@ async function openChild(id, btn){
   me=profileFromChild(Object.assign({}, c, {class_name:SCH.cls.name}), pr);
   subject=me.subject==='english'?'english':'maths';
   startChildSession();
+  if(isTablet()) return openGames();   // the starting exercise is done with the teacher, on the teacher's phone
   if(SCH.assess) return startStarting(SCH.assess);
   SCH.child.start_done ? openGames() : startStarting('baseline');
 }
@@ -3152,6 +3159,7 @@ function openSchoolHome(){
   store.mode='school'; store.school=store.school||{outbox:[]}; save();
   if(!store.school.code) return openSchool('code');
   if(!tokenOf()) return openSchool('login');
+  if(isTablet()){ openSchool('tablet'); obFlush(); return loadTablet(); }
   openSchool('task'); obFlush();
   loadSchoolOpts().then(()=>{ if(current==='sSchool' && SCH.view==='task') renderSchool(); });
 }
@@ -3170,7 +3178,9 @@ function needLogin(){ if(store.school) store.school.token=null; save(); SCH.clas
 function schoolBack(){
   const v=SCH.view;
   if(v==='code'){ store.mode=null; save(); renderHome(); show('sHome'); return; }
-  if(v==='login') return openSchool('code');
+  if(v==='login') return SCH.exitTablet && isTablet() ? (SCH.exitTablet=false, openSchool('tablet')) : openSchool('code');
+  if(v==='tablet') return;
+  if(v==='tabletsetup') return openSchool('children');
   if(v==='register'||v==='setpin') return openSchool('login');
   if(v==='children') return openSchool('classes');
   if(v==='addchild') return openSchool('children');
@@ -3503,6 +3513,9 @@ function renderSchool(){
       <input class="input" id="sCode" maxlength="20" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase" placeholder="For example, ARAN" value="${esc(sc.code||'')}">
       ${errP()}<div class="btns"><button class="btn primary" data-s="code">Continue</button></div></div>
     <div class="foot">${contactHTML()}</div>`;
+  else if(v==='login' && SCH.exitTablet && isTablet()) b.innerHTML=`<div class="head"><h1>Leave tablet mode</h1><p>A teacher logs in to use this tablet as their own. The children's results are kept.</p></div>
+    <div class="card form">${phoneInput(sc.phone)}${pinInput('sPin','PIN','current-password')}
+      ${errP()}<div class="btns"><button class="btn primary" data-s="login">Log in</button></div></div>`;
   else if(v==='login') b.innerHTML=`<div class="head"><h1>Teacher login</h1><p>${esc(sc.name||'')}</p></div>
     <div class="card form">${phoneInput(sc.phone)}${pinInput('sPin','PIN','current-password')}
       ${errP()}<div class="btns"><button class="btn primary" data-s="login">Log in</button></div>
@@ -3555,6 +3568,8 @@ function renderSchool(){
   else if(v==='compete') b.innerHTML=compHTML();
   else if(v==='screen') b.innerHTML=screenHTML();
   else if(v==='league') b.innerHTML=leagueHTML();
+  else if(v==='tablet') b.innerHTML=tabletHTML();
+  else if(v==='tabletsetup') b.innerHTML=tabletSetupHTML();
   else if(v==='sadmin') b.innerHTML=sadminHTML();
   else if(v==='pilot') b.innerHTML=`<div class="head"><h1>Pilot results</h1><p>${esc(sc.name||'')}</p></div>${errP()}${SCH.pilot===null?`<div class="spin">Loading results…</div>`:pilotHTML(SCH.pilot, 'school')}`;
 }
@@ -3574,6 +3589,7 @@ function classToolsHTML(){
   return `<div id="classTools" class="ctools">
     ${tools?`<button class="card ctool tap" data-s="ct-day"><span class="ci">📊</span><span><b>My class today</b><small>Who played, needs help, skills</small></span></button>
     <button class="card ctool tap" data-s="ct-practice"><span class="ci">📝</span><span><b>${cp?"Today's practice is set":"Set today's practice"}</b><small>${cp?esc(names):'The topic you taught today'}</small></span></button>`:''}
+    ${tools?`<button class="card ctool tap" data-s="ct-tablet"><span class="ci">📱</span><span><b>Class tablet</b><small>Children tap their owl and play</small></span></button>`:''}
     ${comp?`<button class="card ctool tap" data-s="ct-compete"><span class="ci">🏆</span><span><b>Competition</b><small>Class goal, teams, badges</small></span></button>`:''}</div>`;
 }
 async function ctLoad(fn, args, key){
@@ -3678,6 +3694,7 @@ function practiceHTML(){
   return head+`<div class="seg ctsubj" role="group" aria-label="Subject"><button data-s="ct-subj" data-subj="maths" aria-pressed="${CT.subj==='maths'}">Maths</button><button data-s="ct-subj" data-subj="english" aria-pressed="${CT.subj==='english'}">English</button></div>
     ${inCls.length?`<h2 class="stephead">In ${esc(cc)}</h2>${groupBy(inCls)}${other.length?`<details class="more"><summary>Other topics (${other.length})</summary>${groupBy(other)}</details>`:''}`
       : (usable.length?groupBy(usable):'<p class="note">No game for these topics in this class yet.</p>')}
+    <label class="lockopt"><input type="checkbox" data-s="ct-lock" ${CT.lock?'checked':''}> <span><b>Only this practice</b><small>Children see only today's practice, not the other games.</small></span></label>
     <div class="stickybar"><span>${CT.sel.length} of 3 picked</span><div class="btns">${today?`<button class="btn small" data-s="ct-clear">Clear today</button>`:''}<button class="btn primary" data-s="ct-setpractice" ${CT.sel.length?'':'disabled'}>Set for today</button></div></div>`;
 }
 
@@ -3767,12 +3784,12 @@ async function classToolAction(a, btn){
   if(a==='ct-day'){ CT.day=null; CT.copy=''; openSchool('classday'); return loadClassDay(); }
   if(a==='ct-refresh'){ return busy(btn, async()=>{ CT.copy=''; await loadClassDay(); }); }
   if(a==='ct-copyreport'){ const t=classReport(); if(!t){ return; } try{ await navigator.clipboard.writeText(t); toast('Class report copied'); CT.copy=''; }catch(e){ CT.copy=t; } return renderSchool(); }
-  if(a==='ct-practice'){ CT.topics=null; CT.sel=[]; openSchool('practice'); return loadTopics(); }
+  if(a==='ct-practice'){ CT.topics=null; CT.sel=[]; const cur=classPracticeFor(k); CT.lock=cur?!!cur.locked:true; openSchool('practice'); return loadTopics(); }
   if(a==='ct-subj'){ CT.subj=btn.dataset.subj; return renderSchool(); }
   if(a==='ct-pick'){ const id=btn.dataset.sk; if(CT.sel.includes(id)) CT.sel=CT.sel.filter(x=>x!==id); else if(CT.sel.length<3) CT.sel.push(id); else { toast('Pick up to 3 topics'); return; } return renderSchool(); }
   if(a==='ct-setpractice'||a==='ct-clear'){ const plan=classPlan(k), ok=new Set(plan.maths.concat(plan.english));
     const sel=a==='ct-clear'?[]:CT.sel, gs=[...new Set(sel.flatMap(id=>((CT.topics.skills||[]).find(s=>s.id===id)||{games:[]}).games.map(x=>x.game)).filter(id=>ok.has(id)&&GAMES[id]&&!GAMES[id].isSprint))];
-    return busy(btn, async()=>{ if(await call('class_set_practice', {p_class_id:k.id, p_skills:sel, p_games:gs}, sel.length?"Today's practice is set. Children see it as Today's class practice.":"Today's practice is cleared.")){
+    return busy(btn, async()=>{ if(await call('class_set_practice', {p_class_id:k.id, p_skills:sel, p_games:gs, p_locked:!!CT.lock}, sel.length?(CT.lock?"Today's practice is set. Children see only this practice.":"Today's practice is set. Children see it as Today's class practice."):"Today's practice is cleared.")){
       await loadSchoolOpts(); openSchool('children'); } else renderSchool(); }); }
   if(a==='ct-compete'){ CT.comp=null; openSchool('compete'); return loadComp(); }
   if(a==='ct-goal'){ const v=parseInt(($('ctGoal')||{}).value,10); if(!(v>=1)) { CT.err='Type a number of stars, for example 150.'; return renderSchool(); }
@@ -3787,6 +3804,57 @@ async function classToolAction(a, btn){
   if(a==='ct-exitscreen'){ clearInterval(CT.screenT); try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} return openSchool('compete'); }
   if(a==='ct-share') return shareTree(btn);
   if(a==='ct-league'){ CT.league=null; openSchool('league'); return loadLeague(); }
+  if(a==='ct-lock'){ CT.lock=!CT.lock; return renderSchool(); }
+  if(a==='ct-tablet'){ TB.count=null; openSchool('tabletsetup');
+    try{ const r=await rpc('class_tablets', {p_token:tokenOf(), p_class_id:k.id}); TB.count=r.count; }catch(e){ if(e.code==='invalid_token') return needLogin(); CT.err=serr(e); }
+    return current==='sSchool' && SCH.view==='tabletsetup' && renderSchool(); }
+  if(a==='ct-tabletend') return busy(btn, async()=>{ const r=await call('class_end_tablets', {p_class_id:k.id}); if(r){ TB.count=0; CT.msg='All tablets of this class are signed out.'; } renderSchool(); });
+  if(a==='ct-tabletstart') return busy(btn, async()=>{
+    try{ await obFlush(); const r=await rpc('tablet_start', {p_token:tokenOf(), p_class_id:k.id});
+      if(!r || !r.token){ CT.err=serr(r&&r.error); return renderSchool(); }
+      const sc=store.school; Object.assign(sc, {token:r.token, role:'tablet', tablet:null, opts:null}); TB.data=null; save();
+      SCH.classes=null; SCH.klass=r.class; openSchool('tablet'); loadTablet(); }
+    catch(e){ if(e.code==='invalid_token') return needLogin(); CT.err=serr(e); renderSchool(); } });
+}
+
+
+/* ================= class tablet (update 9) =================
+   A teacher turns a tablet into the tablet of one class. Children tap their own owl; no PIN for children.
+   The tablet can only play the children of its class. A teacher logs in on the tablet to leave tablet mode. */
+const TB = { data:null, err:'', count:null };
+const isTablet = () => store.mode==='school' && !!store.school && store.school.role==='tablet';
+async function loadTablet(){
+  try{ TB.data=await rpc('tablet_class', {p_token:tokenOf()}); TB.err=''; store.school.tablet=TB.data; save(); }
+  catch(e){ if(e.code==='invalid_token') return needLogin(); TB.data=TB.data||store.school.tablet||null; TB.err=e.offline?'No internet. Results are kept on this tablet and sent later.':serr(e); }
+  loadSchoolOpts();
+  if(current==='sSchool' && SCH.view==='tablet') renderSchool();
+}
+function tabletHTML(){
+  const d=TB.data||store.school.tablet;
+  if(!d) return `<div class="spin">Loading the class…</div>${TB.err?`<p class="err">${esc(TB.err)}</p>`:''}`;
+  const kids=d.children||[], first=n=>firstName(n), dup=new Set(kids.map(k=>first(k.name)).filter((n,i,a)=>a.indexOf(n)!==i));
+  const label=k=>{ const f=first(k.name), parts=String(k.name).trim().split(/\s+/); return dup.has(f)&&parts[1] ? `${f} ${parts[1][0]}.` : f; };
+  const p=d.practice;
+  return `<div class="head tbhead"><h1>${esc(d.class.name)}</h1><p>${p&&(p.skills||[]).length?`Today's practice: <b>${esc(p.skills.map(x=>x.name).join(' · '))}</b>`:'Tap your owl to start.'}</p></div>
+    ${TB.err?`<p class="note">${esc(TB.err)}</p>`:''}
+    <div class="kids tbkids">${kids.map(k=>`<button class="card kid tap" data-s="tb-kid" data-id="${esc(k.id)}">${avatar({id:k.id, avatar:k.avatar},true)}<b>${esc(label(k))}</b>${k.played_today?'<span class="tbdone">✓ played today</span>':''}</button>`).join('')||'<p>No children in this class yet. A teacher adds them on their phone.</p>'}</div>
+    <div class="foot"><button class="linkbtn" data-s="tb-refresh">Refresh</button><button class="linkbtn" data-s="tb-exit">Teacher: leave tablet mode</button></div>`;
+}
+function tabletSetupHTML(){
+  const k=SCH.klass||{};
+  return `<div class="head"><h1>Class tablet</h1><p>${esc(k.name)}</p></div>${ctErr()}${ctMsg()}
+    <div class="card panel cpanel"><h3>Make this device the class tablet</h3>
+      <p>Do this on the tablet the children will use. After that the tablet shows only <b>${esc(k.name)}</b>: each child taps their own owl and plays. Children need no PIN.</p>
+      <p>The tablet can only play. It cannot add or change children or see reports. If today's practice is locked, children see only that practice.</p>
+      <p>To leave tablet mode, a teacher logs in on the tablet.</p>
+      <div class="btns"><button class="btn primary" data-s="ct-tabletstart">Make this the ${esc(k.name)} tablet</button></div></div>
+    <div class="card panel cpanel"><h3>Signed-in tablets</h3><p>${TB.count==null?'Checking…':TB.count===0?'No tablets are signed in for this class.':`${TB.count} tablet${TB.count>1?'s are':' is'} signed in for this class.`}</p>
+      ${TB.count?`<p>Lost a tablet? Sign them all out. Each one then needs a teacher to set it up again.</p><div class="btns"><button class="btn small" data-s="ct-tabletend">Sign out all ${esc(k.name)} tablets</button></div>`:''}</div>`;
+}
+async function tabletAction(a, btn){
+  if(a==='tb-kid'){ audio(); const d=TB.data||store.school.tablet; SCH.klass=d.class; SCH.kids=d.children; SCH.assess=null; return openChild(btn.dataset.id, btn); }
+  if(a==='tb-refresh') return busy(btn, loadTablet);
+  if(a==='tb-exit'){ SCH.exitTablet=true; return openSchool('login'); }
 }
 
 /* ---------- the principal is the school admin: results, teachers and children of their own school ---------- */
@@ -3895,6 +3963,7 @@ async function sadminAction(a, btn){
 async function schoolAction(a, btn){
   if(a==='sadmin' || a.startsWith('sa-')) return sadminAction(a, btn);
   if(a.startsWith('ct-')) return classToolAction(a, btn);
+  if(a.startsWith('tb-')) return tabletAction(a, btn);
   const sc=store.school||(store.school={outbox:[]});
   const pinOk = id => /^\d{4}$/.test(($(id)||{}).value||'');
   if(a==='code'){ const code=($('sCode').value||'').trim().toUpperCase(); if(!code) return setErr('sErr','Type the school code.');
@@ -3940,7 +4009,10 @@ async function schoolAction(a, btn){
         p_avatar:SCH.addOwl, p_theme:'savanna', p_parent_phone:pp?'+252'+pp:null});
       if(!r.ok) return setErr('sErr', serr(r.error)); await openChild(r.child_id); }catch(e){ if(e.code==='invalid_token') return needLogin(); setErr('sErr', serr(e)); } }); }
 }
-function loggedIn(r){ const sc=store.school; Object.assign(sc, {token:r.token, teacher:r.name, role:r.role, name:r.school||sc.name, opts:null}); save(); SCH.classes=null; openSchool('task'); obFlush();
+function loggedIn(r){ const sc=store.school;
+  if(sc.role==='tablet' && sc.token && sc.token!==r.token) rpc('logout', {p_token:sc.token}).catch(()=>{});   // a teacher took the tablet back
+  SCH.exitTablet=false; delete sc.tablet;
+  Object.assign(sc, {token:r.token, teacher:r.name, role:r.role, name:r.school||sc.name, opts:null}); save(); SCH.classes=null; openSchool('task'); obFlush();
   loadSchoolOpts().then(()=>{ if(current==='sSchool' && SCH.view==='task') renderSchool(); }); }
 
 /* ---------- admin: school and family codes, PIN resets ---------- */
@@ -4222,7 +4294,7 @@ function show(id){
   else if(id==='sSchool' && store.school && store.school.name) mid.innerHTML=brandHTML(store.school.name);
   else if(id==='sHome' && !store.mode) mid.innerHTML='';
   else mid.innerHTML=brandHTML();
-  if(id==='sSchool') $('backBtn').hidden = SCH.view==='task';
+  if(id==='sSchool') $('backBtn').hidden = SCH.view==='task' || SCH.view==='tablet';
   if(id==='sHome') $('backBtn').hidden = !needsFamilyStart();   // the family screens can go back to the two doors
   if(id==='sPlay') document.querySelector('.app').style.setProperty('--acc', GAMES[game].acc);
 }
@@ -4362,6 +4434,12 @@ function openGames(){
   const steps = SCH.cls ? ENGLISH.steps.map(st=>({n:st.n, name:st.name, games:st.games.filter(id=>grp.games.includes(id))})).filter(st=>st.games.length)
                         : ENGLISH.stepsFor(bandOf(me)).map(st=>({n:st.n, name:st.name, games:st.games.filter(shown)}));
   const list = eng ? steps.map(st=>`<h2 class="stephead">Step ${st.n} · ${st.name}</h2>`+st.games.map(gameCard).join('')).join('') : grp.games.map(gameCard).join('');
+  if(cp && cp.locked && !SCH.preview){   // the teacher locked today's practice: only that
+    $('subjTabs').innerHTML='';
+    $('gamesSub').innerHTML=`<span class="tag">${grp.label}</span>&nbsp; Your teacher set today's practice.`;
+    $('games').innerHTML=card+(isTablet()?`<button class="card game tap" id="tbFinish" style="--acc:#596282"><span class="gicon">✓</span><b>I'm finished</b><small>Back to the class, for the next child</small></button>`:'');
+    if(grp.voice) say(doneToday?`Well done, ${me.name}! You finished today's practice. You can play it again.`:`Hi ${me.name}! Tap start for today's practice.`);
+    return; }
   const banner = SCH.preview ? `<div class="banner" style="grid-column:1/-1">Preview: try any game to check the questions. Nothing is saved.</div>` : '';
   $('games').innerHTML=banner+(eng||me.placement||SCH.cls?card:check+card)+garden+rev+list;
   if(grp.voice) say(eng?`Hi ${me.name}! Let's learn English. Pick a game.`:`Hi ${me.name}! Tap today's practice, or pick a game.`);
@@ -4663,6 +4741,7 @@ function practiceButtons(){
   if(practice.i<practice.steps.length) return {btns:`<button class="btn primary" id="pracNext">Continue ▶</button>`, note:`<p class="pracnext">Next: ${GAMES[practice.steps[practice.i].g].name}</p>`, say:'Great! On to the next one.'};
   me.practiceDays=[...new Set([...(me.practiceDays||[]), todayStr()])].slice(-90); save(); practice=null;
   const d=practiceDays(me);
+  if(isTablet()) return {btns:`<button class="btn primary" id="pracEnd">Finish ✓</button>`, note:`<div class="pracdone">🌟 Today's practice is done! Tap Finish for the next child.</div>`, say:`Today's practice is done! Great work, ${me.name}.`};
   return {btns:`<button class="btn primary" id="pracEnd">Back to games</button>`, note:`<div class="pracdone">🌟 Today's practice is done! · ${d} day${d>1?'s':''} in a row</div>`, say:"Today's practice is done! Great work."};
 }
 function nextPracticeOrEnd(){ const pb=practiceButtons(); if(pb && practice) runPracticeStep(); else openGames(); }
@@ -4890,7 +4969,8 @@ document.addEventListener('click', async e=>{
   if(t.closest('#practiceBtn')){ audio(); startPractice(); return; }
   if(t.closest('#reviewBtn')){ audio(); practice=null; game='review'; startLevel(0); return; }
   if(t.closest('#pracNext')){ if(practice) runPracticeStep(); return; }
-  if(t.closest('#pracEnd')){ openGames(); return; }
+  if(t.closest('#pracEnd')){ if(isTablet()) return leaveChild(); openGames(); return; }
+  if(t.closest('#tbFinish')){ return leaveChild(); }
   const ed=t.closest('[data-edit]'); if(ed){ openEditor(store.profiles.find(p=>p.id===ed.dataset.edit),'sParent'); return; }
   const cp=t.closest('#copyMsg, #copyCsv');
   if(cp){ const text=cp.id==='copyMsg'?resultsMessage():toCSV();
