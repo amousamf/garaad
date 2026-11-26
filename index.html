@@ -861,6 +861,49 @@ details.more{margin-top:12px}details.more summary{cursor:pointer;font-weight:600
 .checkrow{display:flex;justify-content:center;width:100%;margin-top:14px}
 .checkrow .btn{min-width:180px;font-size:18px}
 .checkrow .btn:disabled{opacity:.45}
+
+/* ---------- home rows: Start here, then rows that scroll sideways ---------- */
+.hrow{grid-column:1/-1;display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 10px;margin:0 -2px;scrollbar-width:thin}
+.hrow>.game{flex:0 0 clamp(168px,46vw,220px);scroll-snap-align:start}
+.stephead small{font-family:var(--body,inherit);font-weight:400;font-size:13px;color:var(--page-muted,var(--muted));margin-left:6px}
+.teasers{grid-column:1/-1;border-radius:22px;padding:12px 12px 2px;background:color-mix(in srgb, var(--gold) 18%, transparent)}
+.teasers .stephead{margin-top:0}
+
+/* ---------- tiny stories: a hero travels to its goal along the progress bar ---------- */
+.storytrack{position:relative;height:30px;margin-top:4px}
+.storytrack .qhero,.storytrack .qgoal{position:absolute;top:0;font-size:24px;line-height:30px;width:30px;text-align:center}
+.storytrack .qgoal{right:0}
+.storytrack .qhero{left:0;transition:left .5s cubic-bezier(.3,1.4,.5,1)}
+.storytrack .qhero.hop{animation:herohop .5s}
+@keyframes herohop{40%{transform:translateY(-10px)}}
+.storytrack + .qbar{margin-top:0}
+.scene{position:relative;width:min(300px,80vw);height:64px;margin:-4px auto 0;font-size:46px;line-height:64px}
+.scene .sgoal{position:absolute;right:0;top:0}
+.scene .shero{position:absolute;left:0;top:0;animation:sceneGo 1.1s .3s cubic-bezier(.4,1.2,.5,1) forwards}
+.scene.drive .shero{animation:sceneDrive 1.8s .3s ease-in forwards}
+.scene .sgoal{animation:sceneHome .6s 1.3s both}
+@keyframes sceneGo{to{left:calc(100% - 100px)}}
+@keyframes sceneDrive{60%{left:calc(100% - 70px);opacity:1}100%{left:calc(100% + 60px);opacity:0}}
+@keyframes sceneHome{50%{transform:scale(1.35) rotate(8deg)}}
+.storyend{font-weight:700;color:var(--page-ink,inherit)!important}
+@media (prefers-reduced-motion: reduce){.scene .shero,.scene .sgoal{animation:none}.scene .shero{left:calc(100% - 100px)}}
+
+/* ---------- idle hand: shows how to answer when a young child is stuck ---------- */
+.hand{position:fixed;left:0;top:0;z-index:58;font-size:44px;line-height:1;pointer-events:none;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
+
+/* ---------- parent welcome and learning profile ---------- */
+.welcome .wq{font-family:var(--display);font-weight:800;font-size:24px;line-height:1.2;margin:0;color:#2B2118}
+.welcome .wstep{margin:0;color:#6B5743;font-size:14px}
+.welcome .wopts{display:flex;flex-direction:column;gap:10px}
+.welcome .wopt{display:flex;align-items:center;gap:14px;text-align:left;background:#fff;border:3px solid transparent;border-radius:20px;padding:12px 14px;font-size:18px;font-weight:600;color:#2B2118}
+.welcome .wopt span{font-size:28px}
+.welcome .wopt[aria-pressed="true"]{border-color:#0E8C7E}
+.lprof{border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:10px 0;display:flex;flex-direction:column;gap:6px;background:var(--surface)}
+.lprof h4{margin:0;font-size:15px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.lprof .pills{display:flex;flex-wrap:wrap;gap:6px}
+.lprof .pills span{font-size:13px;background:var(--primary-soft);color:var(--primary-ink);border-radius:99px;padding:3px 10px;font-weight:600}
+.lprof p{margin:0;font-size:14px;color:var(--muted)}
+.welcome .lprof{background:#fff;border-color:#F0E2C8}
 </style>
 
 <div class="app">
@@ -906,7 +949,7 @@ details.more{margin-top:12px}details.more summary{cursor:pointer;font-weight:600
 
   <section class="screen" id="sPlay" hidden>
     <div class="ptop">
-      <div class="meta"><b id="pTitle"></b><div class="qbar"><i id="qbar"></i></div></div>
+      <div class="meta"><b id="pTitle"></b><div class="storytrack" id="storyTrack" hidden aria-hidden="true"><span class="qgoal" id="qGoal"></span><span class="qhero" id="qHero"></span></div><div class="qbar"><i id="qbar"></i></div></div>
     </div>
     <div class="prompt"><span class="powl" id="pOwl" aria-hidden="true"></span><div class="bubble2"><div class="text" id="pText"></div><button class="say" id="sayBtn" aria-label="Hear the question"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 010 7"/></svg></button></div></div>
     <div class="tools" id="tools"><div id="hintRow" style="display:flex;justify-content:center"></div><button class="toolbtn" id="capBtn" hidden aria-pressed="true"><span class="aa">Aa</span><span id="capLbl">Words on</span></button></div>
@@ -2853,7 +2896,7 @@ document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState=
 setInterval(()=>obFlush(), 30000);
 
 /* ---------- a child's session: opened when the teacher taps the child, closed when they go back ---------- */
-function progressOf(p){ return {games:p.games||{}, best:p.best||{}, review:p.review||[], words:p.words||{}, practiceDays:p.practiceDays||[], giftDay:p.giftDay||null, bonus:p.bonus||0, spent:p.spent||0, themeSet:!!p.themeSet, subject:p.subject||subject, last:p.last||0, placement:p.placement||null, placementSkipped:!!p.placementSkipped, band:p.band||null}; }
+function progressOf(p){ return {games:p.games||{}, best:p.best||{}, review:p.review||[], words:p.words||{}, practiceDays:p.practiceDays||[], giftDay:p.giftDay||null, profile:p.profile||null, bonus:p.bonus||0, spent:p.spent||0, themeSet:!!p.themeSet, subject:p.subject||subject, last:p.last||0, placement:p.placement||null, placementSkipped:!!p.placementSkipped, band:p.band||null}; }
 function saveChildProgress(){
   if(SCH.preview || !SCH.child || !me) return;
   const pr=progressOf(me); store.school.cache=store.school.cache||{}; store.school.cache[SCH.child.id]=pr;
@@ -2922,7 +2965,7 @@ async function famRestore(){
       const local=store.profiles.find(p=>p.id===k.id);
       if(local && (local.last||0)>=(pr.last||0)) { got.push(local); continue; }   // this phone holds newer progress
       got.push({id:k.id, name:k.name, age:k.age||5, avatar:k.avatar||null, theme:k.theme||'savanna', color:hashColor(k.id),
-        games:pr.games||{}, best:pr.best||{}, review:pr.review||[], words:pr.words||{}, practiceDays:pr.practiceDays||[], giftDay:pr.giftDay||null,
+        games:pr.games||{}, best:pr.best||{}, review:pr.review||[], words:pr.words||{}, practiceDays:pr.practiceDays||[], giftDay:pr.giftDay||null, profile:pr.profile||null,
         bonus:pr.bonus||0, spent:pr.spent||0, themeSet:!!pr.themeSet, subject:pr.subject, last:pr.last||0,
         placement:pr.placement||undefined, placementSkipped:!!pr.placementSkipped, band:pr.band||undefined});
     }
@@ -2936,7 +2979,7 @@ function profileFromChild(c, pr){
   pr=pr||{};
   return {id:c.id, name:c.name, age:c.age||5, color:hashColor(c.id), avatar:c.avatar||null, theme:c.theme||'savanna', parent_phone:c.parent_phone||null,
     games:pr.games||{}, best:pr.best||{}, review:pr.review||[], words:pr.words||{},
-    practiceDays:pr.practiceDays||[], giftDay:pr.giftDay||null, bonus:pr.bonus||0, spent:pr.spent||0, themeSet:!!pr.themeSet, subject:pr.subject, last:pr.last||0, band:classCfg(c.class_name).band};
+    practiceDays:pr.practiceDays||[], giftDay:pr.giftDay||null, profile:pr.profile||null, bonus:pr.bonus||0, spent:pr.spent||0, themeSet:!!pr.themeSet, subject:pr.subject, last:pr.last||0, band:classCfg(c.class_name).band};
 }
 async function openChild(id, btn){
   const listed=(SCH.kids||[]).find(x=>x.id===id), cached=(store.school.cache||{})[id];
@@ -4448,11 +4491,63 @@ function saveChild(){
   const err=(!$('famWrap').hidden && !fam)?'Type your family name.':!name?'Type the child’s name.':!edAge?'Pick the child’s age.':'';
   if(err){ $('fErr').textContent=err; $('fErr').hidden=false; return; }
   if(!$('famWrap').hidden){ store.family=fam; }
-  let kid=editing;
+  let kid=editing; const isNew=!editing;
   if(editing){ editing.name=name; editing.age=edAge; editing.avatar=edOwl; editing.dirty=true; }
   else { kid={id:famOn()?uuid():'k'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), name, age:edAge, avatar:edOwl, theme:'savanna', color:AVCOL[store.profiles.length%AVCOL.length], games:{}, best:{}, last:0, dirty:true}; store.profiles.push(kid); }
   famChildPush(kid);
   save(); editReturn==='sParent'?openParent():goHome();
+  if(isNew && store.mode!=='school') openWelcome(kid);
+}
+
+/* ---------- parent welcome and learning profile (idea from LogicLike) ----------
+   After adding a child, three quick questions. The answers set the starting subject, how long today's practice is,
+   and a gentler start in the quick check. They show as a learning profile card in the Parent area. */
+const dailyMin = p => (p && p.profile && [5,10,15].includes(p.profile.minutes)) ? p.profile.minutes : 10;
+const WELCOME_Q = [
+  {k:'focus', q:n=>`What should ${n} work on most?`, opts:[['maths','Maths','🔢'],['english','English','🔤'],['both','Both','⭐']]},
+  {k:'feel', q:n=>`How does ${n} feel about learning right now?`, opts:[['enjoys','Enjoys it','😊'],['encourage','Needs encouragement','🙂'],['hard','Finds it hard','🤔']]},
+  {k:'minutes', q:n=>`How long can ${n} play each day?`, opts:[[5,'5 minutes','⏱️'],[10,'10 minutes','⏰'],[15,'15 minutes','🕰️']]}
+];
+const PROF_TXT = { focus:{maths:'Maths first', english:'English first', both:'Maths and English'}, feel:{enjoys:'Enjoys learning', encourage:'Needs encouragement', hard:'Finds it hard: gentle start'} };
+let WEL=null;
+function openWelcome(kid){
+  closeSheet(); WEL={kid, i:0, a:Object.assign({}, kid.profile||{})};
+  const w=document.createElement('div'); w.className='sheetwrap'; w.id='sheet';
+  w.innerHTML=`<div class="sheet welcome gate" role="dialog" aria-modal="true" aria-labelledby="welTitle"><span class="grab"></span>
+    <div style="display:flex;align-items:center;justify-content:space-between"><h2 id="welTitle">About ${esc(kid.name)}</h2><button class="ibtn" id="sheetX" aria-label="Skip"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div id="welBody"></div></div>`;
+  document.body.appendChild(w);
+  w.addEventListener('click', e=>{
+    if(e.target===w || e.target.closest('#sheetX') || e.target.closest('#welDone')){ WEL=null; closeSheet(); if(current==='sParent') renderParent(); return; }
+    const o=e.target.closest('[data-wv]'); if(o && WEL){ const Q=WELCOME_Q[WEL.i]; WEL.a[Q.k]=Q.k==='minutes'?+o.dataset.wv:o.dataset.wv; WEL.i++; if(WEL.i>=WELCOME_Q.length) saveWelcome(); renderWelcome(); return; }
+    if(e.target.closest('#welBack') && WEL && WEL.i>0){ WEL.i--; renderWelcome(); }
+  });
+  renderWelcome();
+}
+function renderWelcome(){
+  const b=$('welBody'); if(!b||!WEL) return; const k=WEL.kid;
+  if(WEL.i<WELCOME_Q.length){ const Q=WELCOME_Q[WEL.i];
+    b.innerHTML=`<div style="display:flex;flex-direction:column;gap:14px"><p class="wstep">Question ${WEL.i+1} of ${WELCOME_Q.length} · for grown-ups</p><p class="wq">${esc(Q.q(k.name))}</p>
+      <div class="wopts">${Q.opts.map(([v,l,ic])=>`<button type="button" class="wopt" data-wv="${v}" aria-pressed="${WEL.a[Q.k]===v}"><span aria-hidden="true">${ic}</span>${l}</button>`).join('')}</div>
+      ${WEL.i>0?'<div class="btns"><button type="button" class="btn small" id="welBack">Back</button></div>':''}</div>`; return; }
+  b.innerHTML=`<div style="display:flex;flex-direction:column;gap:12px"><p class="wstep">Here is ${esc(k.name)}'s learning profile. You can change it any time in the Parent area.</p>
+    ${profileHTML(k, true)}<div class="btns"><button type="button" class="btn primary" id="welDone">Done</button></div></div>`;
+}
+function saveWelcome(){
+  const k=WEL.kid, a=WEL.a; k.profile={focus:a.focus, feel:a.feel, minutes:a.minutes, at:Date.now()};
+  if(a.focus==='english') k.subject='english'; else if(a.focus==='maths') k.subject='maths';
+  k.dirty=true; save();
+}
+/* the learning profile card: what the parent told us, plus what Garaad has seen so far */
+function profileHTML(p, inSheet){
+  const pr=p.profile;
+  if(!pr) return inSheet?'':`<div class="lprof"><h4>Learning profile<button class="btn small" data-prof="${p.id}">Add</button></h4><p>Three quick questions so Garaad can fit ${esc(p.name)}: what to work on, how they feel about learning, and how long they play each day.</p></div>`;
+  let best=null; Object.keys(p.games||{}).forEach(id=>{ const s=p.games[id]; if(GAMES[id] && s.tries>=6){ const a=s.right/s.tries; if(a>=.8 && (!best||a>best.a)) best={id,a}; } });
+  const band=GROUPS[bandOf(p)];
+  return `<div class="lprof"><h4>Learning profile${inSheet?'':`<button class="btn small" data-prof="${p.id}">Change</button>`}</h4>
+    <div class="pills"><span>${PROF_TXT.focus[pr.focus]||'Maths and English'}</span><span>${dailyMin(p)} minutes a day</span><span>${PROF_TXT.feel[pr.feel]||''}</span></div>
+    <p>Games: ${band?band.label:''}${p.placement?` · quick check: from level ${p.placement.start}`:''}${best?` · Strongest: ${GAMES[best.id].icon} ${GAMES[best.id].name}`:''}</p>
+    <p>Today's practice: about ${dailyMin(p)} minutes (${({5:2,10:3,15:4})[dailyMin(p)]} games).${pr.feel==='hard'?' The quick check starts a little easier.':''}</p></div>`;
 }
 
 /* ---------- games ---------- */
@@ -4465,7 +4560,7 @@ function openGames(){
   $('gamesSub').innerHTML=`<span class="tag">${grp.label}</span>&nbsp; ${eng?'Listen, speak, read and write.':'Start today\'s practice, or pick a game.'}`;
   const due=dueReviews().length, days=practiceDays(me), doneToday=(me.practiceDays||[]).includes(todayStr());
   const cp=classPractice(), cpNames=cp?(cp.skills||[]).map(x=>x.name).join(' · '):'';
-  const card=`<button class="card practice tap" id="practiceBtn"><span class="pi">${doneToday?'✅':cp?'📝':'🌟'}</span><span class="pt"><b>${cp?"Today's class practice":`Today's ${eng?'English ':''}practice`}</b><small>${cp?`Set by your teacher: ${esc(cpNames)}`:doneToday?'Done today. You can play it again.':'About 10 minutes · games picked for you'}</small>${days?`<small class="streak">⭐ ${days} day${days>1?'s':''} in a row</small>`:''}</span><span class="btn primary small go">${doneToday?'Again':'Start'}</span></button>`;
+  const card=`<button class="card practice tap" id="practiceBtn"><span class="pi">${doneToday?'✅':cp?'📝':'🌟'}</span><span class="pt"><b>${cp?"Today's class practice":`Today's ${eng?'English ':''}practice`}</b><small>${cp?`Set by your teacher: ${esc(cpNames)}`:doneToday?'Done today. You can play it again.':`About ${dailyMin(me)} minutes · games picked for you`}</small>${days?`<small class="streak">⭐ ${days} day${days>1?'s':''} in a row</small>`:''}</span><span class="btn primary small go">${doneToday?'Again':'Start'}</span></button>`;
   const check = !eng && !me.placement && !SCH.cls ? `<button class="card checkcard tap" id="checkBtn"><span class="pi">🧭</span><span class="pt"><b>Quick check</b><small>8 warm-up questions to find the best games for ${esc(me.name)}</small></span><span class="btn primary small go">Start</span></button>` : '';
   const nw=Object.keys(me.words||{}).length;
   const garden = eng ? `<button class="card practice garden tap" id="gardenBtn"><span class="pi">🌼</span><span class="pt"><b>Word Garden</b><small>${nw?`${nw} word${nw>1?'s':''} grown so far. Tap to visit.`:'Every new word you learn grows a flower.'}</small></span><span class="btn small go">Visit</span></button>` : '';
@@ -4478,7 +4573,13 @@ function openGames(){
   };
   const steps = SCH.cls ? ENGLISH.steps.map(st=>({n:st.n, name:st.name, games:st.games.filter(id=>grp.games.includes(id))})).filter(st=>st.games.length)
                         : ENGLISH.stepsFor(bandOf(me)).map(st=>({n:st.n, name:st.name, games:st.games.filter(shown)}));
-  const list = eng ? steps.map(st=>`<h2 class="stephead">Step ${st.n} · ${st.name}</h2>`+st.games.map(gameCard).join('')).join('') : grp.games.map(gameCard).join('');
+  const row = (name, ids, note) => ids.length ? `<h2 class="stephead">${name}${note?`<small>${note}</small>`:''}</h2><div class="hrow">${ids.map(gameCard).join('')}</div>` : '';
+  let list;
+  if(eng) list = steps.map(st=>row(`Step ${st.n} · ${st.name}`, st.games)).join('');
+  else { const left=new Set(grp.games);
+    list = MATH_ROWS.map(r=>{ const ids=grp.games.filter(id=>left.has(id) && (typeof r.ids==='function'?r.ids(id):r.ids.includes(id))); ids.forEach(id=>left.delete(id)); return row(r.name, ids, r.note); }).join('')
+         + row('Challenges', [...left]);
+    const tz=teasers(); if(tz.length) list += `<div class="teasers">${row('✨ Brain teasers', tz, 'For fast finishers: harder puzzles')}</div>`; }
   if(cp && cp.locked && !SCH.preview){   // the teacher locked today's practice: only that
     $('subjTabs').innerHTML='';
     $('gamesSub').innerHTML=`<span class="tag">${grp.label}</span>&nbsp; Your teacher set today's practice.`;
@@ -4486,8 +4587,25 @@ function openGames(){
     if(grp.voice) say(doneToday?`Well done, ${me.name}! You finished today's practice. You can play it again.`:`Hi ${me.name}! Tap start for today's practice.`);
     return; }
   const banner = SCH.preview ? `<div class="banner" style="grid-column:1/-1">Preview: try any game to check the questions. Nothing is saved.</div>` : '';
-  $('games').innerHTML=banner+(eng||me.placement||SCH.cls?card:check+card)+garden+rev+list;
+  $('games').innerHTML=banner+'<h2 class="stephead">Start here</h2>'+(eng||me.placement||SCH.cls?card:check+card)+garden+rev+list;
   if(grp.voice) say(eng?`Hi ${me.name}! Let's learn English. Pick a game.`:`Hi ${me.name}! Tap today's practice, or pick a game.`);
+}
+
+/* ---------- home rows (idea from LogicLike): Start here, then free-choice rows ---------- */
+const MATH_ROWS = [
+  {name:'Numbers', ids:['count','findnum','order','more','place','compare','skip','missing']},
+  {name:'Adding and taking away', ids:['addpics','takeaway','addsub','doubles','groups','story','times','divide','orderops','words']},
+  {name:'Shapes, sizes and measures', ids:['shapes','colours','sizes','area','clock','money','fractions','decimals','percent']},
+  {name:'Thinking puzzles', ids:['odd','pattern','sequence','logic']},
+  {name:'Adventures', note:'Build, sort, shop and find the treasure', ids:id=>!!GAMES[id].style}
+];
+/* Brain teasers: puzzles from the next age group, shown once a child has done today's practice or is doing very well. Family only. */
+const TEASERS = {little:['missing','compare','groups'], middle:['sequence','logic']};
+function teasers(){
+  if(SCH.cls || subject==='english' || !me) return [];
+  const ids=(TEASERS[bandOf(me)]||[]).filter(id=>GAMES[id] && shown(id)); if(!ids.length) return [];
+  const t=totals(me), fast=t.answers>=30 && t.right/t.answers>=0.85, doneToday=(me.practiceDays||[]).includes(todayStr());
+  return fast||doneToday ? ids : [];
 }
 
 /* ---------- Word Garden: every word learned grows a flower ---------- */
@@ -4565,8 +4683,9 @@ function buildPractice(){
   take(st.filter(x=>x.acc!==null && x.acc<0.75).sort((x,y)=>x.acc-y.acc)[0]);                       // the one that needs practice
   take(st.filter(x=>!used.has(x.id) && x.done<capOf(x.id)).sort((x,y)=>x.last-y.last)[0]);         // keep moving forward, least recently played first
   take(st.filter(x=>!used.has(x.id) && x.acc!==null && x.acc>=0.75).sort((x,y)=>y.last-x.last)[0]); // one they enjoy and are good at
-  for(const x of st.slice().sort(()=>Math.random()-.5)){ if(steps.filter(z=>z.g!=='review').length>=3) break; take(x); }
-  return steps;
+  const want={5:2,10:3,15:4}[dailyMin(me)]||3;
+  for(const x of st.slice().sort(()=>Math.random()-.5)){ if(steps.filter(z=>z.g!=='review').length>=want) break; take(x); }
+  return steps.slice(0, want+(steps[0]&&steps[0].g==='review'?1:0));
 }
 
 /* ---------- after 2 wrong tries: show and say the right answer with a short why, then move on ----------
@@ -4651,20 +4770,98 @@ function startLevel(n){
   const g0=GAMES[game];
   const label = g0.isSprint||g0.isReview ? g0.name : `${g0.name} · Level ${n}`;
   $('pTitle').textContent = practice ? `Practice ${practice.i+1} of ${practice.steps.length} · ${label}` : label;
-  if(g0.isSprint){ startSprint(); return; }
+  if(g0.isSprint){ $('storyTrack').hidden=true; startSprint(); return; }
   plan=buildPlan(game,n);
   if(!plan.length){ practice ? nextPracticeOrEnd() : openGames(); return; }
-  setBar();
+  setStory(); setBar();
   if(n===1 && !g0.isReview && me) runDemo(); else nextQ();
 }
-function setBar(){ $('qbar').style.width = `${100*qi/Math.max(1,plan.length)}%`; }
+function setBar(){ const pct=100*qi/Math.max(1,plan.length); $('qbar').style.width = `${pct}%`;
+  const h=$('qHero'); if(h && !$('storyTrack').hidden){ h.style.left=`calc(${pct}% - ${pct*0.3}px)`; if(qi>0){ h.classList.remove('hop'); void h.offsetWidth; h.classList.add('hop'); } } }
+/* ---------- tiny stories (idea from LogicLike): every game is a little story ----------
+   A hero travels along the progress bar to its goal; when the level is done the hero arrives (or drives off). */
+const STORY = {
+  count:['🐿️','🌰','Help the squirrel collect its nuts!','The squirrel has all its nuts!'],
+  findnum:['🐸','🌼','Help the frog hop to the flower!','The frog made it!'],
+  order:['🐌','🍓','Help the snail reach the strawberry!','Yum! The snail got there!'],
+  shapes:['🤖','🔋','Help the robot find its battery!','The robot is full of power!'],
+  colours:['🦋','🌸','Help the butterfly find its flower!','The butterfly found its flower!'],
+  more:['🐘','🥜','Help the elephant get the peanuts!','The elephant is happy!'],
+  sizes:['🦒','🌳','Help the giraffe reach the tree!','The giraffe can eat now!'],
+  odd:['🕵️','🔑','Help the detective find the key!','The detective found the key!'],
+  pattern:['🐝','🍯','Help the bee get back to the honey!','The bee is home!'],
+  addpics:['🚂','🏁','Drive the train to the station!','The train is on its way!'],
+  takeaway:['🐦','🌳','Help the bird fly back to its tree!','The bird is home!'],
+  smeasure:['🐫','💧','Help the camel reach the water!','The camel can drink!'],
+  tdays:['🧭','💎','Follow the map to the treasure!','You found the treasure!'],
+  tnumbers:['🧭','💎','Follow the map to the treasure!','You found the treasure!'],
+  bnumber:['🧱','🏠','Help build the house!','The house is built!'],
+  bbonds:['🧱','🏰','Help build the castle!','The castle is built!'],
+  mmarket:['🦉','🧺',"Help the owl fill the basket!",'The basket is full!'],
+  addsub:['🚀','🌙','Fly the rocket to the moon!','The rocket is off to the moon!'],
+  missing:['🐶','🦴','Help the puppy find its bone!','The puppy found its bone!'],
+  place:['🧱','🏰','Help build the castle!','The castle is built!'],
+  compare:['🐢','🏝️','Help the turtle swim to the island!','The turtle made it!'],
+  skip:['🦘','🌳','Jump the kangaroo home!','The kangaroo is home!'],
+  story:['🚲','🏫','Ride the bike to school!','Off to school!'],
+  clock:['🐓','🌅','Help the rooster wake up the sun!','Good morning, sun!'],
+  money:['🛒','🏪','Push the cart to the shop!','Shopping done!'],
+  doubles:['🐞','🍃','Help the ladybird reach the leaf!','The ladybird made it!'],
+  groups:['🐧','🧊','Help the penguin get to the ice!','The penguin is home!'],
+  times:['🏎️','🏆','Race to the finish!','You won the race!'],
+  divide:['🐬','🏝️','Swim the dolphin to the island!','The dolphin made it!'],
+  fractions:['🛵','🍕','Deliver the pizza!','The pizza is on its way!'],
+  decimals:['🚀','🌍','Fly the rocket around the world!','The rocket is off!'],
+  percent:['🎈','☁️','Float the balloon up to the clouds!','The balloon reached the clouds!'],
+  sequence:['🧗','⛰️','Climb the mountain!','You reached the top!'],
+  logic:['🦉','📜','Help the owl solve the riddle!','Riddle solved!'],
+  area:['🚜','🌾','Drive the tractor across the field!','The field is ready!'],
+  orderops:['🚢','⚓','Sail the ship to the port!','The ship is on its way!'],
+  words:['✈️','🏙️','Fly the plane to the city!','The plane is off!'],
+  etap:['🐒','🍌','Help the monkey get the bananas!','The monkey has its bananas!'],
+  esafari:['🦁','🏞️','Help the lion get home!','The lion is home!'],
+  esimon:['🤸','🏅','Win the medal!','You won the medal!'],
+  eparrot:['🦜','🌴','Help the parrot fly to its tree!','The parrot is home!'],
+  ename:['🎤','⭐','Sing your way to the star!','You are a star!'],
+  erhyme:['🚀','🌕','Fly the rocket to the moon!','The rocket is off!'],
+  eclap:['🥁','🎶','Play the drum to the music!','What a song!'],
+  efish:['🎣','🐟','Catch the fish!','You caught the fish!'],
+  eopp:['🐧','❄️','Help the penguin find the snow!','The penguin found the snow!'],
+  esort:['🧺','🏡','Carry the basket home!','The basket is home!'],
+  eletter:['🔍','🔤','Find the hidden letters!','You found them all!'],
+  etrace:['✏️','🏁','Draw the path to the flag!','You got to the flag!'],
+  ecaption:['📷','🖼️','Take the photos for the picture wall!','The wall is full of pictures!'],
+  eyesno:['⛵','🏝️','Sail the boat to the island!','The boat is off to the island!'],
+  estory:['📚','🌙','Read the bedtime story!','Good night!'],
+  eread:['🔎','💡','Find the answer!','You found it!'],
+  emissing:['🧩','🏆','Finish the puzzle!','Puzzle done!'],
+  espell:['🐝','🌻','Help the bee reach the sunflower!','The bee found the sunflower!'],
+  ebee:['🐝','🍯','Help the bee get to the honey!','The bee is home!'],
+  esentence:['🚂','🏁','Drive the word train to the station!','The train is on its way!'],
+  efix:['🩺','💚','Make the sentences better!','All better!'],
+  sgrammar:['🗂️','✅','Sort everything into the right place!','All sorted!']
+};
+const DRIVERS = new Set(['🚂','🚀','🏎️','🛵','✈️','🚢','🚲','🚜','⛵']);
+const storyOf = id => (!placing && !sprint && GAMES[id] && !GAMES[id].isReview && !GAMES[id].isSprint && STORY[id]) || null;
+let storyIntro=null;
+function setStory(){
+  const st=storyOf(game), tr=$('storyTrack'); if(!tr) return;
+  tr.hidden=!st; storyIntro=null; if(!st) return;
+  $('qHero').textContent=st[0]; $('qGoal').textContent=st[1]; $('qHero').style.left='0';
+  storyIntro=st[2]; mascotPop(st[2]);
+}
+function sceneHTML(id){
+  const st=storyOf(id); if(!st) return '';
+  return `<div class="scene${DRIVERS.has(st[0])?' drive':''}" aria-hidden="true"><span class="sgoal">${st[1]}</span><span class="shero">${st[0]}</span></div><p class="storyend">${esc(st[3])}</p>`;
+}
 function nextQ(){
   if(qi>=plan.length){ finishLevel(); return; }
   const sp=plan[qi];
   if(sp.s!=null) q=makeQ(sp.g, sp.lv, sp.s);
   else { let g=0; do{ q=makeQ(sp.g, sp.lv); }while(!q.pad && q.answer===lastAnswer && g++<8); }
   q.isReview=!!sp.review; lastAnswer=q.answer; renderQ();
-  if(G().voice){ const myQ=q; setTimeout(async()=>{ if(q.pre){ await q.pre(); if(q!==myQ) return; } say(q.isReview?['Here is one to try again.', ...questionParts(q)]:questionParts(q)); },250); }
+  const intro=storyIntro; storyIntro=null;
+  if(G().voice){ const myQ=q; setTimeout(async()=>{ if(q.pre){ await q.pre(); if(q!==myQ) return; } say(q.isReview?['Here is one to try again.', ...questionParts(q)]:intro?[intro, ...questionParts(q)]:questionParts(q)); },250); }
 }
 function renderQ(){
   $('pText').textContent=q.text;
@@ -4672,8 +4869,36 @@ function renderQ(){
   typed=''; tries=0; locked=false;
   if(q.mount) q.mount($('stage'));
   picked=null; if(checkMode()) $('stage').insertAdjacentHTML('beforeend', `<div class="checkrow"><button class="btn primary" id="choiceCheck" disabled>Check ✓</button></div>`);
-  setOwl('think'); renderHint(); renderCaps();
+  setOwl('think'); renderHint(); renderCaps(); armIdle();
 }
+/* ---------- idle hand (idea from LogicLike): if a young child doesn't tap for a while, the question is read again
+   and a hand shows how to answer (it glides over the choices, or from the answer box to the keypad and the tick).
+   It never points at the right answer. Twice at most per question. Not for ages 9–12 at home. */
+let idleT=null, idleN=0;
+const idleOK = () => !!me && !!q && current==='sPlay' && !q.isDemo && !locked && !sprint && !$('sheet') && (bandOf(me)!=='older' || !!SCH.cls);
+function armIdle(){ clearTimeout(idleT); idleN=0; idleT=setTimeout(idleHelp, 7000); }
+function idleHelp(){
+  if(!idleOK()) return; idleN++;
+  if(G().voice && !muted && !placing) say(questionParts(q));
+  showHand();
+  if(idleN<2) idleT=setTimeout(idleHelp, 12000);
+}
+function showHand(){
+  hideHand(); if(reduceMotion) return;
+  const st=$('stage'), ctr=el=>{ const r=el.getBoundingClientRect(); return r.width?[r.left+r.width/2, r.top+r.height/2]:null; };
+  let pts=[];
+  if(q.pad){ pts=[$('slot'), st.querySelector('.pad'), st.querySelector('[data-key="go"]')].filter(Boolean).map(ctr); }
+  else { pts=[...st.querySelectorAll('[data-choice]')].filter(b=>!b.classList.contains('wrong')&&!b.classList.contains('hinted')).slice(0,6).map(ctr);
+    const c=$('choiceCheck'); if(c && pts.length) pts.push(ctr(c)); }
+  pts=pts.filter(Boolean); if(!pts.length) return;
+  const h=document.createElement('div'); h.className='hand'; h.id='idleHand'; h.textContent='👆'; h.setAttribute('aria-hidden','true'); document.body.appendChild(h);
+  const at=([x,y],sc)=>({transform:`translate(${x-16}px,${y-4}px) scale(${sc})`});
+  const fr=[{...at(pts[0],1), opacity:0}]; pts.forEach(pt=>{ fr.push({...at(pt,1), opacity:1}); fr.push({...at(pt,.85), opacity:1}); fr.push({...at(pt,1), opacity:1}); });
+  fr.push({...at(pts[pts.length-1],1), opacity:0});
+  h.animate(fr.map((f,i)=>({...f, offset:i/(fr.length-1)})), {duration:900*pts.length+600, easing:'ease-in-out'}).onfinish=hideHand;
+}
+function hideHand(){ const h=$('idleHand'); if(h) h.remove(); }
+document.addEventListener('pointerdown', ()=>{ if(current!=='sPlay') return; hideHand(); if(idleT){ clearTimeout(idleT); if(q && !locked) idleT=setTimeout(idleHelp, 9000); } }, true);
 /* words on/off: for children who listen, the question text can be hidden (it is still read aloud).
    Only offered when the game speaks; older children who read always see the words. */
 const capsOffered = () => !!me && !placing && !sprint && !muted && !!G().voice;
@@ -4891,6 +5116,7 @@ function finishLevel(){
   const last=level>=cap, pb=practiceButtons(), after=Math.min(cap,levelsDone(s));
   $('result').innerHTML=`<div class="cele">${mascotSVG(passed?'cheer':'happy')}</div>
     <div class="bigstars">${[1,2,3].map(i=>`<span class="${i<=stars?'on':''}">★</span>`).join('')}</div>
+    ${passed?sceneHTML(game):''}
     <h2>${passed?(last?`You finished all ${cap} levels, ${esc(me.name)}!`:(stars===3?`Perfect, ${esc(me.name)}!`:`Well done, ${esc(me.name)}!`)):`Good try, ${esc(me.name)}!`}</h2>
     <p>${passed?`Level ${level} complete · `:''}${right} of ${per} right first time${passed?'':` · get ${Math.ceil(per*.5)} to pass`}</p>
     <div class="gprogline" style="--acc:${GAMES[game].acc}"><span>${GAMES[game].icon} ${GAMES[game].name}</span><span class="bar" style="flex:1"><i id="progFill" style="width:${Math.round(before*100/cap)}%"></i></span><span>${after}/${cap}</span></div>
@@ -4898,7 +5124,8 @@ function finishLevel(){
     <div class="btns">${pb?pb.btns:`${passed&&!last?`<button class="btn primary" id="nextBtn">Next level ▶</button>`:''}<button class="btn${passed?'':' primary'}" id="againBtn">↻ Play again</button><button class="btn" id="levelsBtn">All levels</button>`}</div>`;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{ const f=$('progFill'); if(f) f.style.width=Math.round(after*100/cap)+'%'; }));
   const won=starBalance(me)-bal0; if(won>0){ setTimeout(()=>{ if(current==='sDone') starPop(won, bal0); }, 700); const c=document.querySelector('.childchip .starcount'); if(c) c.innerHTML=ICON_STAR+bal0; }
-  say(pb?[cheerLines(passed,stars,level), pb.say]:cheerLines(passed,stars,level));
+  const se=passed&&storyOf(game)?[storyOf(game)[3]]:[];
+  say(pb?[cheerLines(passed,stars,level), ...se, pb.say]:[cheerLines(passed,stars,level), ...se]);
 }
 
 /* ---------- quick check: find the right games and starting level ---------- */
@@ -4910,10 +5137,10 @@ let placing=null;
 const gameBand = gid => Object.keys(GROUPS).find(k=>GROUPS[k].games.includes(gid)) || 'little';
 function startPlacement(p){
   me=p; practice=null; stopSprint(); logRound(false);
-  placing={pos:START_BY_AGE[p.age]??2, n:0, max:8, hist:[]};
+  placing={pos:Math.max(0,(START_BY_AGE[p.age]??2)-(p.profile&&p.profile.feel==='hard'?1:0)), n:0, max:8, hist:[]};
   game='placement'; level=0; plan=[];
   round={game:'placement', level:0, started:Date.now(), items:[], logged:false};
-  show('sPlay'); $('qbar').style.width='0%';
+  show('sPlay'); $('qbar').style.width='0%'; $('storyTrack').hidden=true;
   say(`Hi ${p.name}! Let's play a few warm-up questions.`).then(()=>{ if(placing) placeQ(); });
   $('pText').textContent='Warm-up'; $('stage').innerHTML=`<div class="cele">${mascotSVG('happy')}</div><p style="font-size:20px;font-weight:600;text-align:center;margin:0">A few warm-up questions<br>to find the best games for you.</p>`;
 }
@@ -5087,6 +5314,7 @@ function renderParent(){
         ${p.placement?`<span>Quick check: ${GROUPS[p.placement.band].label}, from level ${p.placement.start}</span>`:''}</div>
       <div class="kpis"><div class="kpi"><b>${t.rounds}</b><span>Levels played</span></div><div class="kpi"><b>${t.answers}</b><span>Questions</span></div><div class="kpi"><b>${t.right}</b><span>Right first time${acc!==null?` (${acc}%)`:''}</span></div><div class="kpi"><b>${t.wrong}</b><span>Wrong tries</span></div></div>
       ${flag}
+      ${profileHTML(p)}
       <div class="tablewrap"><table class="gtable"><thead><tr><th>Game</th><th class="n">Levels</th><th class="n">Plays</th><th class="n">Accuracy</th></tr></thead><tbody>${rows}</tbody></table></div>
     </div>`; }).join('');
   $('parentBody').innerHTML = `<div class="head"><h1>Progress</h1><p>How each child is doing, game by game.</p></div>
@@ -5150,6 +5378,7 @@ document.addEventListener('click', async e=>{
   if(t.closest('#pracNext')){ if(practice) runPracticeStep(); return; }
   if(t.closest('#pracEnd')){ if(isTablet()) return leaveChild(); openGames(); return; }
   if(t.closest('#tbFinish')){ return leaveChild(); }
+  const pf=t.closest('[data-prof]'); if(pf){ const k=store.profiles.find(p=>p.id===pf.dataset.prof); if(k) openWelcome(k); return; }
   const ed=t.closest('[data-edit]'); if(ed){ openEditor(store.profiles.find(p=>p.id===ed.dataset.edit),'sParent'); return; }
   const cp=t.closest('#copyMsg, #copyCsv');
   if(cp){ const text=cp.id==='copyMsg'?resultsMessage():toCSV();
