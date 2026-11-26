@@ -15,7 +15,11 @@ The mascot is Garaad, a wise owl whose eyes are the double "aa" of the name. Bra
 - **English:** a Maths / English switch on each child's games page, with 21 games in five steps: 1 *Listening ears*, 2 *Sound play*, 3 *Words and letters* (Opposites, Word Sort, Letter Hunt, Trace the Trail), 4 *Reading* (Caption Catch, Yes or No Island, Story Steps, Read and Answer) and 5 *Writing* (Missing Letter, Spell the Picture, Spelling Bee, Sentence Builder, Fix-It Doctor). Younger children see Steps 1–3 first; ages 6–12 see Reading and Writing first. Every word learned grows a flower in the child's Word Garden.
 - Speaking games use the microphone. Recordings stay on the phone and are never uploaded; a grown-up can always confirm an answer.
 - Installs to the phone's home screen and works offline after the first visit.
-- Progress stays on the device. Parents can send results by email or WhatsApp from the Parent area (press and hold to open).
+- Progress stays on the device. Parents can send results by email or WhatsApp from the Parent area.
+- **Parent gate:** the Parent area, removing a child, sending results and the About/Privacy links ask the grown-up to type a number written in words (for example "seven, two, five, one" → 7251), in English, Af-Soomaali or Arabic. Young children can't read it. After a pass it stays open for 2 minutes; removing a child always asks.
+- **Rewards:** when a level earns new stars, a "+3 ★" badge pops up and flies to the child's star count. Finishing today's practice opens a gift box once a day with 2 or 3 bonus stars.
+- **Tools in every game:** hear the question again, get a hint, and **Words on/off** (hide the written question for children who listen; it is still read aloud; only offered when the game speaks).
+- **Check button:** in thinking puzzles (Odd One Out, Patterns, Fix-It Doctor, Read and Answer) the child taps an answer, can change it, then presses **Check**. Quick drills keep instant feedback.
 
 ## Home page: School or Family
 
