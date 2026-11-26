@@ -816,6 +816,51 @@ details.more{margin-top:12px}details.more summary{cursor:pointer;font-weight:600
 .lockopt input{width:22px;height:22px;margin-top:2px;accent-color:var(--primary)}.lockopt b{display:block}.lockopt small{display:block;color:var(--muted);font-size:13px}
 .tbhead h1{font-size:clamp(30px,6vw,44px)}.tbkids{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
 .tbdone{font-size:13px;color:var(--success);font-weight:600}
+
+/* ---------- parent gate: a number written in words, typed as digits (children who can't read can't pass) ---------- */
+.sheet.gate{max-height:96dvh;overflow-y:auto}
+.gate .gq{margin:0;color:#6B5743;font-size:16px}
+.gate .gwords{font-family:var(--display);font-weight:800;font-size:clamp(24px,7vw,32px);line-height:1.2;color:#2B2118;background:#fff;border-radius:18px;padding:12px 16px;text-align:center}
+.gate .gwords[dir="rtl"]{font-family:system-ui,sans-serif}
+.gate .gslots{display:flex;justify-content:center;gap:10px}
+.gate .gslots span{width:52px;height:60px;border-radius:14px;border:2.5px dashed #D9C6A6;display:grid;place-items:center;font-size:30px;font-weight:700;background:#fff;color:#2B2118}
+.gate .gslots span.f{border-style:solid;border-color:#0E8C7E}
+.gate .gslots.bad span{border-color:#D63E55;animation:shake .45s}
+.gate .gpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.gate .gpad button{height:54px;border-radius:14px;background:#fff;border:2px solid #F0E2C8;font-size:24px;font-weight:600;color:#2B2118}
+.gate .glang{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.gate .glang button{border:2px solid #F0E2C8;background:transparent;border-radius:99px;padding:4px 12px;font-size:14px;color:#6B5743}
+.gate .glang button[aria-pressed="true"]{border-color:#0E8C7E;background:#E0F4F1;color:#0A5E55;font-weight:600}
+.gate .gerr{margin:0;text-align:center;color:#B4232F;font-size:14px;min-height:1.2em}
+
+/* ---------- star pop (+3 stars) and the daily gift box ---------- */
+.starpop{position:fixed;left:0;top:0;z-index:60;pointer-events:none;display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:#2B2118;font-family:var(--display);font-weight:800;font-size:30px;line-height:1;padding:10px 18px;border-radius:99px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.starpop .starico{width:28px;height:28px;fill:#fff}
+.starcount.bump{animation:yay .4s}
+.gift{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;padding:4px;cursor:pointer;color:var(--page-ink,inherit)}
+.gift .giftbox{overflow:visible;width:clamp(96px,26vw,124px);height:auto;animation:wobble 1.6s ease-in-out infinite;transform-origin:50% 90%}
+.gift b{font-family:var(--display);font-weight:800;font-size:20px}
+.gift.open .giftbox{animation:none}
+.gift.open .lid{transition:transform .45s cubic-bezier(.3,1.6,.5,1);transform:translateY(-30px) rotate(-18deg)}
+.giftwon{font-family:var(--display);font-weight:800;font-size:22px;color:var(--page-ink,inherit)}
+@keyframes wobble{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(-8deg)}20%{transform:rotate(7deg)}30%{transform:rotate(-5deg)}40%{transform:rotate(3deg)}}
+@media (prefers-reduced-motion: reduce){.gift .giftbox{animation:none}}
+
+/* ---------- the same tools in every game: hear again, hint, words on/off ---------- */
+.tools{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.tools #hintRow:empty{display:none}
+.toolbtn{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 14px;border-radius:99px;background:var(--surface);color:var(--ink);border:2px solid var(--line);font-weight:600;font-size:15px}
+.toolbtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.toolbtn[aria-pressed="false"]{color:var(--muted)}
+.toolbtn .aa{font-family:var(--display);font-weight:800;font-size:18px;line-height:1}
+.prompt.nocap .bubble2 .text{display:none}
+.prompt.nocap .bubble2{justify-content:center}
+.prompt.nocap .bubble2 .say{width:64px;height:64px}
+/* Check button for thinking puzzles: tap to choose, then Check */
+.opt.picked{border-color:var(--primary)!important;box-shadow:0 0 0 3px var(--primary-soft),0 3px 0 var(--line)}
+.checkrow{display:flex;justify-content:center;width:100%;margin-top:14px}
+.checkrow .btn{min-width:180px;font-size:18px}
+.checkrow .btn:disabled{opacity:.45}
 </style>
 
 <div class="app">
@@ -864,7 +909,7 @@ details.more{margin-top:12px}details.more summary{cursor:pointer;font-weight:600
       <div class="meta"><b id="pTitle"></b><div class="qbar"><i id="qbar"></i></div></div>
     </div>
     <div class="prompt"><span class="powl" id="pOwl" aria-hidden="true"></span><div class="bubble2"><div class="text" id="pText"></div><button class="say" id="sayBtn" aria-label="Hear the question"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 010 7"/></svg></button></div></div>
-    <div id="hintRow" style="display:flex;justify-content:center"></div>
+    <div class="tools" id="tools"><div id="hintRow" style="display:flex;justify-content:center"></div><button class="toolbtn" id="capBtn" hidden aria-pressed="true"><span class="aa">Aa</span><span id="capLbl">Words on</span></button></div>
     <div class="stage" id="stage"></div>
   </section>
 
@@ -2808,7 +2853,7 @@ document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState=
 setInterval(()=>obFlush(), 30000);
 
 /* ---------- a child's session: opened when the teacher taps the child, closed when they go back ---------- */
-function progressOf(p){ return {games:p.games||{}, best:p.best||{}, review:p.review||[], words:p.words||{}, practiceDays:p.practiceDays||[], bonus:p.bonus||0, spent:p.spent||0, themeSet:!!p.themeSet, subject:p.subject||subject, last:p.last||0, placement:p.placement||null, placementSkipped:!!p.placementSkipped, band:p.band||null}; }
+function progressOf(p){ return {games:p.games||{}, best:p.best||{}, review:p.review||[], words:p.words||{}, practiceDays:p.practiceDays||[], giftDay:p.giftDay||null, bonus:p.bonus||0, spent:p.spent||0, themeSet:!!p.themeSet, subject:p.subject||subject, last:p.last||0, placement:p.placement||null, placementSkipped:!!p.placementSkipped, band:p.band||null}; }
 function saveChildProgress(){
   if(SCH.preview || !SCH.child || !me) return;
   const pr=progressOf(me); store.school.cache=store.school.cache||{}; store.school.cache[SCH.child.id]=pr;
@@ -2877,7 +2922,7 @@ async function famRestore(){
       const local=store.profiles.find(p=>p.id===k.id);
       if(local && (local.last||0)>=(pr.last||0)) { got.push(local); continue; }   // this phone holds newer progress
       got.push({id:k.id, name:k.name, age:k.age||5, avatar:k.avatar||null, theme:k.theme||'savanna', color:hashColor(k.id),
-        games:pr.games||{}, best:pr.best||{}, review:pr.review||[], words:pr.words||{}, practiceDays:pr.practiceDays||[],
+        games:pr.games||{}, best:pr.best||{}, review:pr.review||[], words:pr.words||{}, practiceDays:pr.practiceDays||[], giftDay:pr.giftDay||null,
         bonus:pr.bonus||0, spent:pr.spent||0, themeSet:!!pr.themeSet, subject:pr.subject, last:pr.last||0,
         placement:pr.placement||undefined, placementSkipped:!!pr.placementSkipped, band:pr.band||undefined});
     }
@@ -2891,7 +2936,7 @@ function profileFromChild(c, pr){
   pr=pr||{};
   return {id:c.id, name:c.name, age:c.age||5, color:hashColor(c.id), avatar:c.avatar||null, theme:c.theme||'savanna', parent_phone:c.parent_phone||null,
     games:pr.games||{}, best:pr.best||{}, review:pr.review||[], words:pr.words||{},
-    practiceDays:pr.practiceDays||[], bonus:pr.bonus||0, spent:pr.spent||0, themeSet:!!pr.themeSet, subject:pr.subject, last:pr.last||0, band:classCfg(c.class_name).band};
+    practiceDays:pr.practiceDays||[], giftDay:pr.giftDay||null, bonus:pr.bonus||0, spent:pr.spent||0, themeSet:!!pr.themeSet, subject:pr.subject, last:pr.last||0, band:classCfg(c.class_name).band};
 }
 async function openChild(id, btn){
   const listed=(SCH.kids||[]).find(x=>x.id===id), cached=(store.school.cache||{})[id];
@@ -4372,7 +4417,7 @@ function renderHome(){
     <button class="card kid add tap" id="addKid"><span class="plus">+</span>Add a child</button></div>`
   : `<div class="card empty"><div class="cele" style="width:120px;animation:none">${owlSVG('happy')}</div><h1 style="font-size:28px">Welcome to Garaad</h1><p>Maths and English games for children aged 3 to 12. Add each child with their name, age and owl, and the right games appear for them.</p><button class="btn primary" id="addKid">Add a child</button></div>`)
   + installCard()
-  + `<div class="parentlink"><button class="btn small hold" id="parentBtn"><span class="fill"></span>${ICON_LOCK.replace('<svg','<svg width="18" height="18" style="stroke:currentColor;fill:none;stroke-width:2.2"')} Parent area</button><p class="hint">Press and hold to open</p></div>`;
+  + `<div class="parentlink"><button class="btn small" id="parentBtn">${ICON_LOCK.replace('<svg','<svg width="18" height="18" style="stroke:currentColor;fill:none;stroke-width:2.2"')} Parent area</button><p class="hint">For grown-ups</p></div>`;
   $('homeBody').insertAdjacentHTML('beforeend', aboutLinks());
   wireHold();
 }
@@ -4537,6 +4582,7 @@ async function showAnswer(qq, st){
 }
 async function revealChoice(){
   locked=true; const myQ=q, st=$('stage'), b=choiceBtn(st,q.answer);
+  st.querySelectorAll('.checkrow').forEach(x=>x.remove());
   setOwl('happy'); $('hintRow').innerHTML='';
   if(b){ b.classList.add('right','shown'); if(!b.textContent.trim() || b.classList.contains('pic')) tagBtn(b, labelOf(b)); }
   $('pText').textContent='Here is the right answer';
@@ -4625,7 +4671,37 @@ function renderQ(){
   $('stage').innerHTML = (q.isReview?'<div class="revtag">🔁 One to try again</div>':'') + q.html + (q.pad ? padHTML(q.decimal) : '');
   typed=''; tries=0; locked=false;
   if(q.mount) q.mount($('stage'));
-  setOwl('think'); renderHint();
+  picked=null; if(checkMode()) $('stage').insertAdjacentHTML('beforeend', `<div class="checkrow"><button class="btn primary" id="choiceCheck" disabled>Check ✓</button></div>`);
+  setOwl('think'); renderHint(); renderCaps();
+}
+/* words on/off: for children who listen, the question text can be hidden (it is still read aloud).
+   Only offered when the game speaks; older children who read always see the words. */
+const capsOffered = () => !!me && !placing && !sprint && !muted && !!G().voice;
+function renderCaps(){
+  const b=$('capBtn'), on=!(capsOffered() && me.captionsOff);
+  document.querySelector('#sPlay .prompt').classList.toggle('nocap', !on);
+  if(!b) return; b.hidden=!capsOffered();
+  b.setAttribute('aria-pressed', String(on)); $('capLbl').textContent = on ? 'Words on' : 'Words off';
+  b.setAttribute('aria-label', on ? 'Hide the words (the question is still read aloud)' : 'Show the words');
+}
+/* Check button for thinking puzzles: the child taps an answer (and can change it), then presses Check.
+   Quick drills keep instant feedback. */
+const CHECK_GAMES = new Set(['odd','pattern','efix','eread']);
+let picked=null;
+const checkMode = () => !!q && !placing && !sprint && !q.isDemo && !q.seq && !q.pad && !q.mount && CHECK_GAMES.has(q.gid) && /data-choice=/.test(q.html);
+function pickChoice(btn){
+  if(btn.classList.contains('wrong') || btn.classList.contains('hinted')) return;
+  $('stage').querySelectorAll('.opt.picked').forEach(b=>b.classList.remove('picked'));
+  const first=!q.pickedOnce; q.pickedOnce=true;
+  picked=btn; btn.classList.add('picked'); tick();
+  const c=$('choiceCheck'); if(c) c.disabled=false;
+  if(first && G().voice) say('Now tap Check.');
+}
+function checkPicked(){
+  if(!picked || locked) return;
+  const b=picked; picked=null; b.classList.remove('picked');
+  const c=$('choiceCheck'); if(c) c.disabled=true;
+  judgeChoice(b);
 }
 /* the owl beside the question: thinking, cheering on a right answer, a gentle "try again" face on a wrong one */
 let owlT=null;
@@ -4658,6 +4734,7 @@ function useHint(){
   if(kind==='choice'){
     const wrong=shuffle([...$('stage').querySelectorAll('[data-choice]')].filter(b=>b.dataset.choice!==q.answer && !b.classList.contains('wrong')));
     wrong.slice(0, Math.max(1, wrong.length-1)).forEach(b=>{ b.classList.add('hinted'); b.setAttribute('aria-disabled','true'); });
+    if(picked && picked.classList.contains('hinted')){ picked.classList.remove('picked'); picked=null; const c=$('choiceCheck'); if(c) c.disabled=true; }
     setOwl('happy');
     say(wrong.length>1?'Let me help. Some answers are gone. Look again.':'Let me help. One answer is gone. Look again.');
   } else {
@@ -4717,6 +4794,10 @@ function onChoice(btn){
     say(q.seqRetry ? q.seqRetry : ['Oops! Start again. Listen.', q.seqSay]);
     return;
   }
+  if(checkMode()){ pickChoice(btn); return; }
+  judgeChoice(btn);
+}
+function judgeChoice(btn){
   if(btn.dataset.choice===q.answer){ locked=true; btn.classList.add('right'); ding(); burst(btn); celebrateCorrect();
     completeQ(tries===0,false, q.after ? ()=>q.after($('stage')) : ()=>say(`${pick(['Well done!','Great!','Yes!'])} ${q.praise||''}`)); }
   else {
@@ -4740,9 +4821,44 @@ function practiceButtons(){
   practice.i++;
   if(practice.i<practice.steps.length) return {btns:`<button class="btn primary" id="pracNext">Continue ▶</button>`, note:`<p class="pracnext">Next: ${GAMES[practice.steps[practice.i].g].name}</p>`, say:'Great! On to the next one.'};
   me.practiceDays=[...new Set([...(me.practiceDays||[]), todayStr()])].slice(-90); save(); practice=null;
-  const d=practiceDays(me);
-  if(isTablet()) return {btns:`<button class="btn primary" id="pracEnd">Finish ✓</button>`, note:`<div class="pracdone">🌟 Today's practice is done! Tap Finish for the next child.</div>`, say:`Today's practice is done! Great work, ${me.name}.`};
-  return {btns:`<button class="btn primary" id="pracEnd">Back to games</button>`, note:`<div class="pracdone">🌟 Today's practice is done! · ${d} day${d>1?'s':''} in a row</div>`, say:"Today's practice is done! Great work."};
+  const d=practiceDays(me), gift=giftWaiting() ? giftHTML() : '', gsay=gift?' You have a surprise gift! Tap the box.':'';
+  if(isTablet()) return {btns:`<button class="btn primary" id="pracEnd">Finish ✓</button>`, note:`<div class="pracdone">🌟 Today's practice is done! Tap Finish for the next child.</div>${gift}`, say:`Today's practice is done! Great work, ${me.name}.${gsay}`};
+  return {btns:`<button class="btn primary" id="pracEnd">Back to games</button>`, note:`<div class="pracdone">🌟 Today's practice is done! · ${d} day${d>1?'s':''} in a row</div>${gift}`, say:"Today's practice is done! Great work."+gsay};
+}
+/* ---------- rewards: a gift box once a day when today's practice is done, and a "+3 stars" pop ---------- */
+const giftWaiting = () => !!me && !SCH.preview && me.giftDay!==todayStr();
+function giftHTML(){
+  return `<button class="gift" id="giftBtn" aria-label="Open your gift"><svg class="giftbox" viewBox="0 0 120 120" aria-hidden="true">
+    <rect x="18" y="52" width="84" height="58" rx="8" fill="#E0567A"/><rect x="53" y="52" width="14" height="58" fill="#F5B400"/>
+    <g class="lid"><rect x="12" y="36" width="96" height="20" rx="6" fill="#BE185D"/><rect x="53" y="36" width="14" height="20" fill="#F5B400"/>
+    <path d="M60 36 C44 14 26 24 38 34 Z M60 36 C76 14 94 24 82 34 Z" fill="#F5B400"/></g></svg><b>Tap to open your gift!</b></button>`;
+}
+function openGift(btn){
+  if(!me || !giftWaiting() || btn.classList.contains('open')) return;
+  const bal0=starBalance(me), n=2+(Math.random()<.4?1:0);
+  me.bonus=(me.bonus||0)+n; me.giftDay=todayStr(); me.dirty=true; save();
+  btn.classList.add('open'); btn.disabled=true; fanfare(); confetti(50);
+  btn.querySelector('b').outerHTML=`<span class="giftwon">${n} bonus stars!</span>`;
+  starPop(n, bal0);
+  say(`Surprise! You found ${n} bonus stars!`);
+}
+/* a "+3 ★" badge pops in the middle, flies to the child's star count, and the count goes up one by one */
+function starPop(n, fromBal){
+  if(!n || !me) return;
+  const chip=document.querySelector('.childchip .starcount'), end=starBalance(me);
+  const setCount=v=>{ if(chip){ chip.innerHTML=ICON_STAR+v; chip.setAttribute('aria-label', v+' stars'); } };
+  if(fromBal!=null) setCount(fromBal);
+  const el=document.createElement('div'); el.className='starpop'; el.setAttribute('aria-hidden','true'); el.innerHTML=`+${n} ${ICON_STAR}`;
+  document.body.appendChild(el);
+  const w=el.offsetWidth, h=el.offsetHeight, sx=innerWidth/2-w/2, sy=innerHeight*.34;
+  const r=chip&&chip.getBoundingClientRect(), ex=r?r.left+r.width/2-w/2:sx, ey=r?r.top+r.height/2-h/2:-80;
+  const countUp=()=>{ el.remove(); let v=fromBal!=null?fromBal:end-n;
+    const step=()=>{ const top=starBalance(me); if(v>=top){ setCount(top); return; } v++; setCount(v); if(chip){ chip.classList.remove('bump'); void chip.offsetWidth; chip.classList.add('bump'); } tick(); setTimeout(step,140); };
+    step(); };
+  if(reduceMotion || !el.animate){ el.style.transform=`translate(${sx}px,${sy}px)`; setTimeout(countUp,900); return; }
+  el.animate([{transform:`translate(${sx}px,${sy}px) scale(.3)`,opacity:0},{transform:`translate(${sx}px,${sy}px) scale(1.25)`,opacity:1,offset:.18},
+    {transform:`translate(${sx}px,${sy}px) scale(1)`,opacity:1,offset:.55},{transform:`translate(${ex}px,${ey}px) scale(.35)`,opacity:.7}],
+    {duration:1500, easing:'ease-in-out', fill:'both'}).onfinish=countUp;
 }
 function nextPracticeOrEnd(){ const pb=practiceButtons(); if(pb && practice) runPracticeStep(); else openGames(); }
 function cheerLines(passed, stars, lvl){
@@ -4765,7 +4881,7 @@ function finishLevel(){
   }
   let stars = ratio>=0.99?3 : ratio>=0.7?2 : ratio>=0.5?1 : 0;
   if(little) stars=Math.max(1,stars);
-  const cap=capOf(game), passed=stars>=1, s=gp(me,game), before=Math.min(cap,levelsDone(s));
+  const cap=capOf(game), passed=stars>=1, s=gp(me,game), before=Math.min(cap,levelsDone(s)), bal0=starBalance(me);
   s.plays++;
   if(passed){ s.stars[level]=Math.max(s.stars[level]||0,stars); if(level===s.unlocked&&level<cap) s.unlocked=level+1; }
   if(round){ round.stars=stars; round.passed=passed; }
@@ -4781,6 +4897,7 @@ function finishLevel(){
     ${pb?pb.note:''}
     <div class="btns">${pb?pb.btns:`${passed&&!last?`<button class="btn primary" id="nextBtn">Next level ▶</button>`:''}<button class="btn${passed?'':' primary'}" id="againBtn">↻ Play again</button><button class="btn" id="levelsBtn">All levels</button>`}</div>`;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{ const f=$('progFill'); if(f) f.style.width=Math.round(after*100/cap)+'%'; }));
+  const won=starBalance(me)-bal0; if(won>0){ setTimeout(()=>{ if(current==='sDone') starPop(won, bal0); }, 700); const c=document.querySelector('.childchip .starcount'); if(c) c.innerHTML=ICON_STAR+bal0; }
   say(pb?[cheerLines(passed,stars,level), pb.say]:cheerLines(passed,stars,level));
 }
 
@@ -4873,13 +4990,71 @@ function stopSprint(){ if(sprint){ clearInterval(sprint.timer); sprint=null; } }
 function endSprint(){
   const score=sprint.score; stopSprint();
   const prev=me.best.sprint||0, best=score>prev; if(best) me.best.sprint=score;
-  const bonus=Math.min(3,Math.floor(score/5)); me.bonus=(me.bonus||0)+bonus;
+  const bal0=starBalance(me), bonus=Math.min(3,Math.floor(score/5)); me.bonus=(me.bonus||0)+bonus;
   if(round){ round.stars=bonus; round.passed=true; } save(); logRound(true);
   show('sDone'); fanfare();
   $('result').innerHTML=`<div class="bigemoji">${best?'🏆':'⏱️'}</div><h2>${score} correct</h2><p>${best?'New personal best!':`Your best is ${prev}.`}${bonus?` +${bonus} ★`:''}</p>
     <div class="btns"><button class="btn primary" id="againBtn">↻ Play again</button><button class="btn" id="levelsBtn">All games</button></div>`;
+  if(bonus){ const c=document.querySelector('.childchip .starcount'); if(c) c.innerHTML=ICON_STAR+bal0; setTimeout(()=>{ if(current==='sDone') starPop(bonus, bal0); }, 700); }
   if(G().voice) say(best?`New best! ${score} correct!`:`${score} correct.`);
 }
+
+/* ---------- parent gate (idea from LogicLike) ----------
+   Grown-up actions ask for a number written in words, which the grown-up types as digits.
+   Young children can't read it. Used for: the Parent area, removing a child, sending results and links out of the app.
+   After a pass, the gate stays open for 2 minutes, except for removing a child, which always asks. */
+const GATE_WORDS = {
+  en:{name:'English', dir:'ltr', w:['zero','one','two','three','four','five','six','seven','eight','nine'], q:'Type this number:'},
+  so:{name:'Af-Soomaali', dir:'ltr', w:['eber','kow','labo','saddex','afar','shan','lix','toddoba','siddeed','sagaal'], q:'Ku qor lambarkan:'},
+  ar:{name:'العربية', dir:'rtl', w:['صفر','واحد','اثنان','ثلاثة','أربعة','خمسة','ستة','سبعة','ثمانية','تسعة'], q:'اكتب هذا الرقم:'}
+};
+const GATE_LEN = 4, GATE_GRACE = 2*60*1000;
+let gatePassedAt=0, GATE=null;
+function gateLang(){ let l=null; try{ l=localStorage.getItem('garaad.gateLang'); }catch(e){} return GATE_WORDS[l]?l:'en'; }
+function gateNumber(){ let d=[]; while(d.length<GATE_LEN){ const n=Math.floor(Math.random()*10); if(n!==d[d.length-1] && !(d.length===0 && n===0)) d.push(n); } return d; }
+function parentGate(opts, onPass){
+  if(typeof opts==='function'){ onPass=opts; opts={}; }
+  if(!opts.always && Date.now()-gatePassedAt<GATE_GRACE){ onPass(); return; }
+  closeSheet();
+  GATE={digits:gateNumber(), typed:'', onPass, opts, err:''};
+  const w=document.createElement('div'); w.className='sheetwrap'; w.id='sheet';
+  w.innerHTML=`<div class="sheet gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle"><span class="grab"></span>
+    <div style="display:flex;align-items:center;justify-content:space-between"><h2 id="gateTitle">${esc(opts.title||'For grown-ups')}</h2><button class="ibtn" id="sheetX" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    ${opts.note?`<p class="gq">${esc(opts.note)}</p>`:''}
+    <div id="gateBody"></div></div>`;
+  document.body.appendChild(w);
+  w.addEventListener('click', e=>{
+    if(e.target===w || e.target.closest('#sheetX')){ GATE=null; closeSheet(); return; }
+    const k=e.target.closest('[data-gk]'); if(k){ gateKey(k.dataset.gk); return; }
+    const l=e.target.closest('[data-gl]'); if(l){ GATE.err=''; try{ localStorage.setItem('garaad.gateLang', l.dataset.gl); }catch(err){} renderGate(); }
+  });
+  renderGate();
+}
+function renderGate(){
+  const b=$('gateBody'); if(!b||!GATE) return;
+  const L=GATE_WORDS[gateLang()], words=GATE.digits.map(d=>L.w[d]).join(L.dir==='rtl'?'، ':', ');
+  b.innerHTML=`<div style="display:flex;flex-direction:column;gap:12px">
+    <p class="gq" dir="${L.dir}">${esc(L.q)}</p>
+    <div class="gwords" dir="${L.dir}" lang="${gateLang()}">${esc(words)}</div>
+    <div class="gslots${GATE.err?' bad':''}" aria-live="polite" aria-label="${GATE.typed.length} of ${GATE_LEN} numbers typed">${Array.from({length:GATE_LEN},(_,i)=>`<span class="${i<GATE.typed.length?'f':''}">${GATE.typed[i]||''}</span>`).join('')}</div>
+    <p class="gerr">${esc(GATE.err)}</p>
+    <div class="gpad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button type="button" data-gk="${n}">${n}</button>`).join('')}<button type="button" data-gk="del" aria-label="Delete">⌫</button><button type="button" data-gk="0">0</button><span></span></div>
+    <div class="glang" role="group" aria-label="Language of the words">${Object.keys(GATE_WORDS).map(k=>`<button type="button" data-gl="${k}" aria-pressed="${k===gateLang()}" lang="${k}">${GATE_WORDS[k].name}</button>`).join('')}</div>
+  </div>`;
+}
+function gateKey(k){
+  if(!GATE) return;
+  if(k==='del'){ GATE.typed=GATE.typed.slice(0,-1); GATE.err=''; renderGate(); return; }
+  if(GATE.typed.length>=GATE_LEN) return;
+  GATE.typed+=k; GATE.err=''; renderGate();
+  if(GATE.typed.length<GATE_LEN) return;
+  if(GATE.typed===GATE.digits.join('')){
+    const go=GATE.onPass; gatePassedAt=Date.now(); GATE=null; closeSheet(); go(); return;
+  }
+  GATE.digits=gateNumber(); GATE.typed=''; GATE.err='Not quite. Here is a new number.';
+  setTimeout(renderGate, 0);
+}
+document.addEventListener('keydown', e=>{ if(!GATE) return; if(/^[0-9]$/.test(e.key)){ e.preventDefault(); gateKey(e.key); } else if(e.key==='Backspace'){ e.preventDefault(); gateKey('del'); } else if(e.key==='Escape'){ GATE=null; closeSheet(); } }, true);
 
 /* ---------- parent area ---------- */
 let pendingDel=null, copyText='', dataMsg='';
@@ -4944,10 +5119,14 @@ function renderParent(){
 /* ================= events ================= */
 document.addEventListener('click', async e=>{
   const t=e.target;
+  const out=t.closest('.aboutlinks a'); if(out && current==='sHome' && store.mode && (store.profiles||[]).length){ e.preventDefault(); parentGate(()=>{ location.href=out.href; }); return; }
   if(t.closest('#themeBtn')){ audio(); openThemeSheet(); return; }
   const tpk=t.closest('[data-theme-pick]'); if(tpk){ audio(); pickTheme(tpk.dataset.themePick); return; }
   const ow=t.closest('[data-owl]'); if(ow){ edOwl=ow.dataset.owl; renderOwls(); const b=$('owlPick').querySelector(`[data-owl="${edOwl}"]`); if(b) b.focus(); return; }
   if(t.closest('#hintBtn')){ audio(); useHint(); return; }
+  if(t.closest('#choiceCheck')){ audio(); checkPicked(); return; }
+  const gb=t.closest('#giftBtn'); if(gb){ audio(); openGift(gb); return; }
+  if(t.closest('#capBtn')){ audio(); if(me){ me.captionsOff=!me.captionsOff; save(); } renderCaps(); if(me&&me.captionsOff&&q) say(questionParts(q)); return; }
   if(t.closest('#addKid')||t.closest('#pAdd')){ openEditor(null, current==='sParent'?'sParent':'sHome'); return; }
   const kid=t.closest('[data-kid]'); if(kid){ audio(); me=store.profiles.find(p=>p.id===kid.dataset.kid); subject=me.subject==='english'?'english':'maths';
     const fresh=!me.placement && !me.placementSkipped && !Object.values(me.games||{}).some(g=>g.tries>0);
@@ -4978,8 +5157,8 @@ document.addEventListener('click', async e=>{
     catch(err){ dataMsg='Select all the text below and copy it.'; copyText=text; }
     renderParent(); const b=$('copyBox'); if(b){ b.focus(); b.select(); } return; }
   if(t.closest('#installBtn')&&deferredInstall){ deferredInstall.prompt(); try{ await deferredInstall.userChoice; }catch(err){} deferredInstall=null; renderHome(); return; }
-  if(t.closest('#shareRes')){ await shareResults(); renderParent(); return; }
-  if(t.closest('#emailRes')){ emailResults(); return; }
+  if(t.closest('#shareRes')){ parentGate(async()=>{ await shareResults(); renderParent(); }); return; }
+  if(t.closest('#emailRes')){ parentGate(emailResults); return; }
   if(t.closest('#dlCsv')&&!dlRef&&STANDALONE){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([toCSV()],{type:'text/csv'})); a.download=csvName(); document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1000); return; }
   if(t.closest('#dlCsv')&&dlRef){ const d=new Date();
     try{ await dlRef.save({filename:`garaad-${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}.csv`,data:toCSV()}); dataMsg=''; }
@@ -4992,7 +5171,7 @@ $('fCancel').addEventListener('click',()=>editReturn==='sParent'?openParent():go
 $('fName').addEventListener('keydown',e=>{ if(e.key==='Enter') saveChild(); });
 $('fRemove').addEventListener('click',()=>{
   if(!editing) return;
-  if(!removeArmed){ removeArmed=true; $('fRemove').textContent='Tap again to remove'; return; }
+  if(!removeArmed){ const who=editing; parentGate({always:true, title:`Remove ${who.name}?`, note:`${who.name} and their progress will be removed. This can't be undone.`}, ()=>{ if(editing===who){ removeArmed=true; $('fRemove').click(); } }); return; }
   if(!Array.isArray(store.removed)) store.removed=[];
   store.removed.push({child_id:editing.id, child:editing.name, age:editing.age, removed:true});
   if(famOn()){ const b=obBox(); b.outbox=(b.outbox||[]).filter(it=>!(it.args && it.args.p_child_id===editing.id && it.fn==='save_progress')); obPush('remove_child', {p_child_id:editing.id}); }
@@ -5001,17 +5180,14 @@ $('fRemove').addEventListener('click',()=>{
 $('backBtn').addEventListener('click',goBack);
 $('sayBtn').addEventListener('click',async()=>{ audio(); if(!q) return; if(q.seq&&!locked){ q.pos=0; $('stage').querySelectorAll('.opt.right').forEach(b=>{ b.classList.remove('right'); const n=b.querySelector('.stepno'); if(n) n.remove(); }); } if(q.pre){ hush(); await q.pre(); } say(questionParts(q)); });
 function renderMute(){ $('muteBtn').innerHTML=muted?ICON_SOUND_OFF:ICON_SOUND_ON; }
-$('muteBtn').addEventListener('click',()=>{ muted=!muted; try{ localStorage.setItem('cwm.muted',muted?'1':'0'); }catch(e){} if(muted){ try{speechSynthesis.cancel();}catch(e){} } renderMute(); });
+$('muteBtn').addEventListener('click',()=>{ muted=!muted; try{ localStorage.setItem('cwm.muted',muted?'1':'0'); }catch(e){} if(muted){ try{speechSynthesis.cancel();}catch(e){} } renderMute(); if(current==='sPlay') renderCaps(); });
 document.addEventListener('keydown',e=>{
   if(current!=='sPlay'||!q||!q.pad) return;
   if(/^[0-9]$/.test(e.key)) onKey(e.key); else if(e.key==='.'&&q.decimal) onKey('.'); else if(e.key==='Backspace') onKey('del'); else if(e.key==='Enter') onKey('go');
 });
 function wireHold(){
-  const b=$('parentBtn'); if(!b) return; let ht=null;
-  b.addEventListener('pointerdown',e=>{ e.preventDefault(); b.classList.add('holding'); ht=setTimeout(()=>{ b.classList.remove('holding'); openParent(); },1300); });
-  ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>{ clearTimeout(ht); b.classList.remove('holding'); }));
-  b.addEventListener('click',e=>{ if(e.detail===0) openParent(); });
-  b.addEventListener('contextmenu',e=>e.preventDefault());
+  const b=$('parentBtn'); if(!b) return;
+  b.addEventListener('click',()=>parentGate(openParent));
 }
 try{ speechSynthesis.getVoices(); }catch(e){}
 
