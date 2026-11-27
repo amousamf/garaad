@@ -858,6 +858,22 @@ details.more{margin-top:12px}details.more summary{cursor:pointer;font-weight:600
 .prompt.nocap .bubble2 .say{width:64px;height:64px}
 /* Check button for thinking puzzles: tap to choose, then Check */
 .opt.picked{border-color:var(--primary)!important;box-shadow:0 0 0 3px var(--primary-soft),0 3px 0 var(--line)}
+.sslots{display:flex;flex-direction:column;gap:10px;width:min(560px,calc(100vw - 32px));margin:0 auto}
+.sslot{position:relative;min-height:64px;border:3px dashed var(--line);border-radius:18px;padding:6px 6px 6px 48px;display:flex;align-items:center;background:var(--surface);transition:border-color .15s,background .15s}
+.sslot.over{border-color:var(--primary);background:var(--primary-soft)}
+.sslot.filled{border-style:solid}
+.sslot .sno{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;background:var(--primary);color:#fff;font-weight:800;display:grid;place-items:center}
+.sslot .sph{color:var(--muted);font-weight:700;font-size:17px}
+.sslot.filled .sph{display:none}
+.sslot .scard{width:100%;min-height:52px;margin:0}
+.spile{display:flex;flex-direction:column;gap:10px;align-items:center;margin:16px auto 0;min-height:20px;width:min(560px,calc(100vw - 32px))}
+.spile:empty{display:none}
+.spile .scard,.sslot .scard{width:100%;max-width:100%}
+.scard{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.scard.slift{opacity:.35}
+.scard.wrong{border-color:var(--danger,#D94F3D)!important}
+.sghost{position:fixed;left:0;top:0;z-index:60;pointer-events:none;opacity:.95;box-shadow:0 10px 24px rgba(0,0,0,.2)!important}
+.skiptalk{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:55;background:var(--ink);color:var(--surface);border:0;border-radius:99px;padding:12px 22px;font:inherit;font-weight:800;font-size:17px;box-shadow:0 6px 18px rgba(0,0,0,.2)}
 .checkrow{display:flex;justify-content:center;width:100%;margin-top:14px}
 .checkrow .btn{min-width:180px;font-size:18px}
 .checkrow .btn:disabled{opacity:.45}
@@ -2184,12 +2200,70 @@ function eYesNo(lv){
 /* ---------- Story Steps (reading: order) ---------- */
 const STORIES3 = [["Hodan picked a mango.","She washed the mango.","She ate it."],["The hen sat on her egg.","The egg cracked.","A little chick came out."],["Yusuf put on his shoes.","He walked to school.","He sat at his desk."],["The sky got dark.","Rain began to fall.","Ayaan opened her umbrella."],["Mum put rice in the pot.","The rice cooked.","We ate dinner together."],["A seed went into the ground.","Rain fell on it.","A small plant grew."],["Bilal filled the cup with water.","He drank the water.","The cup was empty."],["The baby was tired.","Mum sang a song.","The baby fell asleep."],["The goat was hungry.","It found some grass.","It ate the grass."],["Iman got a gift.","She opened the box.","She found a red ball inside."]];
 const STORIES4 = [["Sagal woke up early.","She washed her face.","She ate her breakfast.","She went to school."],["Dad bought some flour.","He mixed it with water.","He cooked the dough in a pan.","The family ate fresh bread."],["The boat left the beach.","The fishermen threw their net.","The net filled with fish.","They sailed home happy."],["Hamza saw a cat in a tree.","The cat could not get down.","Hamza called his dad.","Dad lifted the cat down safely."],["The teacher gave us a test.","We read each question carefully.","We wrote our answers.","The teacher marked our work."],["The camel walked all day.","The sun was very hot.","It found a well with water.","The camel drank and rested."],["Khadar planted a tree.","He watered it every day.","The tree grew tall.","Now it gives shade and mangoes."],["We packed our bags.","We got on the bus.","The bus drove to the city.","We visited our grandmother."]];
+/* Story Steps: numbered boxes (1 First, 2 Next, 3 Last). The child drags each sentence into a box, or taps it to fill the
+   next empty box (tap a box to take a sentence out). "Check" keeps the sentences that are in the right place and sends the
+   others back, so the child only fixes what is wrong. The answer is shown after three checks. */
+const STORY_LABELS = n => n===3 ? ['First','Next','Last'] : ['First','Next','Then','Last'];
+const mixed = a => { let m=shuffle(a), g=0; while(a.length>1 && m.every((x,i)=>x===a[i]) && g++<9) m=shuffle(a); return m; };   // never already in order
 function eStory(lv){
-  const st=pick(lv<=5?STORIES3:STORIES4), items=st.map((t,i)=>({v:'s'+i,t}));
-  return {text:'Tap the sentences in story order', parts:['Read the sentences. Tap them in the right order. What happened first?'],
-    seq:items.map(x=>x.v), answer:items.map(x=>x.v).join(' > '), html:textBtns(shuffle(items),'sent'),
-    seqRetry:'Not that one yet. Read them again, and start with what happened first.',
-    seqDone:async()=>{ await say(['Well done! Here is the story.', st.join(' ')]); }};
+  const st=pick(lv<=5?STORIES3:STORIES4), n=st.length, labs=STORY_LABELS(n), items=st.map((t,i)=>({v:'s'+i,t}));
+  const card=o=>`<div class="opt sent scard" role="button" tabindex="0" data-card="${o.v}">${esc(o.t)}</div>`;
+  let myQ;
+  myQ = {text:'Put the story in order', parts:['Read the sentences. Put them in the boxes in story order. What happened first?'], answer:items.map(x=>x.v).join(' > '),
+    html:`<div class="storybox"><div class="sslots">${labs.map((l,i)=>`<div class="sslot" data-slot="${i}"><span class="sno">${i+1}</span><span class="sph">${l}</span></div>`).join('')}</div>
+      <div class="choices spile" id="sPile">${mixed(items).map(card).join('')}</div>
+      <div class="checkrow"><button class="btn primary" id="stCheck" disabled>Check ✓</button></div></div>`,
+    mount(st0){
+      const stage=st0.querySelector('.storybox');
+      let misses=0, drag=null;
+      const slots=[...stage.querySelectorAll('.sslot')], pile=$('sPile'), chk=$('stCheck');
+      const inSlot=s=>s.querySelector('.scard'), fixed=c=>c.classList.contains('right');
+      const refresh=()=>{ slots.forEach(s=>s.classList.toggle('filled', !!inSlot(s))); chk.disabled=locked || slots.some(s=>!inSlot(s)); };
+      const toPile=c=>{ c.classList.remove('wrong','shake'); pile.appendChild(c); };
+      const toSlot=(c,s)=>{ const old=inSlot(s); if(old===c) return; if(old){ if(fixed(old)) return; const from=c.parentElement.closest('.sslot'); from ? from.appendChild(old) : toPile(old); } s.appendChild(c); tick(); };
+      const tapCard=c=>{ if(locked||fixed(c)) return; audio(); hush();
+        if(c.closest('.sslot')) toPile(c); else { const s=slots.find(x=>!inSlot(x)); if(s) toSlot(c,s); }
+        refresh(); };
+      stage.addEventListener('pointerdown',e=>{
+        const c=e.target.closest('.scard'); if(!c||locked||fixed(c)) return;
+        drag={c, x:e.clientX, y:e.clientY, id:e.pointerId, ghost:null};
+      });
+      const move=e=>{ if(!drag||e.pointerId!==drag.id) return;
+        if(!drag.ghost){ if(Math.hypot(e.clientX-drag.x, e.clientY-drag.y)<10) return;
+          const r=drag.c.getBoundingClientRect(); const g=drag.c.cloneNode(true); g.classList.add('sghost'); g.style.width=r.width+'px';
+          drag.dx=drag.x-r.left; drag.dy=drag.y-r.top; document.body.appendChild(g); drag.ghost=g; drag.c.classList.add('slift'); hush(); audio(); }
+        e.preventDefault(); drag.ghost.style.transform=`translate(${e.clientX-drag.dx}px,${e.clientY-drag.dy}px)`;
+        const over=document.elementFromPoint(e.clientX,e.clientY); slots.forEach(s=>s.classList.toggle('over', !!over && s.contains(over))); };
+      const up=e=>{ if(!drag||e.pointerId!==drag.id) return; const d=drag; drag=null;
+        slots.forEach(s=>s.classList.remove('over'));
+        if(!d.ghost){ tapCard(d.c); return; }
+        d.ghost.remove(); d.c.classList.remove('slift');
+        const over=document.elementFromPoint(e.clientX,e.clientY), s=over && over.closest('.sslot');
+        if(s && stage.contains(s)) toSlot(d.c,s); else if(d.c.closest('.sslot')) toPile(d.c);
+        refresh(); };
+      const cancel=()=>{ if(drag&&drag.ghost){ drag.ghost.remove(); drag.c.classList.remove('slift'); } drag=null; slots.forEach(s=>s.classList.remove('over')); };
+      window.addEventListener('pointermove',move,{passive:false}); window.addEventListener('pointerup',up); window.addEventListener('pointercancel',cancel);
+      const off=()=>{ window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',up); window.removeEventListener('pointercancel',cancel); };
+      myQ.cleanup=off;
+      stage.addEventListener('keydown',e=>{ const c=e.target.closest('.scard'); if(c&&(e.key==='Enter'||e.key===' ')){ e.preventDefault(); tapCard(c); } });
+      chk.addEventListener('click',()=>{ if(locked||chk.disabled) return; audio(); hush();
+        let bad=0; slots.forEach((s,i)=>{ const c=inSlot(s); if(c.dataset.card==='s'+i) c.classList.add('right'); else bad++; });
+        if(!bad){ off(); customDone(misses===0, async()=>{ await say(['Well done! Here is the story.', st.join(' ')]); }); return; }
+        misses++; tries++; boop(); setOwl('oops',1600);
+        const right=n-bad;
+        slots.forEach(s=>{ const c=inSlot(s); if(!fixed(c)){ c.classList.add('wrong','shake'); setTimeout(()=>{ if(!locked){ toPile(c); refresh(); } },650); } });
+        if(misses>=3){ locked=true; off(); setTimeout(async()=>{
+            if(q!==myQ) return;
+            slots.forEach((s,i)=>{ const c=pile.querySelector(`[data-card="s${i}"]`)||stage.querySelector(`[data-card="s${i}"]`); if(c&&!fixed(c)){ c.classList.remove('wrong','shake'); c.classList.add('right','shown'); s.appendChild(c); } });
+            refresh(); $('pText').textContent='Here is the right order';
+            revealing=true; try{ await say(['Here is the right order.', st.join(' ')]); } finally{ revealing=false; }
+            if(q===myQ){ await wait(600); completeQ(false,true); } },750); return; }
+        say(right ? `${right===1?'One is':right+' are'} in the right place. Move the others. What happened first?` : 'Not yet. Read them again. What happened first?');
+        setTimeout(refresh,700);
+      });
+      refresh();
+    }};
+  return myQ;
 }
 
 /* ---------- Read and Answer (reading: comprehension) ---------- */
@@ -4863,11 +4937,13 @@ function nextQ(){
   const intro=storyIntro; storyIntro=null;
   if(G().voice){ const myQ=q; setTimeout(async()=>{ if(q.pre){ await q.pre(); if(q!==myQ) return; } say(q.isReview?['Here is one to try again.', ...questionParts(q)]:intro?[intro, ...questionParts(q)]:questionParts(q)); },250); }
 }
+let qCleanup=null;   // a game that listens on window (drag) removes its listeners before the next question
 function renderQ(){
   $('pText').textContent=q.text;
   $('stage').innerHTML = (q.isReview?'<div class="revtag">🔁 One to try again</div>':'') + q.html + (q.pad ? padHTML(q.decimal) : '');
   typed=''; tries=0; locked=false;
-  if(q.mount) q.mount($('stage'));
+  if(qCleanup){ try{ qCleanup(); }catch(e){} qCleanup=null; }
+  if(q.mount){ q.mount($('stage')); qCleanup=q.cleanup||null; }
   picked=null; if(checkMode()) $('stage').insertAdjacentHTML('beforeend', `<div class="checkrow"><button class="btn primary" id="choiceCheck" disabled>Check ✓</button></div>`);
   setOwl('think'); renderHint(); renderCaps(); armIdle();
 }
@@ -5034,8 +5110,21 @@ function judgeChoice(btn){
   }
 }
 function customDone(firstTry, celebrate){ if(locked||!q) return; locked=true; if(firstTry){ ding(); celebrateCorrect(); } else tick(); completeQ(firstTry, false, celebrate||null); }
+/* A fast child should not have to wait for the owl to finish talking after an answer:
+   a "Next ▶" button shows while it talks, and a tap on it (or anywhere on the game) stops the talk and moves on. */
+function skippable(p){
+  let btn=null, done=false;
+  return new Promise(res=>{
+    const fin=()=>{ if(done) return; done=true; document.removeEventListener('pointerdown',onTap,true); if(btn) btn.remove(); res(); };
+    const onTap=e=>{ if(current!=='sPlay' || (e.target.closest && e.target.closest('.top'))) return; hush(); fin(); };
+    setTimeout(()=>{ if(done) return; document.addEventListener('pointerdown',onTap,true);
+      btn=document.createElement('button'); btn.className='skiptalk'; btn.type='button'; btn.textContent='Next ▶'; btn.setAttribute('aria-label','Next question');
+      document.body.appendChild(btn); }, 600);   // a short moment first, so the tap that answered does not skip the praise at once
+    Promise.resolve(p).then(fin, fin);
+  });
+}
 async function completeQ(firstTry, shown, celebrate){
-  if(celebrate) await celebrate();
+  if(celebrate) await skippable(celebrate());
   const s=gp(me,q.gid); s.tries++; if(firstTry) s.right++; s.last=Date.now();
   if(firstTry){ if(q.isReview) clearReview(q); if(q.word) learnWord(q.word); } else if(!q.noReview) addReview(q);
   if(round) round.items.push({game:q.gid, answer:q.answer, ok:!!firstTry, wrong:tries, shown:!!shown, review:!!q.isReview, hint:!!q.hinted});
